@@ -49,9 +49,9 @@ class TreeGraphPath(GraphElement):
     def svg_string(self):
         if self.is_curved:
             reverse = 0 if self.is_clockwise else 1
-            return f'<path d="M {self.start_pos[0]} {self.start_pos[1]} A {self.radius} {self.radius} 0 0 {reverse} {self.end_pos[0]} {self.end_pos[1]}" fill="transparent" stroke="{self.color}" stroke-width="24"/>\n'
+            return f'<path d="M {self.start_pos[0]} {self.start_pos[1]} A {self.radius} {self.radius} 0 0 {reverse} {self.end_pos[0]} {self.end_pos[1]}" fill="transparent" stroke="{self.color}" stroke-width="14"/>\n'
         else:
-            return f'<line fill="transparent" stroke="{self.color}" stroke-width="24" x1="{self.start_pos[0]}" y1="{self.start_pos[1]}" x2="{self.end_pos[0]}" y2="{self.end_pos[1]}"/>\n'
+            return f'<line fill="transparent" stroke="{self.color}" stroke-width="14" x1="{self.start_pos[0]}" y1="{self.start_pos[1]}" x2="{self.end_pos[0]}" y2="{self.end_pos[1]}"/>\n'
 
 
 class TreeGraph:
@@ -70,14 +70,14 @@ class TreeGraph:
         for group in groups:
             for node_id in group.node_ids:
                 node = tree_nodes[node_id]
-                if node.is_mastery or node.has_starting_nodes:
+                if node.is_mastery or node.is_class_starting_node:
                     continue
                 pos_x, pos_y = self._calculate_node_position(group, node)
                 self.nodes[node_id] = TreeGraphNode(pos_x=pos_x, pos_y=pos_y, size=node.size, is_taken=False)
 
     def _init_paths(self):
         for node_id, node in self.skill_tree.nodes.items():
-            if node.is_mastery or node.has_starting_nodes:
+            if node.is_mastery or node.is_class_starting_node:
                 continue
             for connected_node_id in node.connected_nodes:
                 connected_node = self.skill_tree.nodes[connected_node_id]
