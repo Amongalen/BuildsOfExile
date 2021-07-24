@@ -31,7 +31,7 @@ class PoePYTests(TestCase):
 
 class TreeUtilsTests(TestCase):
     def test_get_used_nodes_handle_trailing_slash(self):
-        tree = skill_tree.read_tree_data_file('BuildsOfExile/trees/390_V2/data.txt')
+        tree = skill_tree.read_tree_data_file('BuildsOfExile/trees/3_9_0/data.txt')
         url1 = 'https://www.pathofexile.com/passive-skill-tree/AAAABAYBABzcz3qiABa_qM_Zhgj0UXQ8BWHrjxrnVI19elM6WLzqakPvfEqLN9T_3hCSd-Xw1aKjbAtFR2yMtDi5fFFHwGZtbAQHshkmlVXGOkIPxCL0LJww-O-I-JfwHyT91CNTUu_rF7DVpvv1lPFNkh9BBLM9XyoLVUuMNkyztUgj9jB8SbFJUQce7T-D292oYeLXz5UuuMq-iujWmyZFnX_Gl_R8g5eVgptwbm0ZUDCkBa7_Oti8b42_MtGMCxEtidM2PZBVMgEgbnBSEZZLeI7pGjidqjBxMjKa4JhT-TfQH-d0O3wFtQ5IXfJSU-UZ7LChLycvBuemmWKs6-6TJw=='
         result1 = tree.parse_tree_url(url1)
         url2 = 'https://www.pathofexile.com/passive-skill-tree/AAAABAYBABzcz3qiABa_qM_Zhgj0UXQ8BWHrjxrnVI19elM6WLzqakPvfEqLN9T_3hCSd-Xw1aKjbAtFR2yMtDi5fFFHwGZtbAQHshkmlVXGOkIPxCL0LJww-O-I-JfwHyT91CNTUu_rF7DVpvv1lPFNkh9BBLM9XyoLVUuMNkyztUgj9jB8SbFJUQce7T-D292oYeLXz5UuuMq-iujWmyZFnX_Gl_R8g5eVgptwbm0ZUDCkBa7_Oti8b42_MtGMCxEtidM2PZBVMgEgbnBSEZZLeI7pGjidqjBxMjKa4JhT-TfQH-d0O3wFtQ5IXfJSU-UZ7LChLycvBuemmWKs6-6TJw==/'
@@ -39,7 +39,7 @@ class TreeUtilsTests(TestCase):
         self.assertListEqual(result1, result2)
 
     def test_read_tree_data_file(self):
-        filepath = 'BuildsOfExile/trees/390_V2/data.txt'
+        filepath = 'BuildsOfExile/trees/3_9_0/data.txt'
         result = skill_tree.read_tree_data_file(filepath)
 
 
