@@ -70,14 +70,14 @@ class TreeGraph:
         for group in groups:
             for node_id in group.node_ids:
                 node = tree_nodes[node_id]
-                if node.is_mastery or node.is_class_starting_node:
+                if node.is_mastery or node.is_class_start_node:
                     continue
                 pos_x, pos_y = self._calculate_node_position(group, node)
                 self.nodes[node_id] = TreeGraphNode(pos_x=pos_x, pos_y=pos_y, size=node.size, is_taken=False)
 
     def _init_paths(self):
         for node_id, node in self.skill_tree.nodes.items():
-            if node.is_mastery or node.is_class_starting_node:
+            if node.is_mastery or node.is_class_start_node:
                 continue
             for connected_node_id in node.connected_nodes:
                 connected_node = self.skill_tree.nodes[connected_node_id]

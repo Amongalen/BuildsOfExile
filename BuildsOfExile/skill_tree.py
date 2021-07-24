@@ -9,7 +9,7 @@ class NodeGroup:
     x: int
     y: int
     orbitals: list[int] = field(default_factory=list)
-    node_ids: list[int] = field(default_factory=list)
+    node_ids: list[str] = field(default_factory=list)
 
 
 @dataclass()
@@ -22,8 +22,13 @@ class TreeNode:
     is_notable: bool
     orbit_radii: int
     orbit_index: int
-    is_class_starting_node: bool
-    connected_nodes: list[int] = field(default_factory=list)
+    class_start_index: int
+    is_ascendancy_start: bool
+    connected_nodes: list[str] = field(default_factory=list)
+
+    @property
+    def is_class_start_node(self):
+        return self.class_start_index != -1
 
     @property
     def size(self):
@@ -34,8 +39,8 @@ class TreeNode:
         return 28
 
     def is_connected_to(self, other_node: "TreeNode"):
-        return (not self.is_mastery) and (not self.is_class_starting_node) and (not other_node.is_mastery) and (
-            not other_node.is_class_starting_node) and (self.ascendancy_name == other_node.ascendancy_name)
+        return (not self.is_mastery) and (not self.is_class_start_node) and (not other_node.is_mastery) and (
+            not other_node.is_class_start_node) and (self.ascendancy_name == other_node.ascendancy_name)
 
 
 @dataclass()
@@ -44,33 +49,39 @@ class SkillTree:
     max_y: int
     min_x: int
     min_y: int
-    node_groups: dict[int, NodeGroup] = field(default_factory=dict)
-    nodes: dict[int, TreeNode] = field(default_factory=dict)
+    asc_start_nodes: dict[str, str]
+    node_groups: dict[str, NodeGroup] = field(default_factory=dict)
+    nodes: dict[str, TreeNode] = field(default_factory=dict)
     skills_per_orbit: list[int] = field(default_factory=list)
     orbit_radii: list[int] = field(default_factory=list)
-    asc_classes: dict[int, str] = field(default_factory=dict)
+    asc_classes: dict[int, dict[int, str]] = field(default_factory=dict)
 
     def find_group_containing_node(self, node_id):
         for group in self.node_groups.values():
             if node_id in group.node_ids:
                 return group
 
-    def parse_tree_url(self, tree_url: str) -> list[int]:
-        tree_url = tree_url.rstrip('/')
-        url_parts = tree_url.split('/')
-        encoded_tree = url_parts[-1]
-        byte_tree = base64.urlsafe_b64decode(encoded_tree)
-        total_nodes = (len(byte_tree) - 7) // 2
-        version, char_id, ascendancy_id, locked, *nodes = struct.unpack(f'iBBB{total_nodes}H', byte_tree)
-        asc_start_node = self._get_asc_start_node_id(char_id, ascendancy_id)
-        nodes.append(asc_start_node)
-        return nodes
+    def get_asc_start_node_id(self, class_id, asc_id):
+        asc_name = self.asc_classes[class_id][asc_id]
+        return self.asc_start_nodes[asc_name]
 
-    def _get_asc_start_node_id(self, char_id, asc_id):
-        asc_name = self.asc_classes[char_id][asc_id]
-        for node in self.nodes.values():
-            if node.name == asc_name:
-                return node.id
+
+def parse_tree_url(tree_url: str, tree: SkillTree):
+    tree_url = tree_url.rstrip('/')
+    url_parts = tree_url.split('/')
+    encoded_tree = url_parts[-1]
+    byte_tree = base64.urlsafe_b64decode(encoded_tree)
+    total_nodes = (len(byte_tree) - 7) // 2
+    version = int.from_bytes(byte_tree[0:4], byteorder='big')
+    class_id = byte_tree[4]
+    ascendancy_id = byte_tree[5]
+    _ = byte_tree[6]
+    nodes = [str(int.from_bytes([byte_tree[i], byte_tree[i + 1]], byteorder='big')) for i in
+             range(7, 7 + total_nodes * 2, 2)]
+    if ascendancy_id != '0':
+        start_asc_node = tree.get_asc_start_node_id(class_id, ascendancy_id)
+        nodes.append(start_asc_node)
+    return nodes
 
 
 def read_tree_data_file(filepath: str) -> SkillTree:
@@ -78,7 +89,7 @@ def read_tree_data_file(filepath: str) -> SkillTree:
         skill_tree_json = json.load(f)
 
     groups = _parse_node_groups(skill_tree_json)
-    nodes = _parse_nodes(skill_tree_json)
+    nodes, asc_start_nodes = _parse_nodes(skill_tree_json)
     asc_classes = _parse_asc_data_json(skill_tree_json)
     skill_tree = SkillTree(
         max_x=skill_tree_json['max_x'],
@@ -89,34 +100,35 @@ def read_tree_data_file(filepath: str) -> SkillTree:
         orbit_radii=skill_tree_json['constants']['orbitRadii'],
         node_groups=groups,
         nodes=nodes,
-        asc_classes=asc_classes
+        asc_classes=asc_classes,
+        asc_start_nodes=asc_start_nodes
     )
     return skill_tree
 
 
 def _parse_asc_data_json(skill_tree_json):
-    return {class_id: {asc_id: ascendancy['id'] for asc_id, ascendancy in enumerate(class_data['ascendancies'])}
+    return {class_id: {asc_id+1: ascendancy['id'] for asc_id, ascendancy in enumerate(class_data['ascendancies'])}
             for class_id, class_data in enumerate(skill_tree_json['classes'])}
 
 
 def _parse_nodes(skill_tree_json):
     nodes = {}
+    asc_start_nodes = {}
     for node_id, node_json in skill_tree_json['nodes'].items():
         if node_id == 'root' or 'orbit' not in node_json:
             continue
-        nodes[node_id] = TreeNode(
-            id=node_json['skill'],
-            name=node_json['name'],
-            ascendancy_name=node_json.get('ascendancyName', ''),
-            is_keystone=node_json.get('isKeystone', False),
-            is_mastery=node_json.get('isMastery', False),
-            is_notable=node_json.get('isNotable', False),
-            orbit_radii=node_json['orbit'],
-            orbit_index=node_json['orbitIndex'],
-            connected_nodes=node_json['out'],
-            is_class_starting_node=('classStartIndex' in node_json)
-        )
-    return nodes
+        new_node = TreeNode(id=node_json['skill'], name=node_json['name'],
+                            ascendancy_name=node_json.get('ascendancyName', ''),
+                            is_keystone=node_json.get('isKeystone', False),
+                            is_mastery=node_json.get('isMastery', False),
+                            is_notable=node_json.get('isNotable', False), orbit_radii=node_json['orbit'],
+                            orbit_index=node_json['orbitIndex'], connected_nodes=node_json['out'],
+                            class_start_index=node_json.get('classStartIndex', -1),
+                            is_ascendancy_start=node_json.get('isAscendancyStart', False))
+        nodes[node_id] = new_node
+        if new_node.is_ascendancy_start:
+            asc_start_nodes[new_node.ascendancy_name] = node_id
+    return nodes, asc_start_nodes
 
 
 def _parse_node_groups(skill_tree_json):

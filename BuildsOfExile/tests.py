@@ -30,23 +30,25 @@ class PoePYTests(TestCase):
 
 
 class TreeUtilsTests(TestCase):
-    def test_get_used_nodes_handle_trailing_slash(self):
-        url1 = 'https://www.pathofexile.com/passive-skill-tree/AAAABAYBABzcz3qiABa_qM_Zhgj0UXQ8BWHrjxrnVI19elM6WLzqakPvfEqLN9T_3hCSd-Xw1aKjbAtFR2yMtDi5fFFHwGZtbAQHshkmlVXGOkIPxCL0LJww-O-I-JfwHyT91CNTUu_rF7DVpvv1lPFNkh9BBLM9XyoLVUuMNkyztUgj9jB8SbFJUQce7T-D292oYeLXz5UuuMq-iujWmyZFnX_Gl_R8g5eVgptwbm0ZUDCkBa7_Oti8b42_MtGMCxEtidM2PZBVMgEgbnBSEZZLeI7pGjidqjBxMjKa4JhT-TfQH-d0O3wFtQ5IXfJSU-UZ7LChLycvBuemmWKs6-6TJw=='
-        result1 = skill_tree.parse_tree_url(url1)
-        url2 = 'https://www.pathofexile.com/passive-skill-tree/AAAABAYBABzcz3qiABa_qM_Zhgj0UXQ8BWHrjxrnVI19elM6WLzqakPvfEqLN9T_3hCSd-Xw1aKjbAtFR2yMtDi5fFFHwGZtbAQHshkmlVXGOkIPxCL0LJww-O-I-JfwHyT91CNTUu_rF7DVpvv1lPFNkh9BBLM9XyoLVUuMNkyztUgj9jB8SbFJUQce7T-D292oYeLXz5UuuMq-iujWmyZFnX_Gl_R8g5eVgptwbm0ZUDCkBa7_Oti8b42_MtGMCxEtidM2PZBVMgEgbnBSEZZLeI7pGjidqjBxMjKa4JhT-TfQH-d0O3wFtQ5IXfJSU-UZ7LChLycvBuemmWKs6-6TJw==/'
-        result2 = skill_tree.parse_tree_url(url2)
-        self.assertListEqual(result1[2], result2[2])
-
     def test_read_tree_data_file(self):
-        filepath = 'BuildsOfExile/trees/3_9_0/data.txt'
-        result = skill_tree.read_tree_data_file(filepath)
+        filepath = 'BuildsOfExile/trees/3_15_0/data.json'
+        tree = skill_tree.read_tree_data_file(filepath)
+
+    def test_parse_tree_url(self):
+        filepath = 'BuildsOfExile/trees/3_15_0/data.json'
+        tree = skill_tree.read_tree_data_file(filepath)
+        url1 = 'https://www.pathofexile.com/passive-skill-tree/3.15.0/AAAABQYBAbDYAA=='
+        nodes = skill_tree.parse_tree_url(url1, tree)
+        self.assertIn(45272, nodes)
+        self.assertIn(55236, nodes)
+        self.assertIn(44683, nodes)
 
 
 class TreeGraphTests(TestCase):
     def test_tree_graph_to_html(self):
         tree = skill_tree.read_tree_data_file('BuildsOfExile/trees/3_15_0/data.json')
-        # url = 'https://www.pathofexile.com/passive-skill-tree/3.9.0/AAAABQYBfgQHBLMFtQbnBx4I9A5ID8QQkhEtEZYWvxewGjgc3B9BIG4i9CP2JP0mlScvKgssnDBxMHww-DIBMjIy0TY9N9Q6QjpYOtg7fDwFPV9FR0WdSVFJsUqLS3hMs02SUDBRR1F0UlNTUlVLVcZd8mHiYetirGpDbAtsjG0ZbWxwUnBud-V6U3yDf8aCm4PbidOMC4w2jX2Nv47pjxqQVZMnlPGVLpeVl_SYU5rgmyadqqEvogCio6QFppmoz67_shm0OLVIuMq5fLxvvOq-isBmz3rQH9Qj1abXz9mG3ajlGedU53To1uvu7LDtP-9874jv6_Af8NX4l_k3-_X_3gA='
-        # taken_node_ids = tree.parse_tree_url(url)
+        url = 'https://www.pathofexile.com/fullscreen-passive-skill-tree/3.15.0/AAAABQYCHg-rIcAkiypNMZ4zozXWPLY_J0rIUUxfsH1bguSKr5ARm7Wjo6xHsNizDr68wefDOspK1S7Wvto76NX0xgA='
+        taken_node_ids = skill_tree.parse_tree_url(url, tree)
         tree_graph = TreeGraph(tree)
-        html = tree_graph.to_html_with_taken_nodes([])
+        html = tree_graph.to_html_with_taken_nodes(taken_node_ids)
         print('html')
