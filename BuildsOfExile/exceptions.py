@@ -8,3 +8,7 @@ class TreeUrlParsingException(Exception):
 
 class PastebinImportException(Exception):
     pass
+
+
+class BuildXmlParsingException(Exception):
+    pass

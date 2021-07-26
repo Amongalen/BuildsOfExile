@@ -88,7 +88,6 @@ function commands.findModEffect(modLine)
 end
 
 function commands.testItemForDisplay(itemText)
-    print("Testing item")
     local results = pobinterface.testItemForDisplay(itemText)
     return results
 end

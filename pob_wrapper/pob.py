@@ -91,7 +91,7 @@ class PathOfBuilding:
         os.environ['POB_RUNTIMEPATH'] = pob_install
 
         self.pob = ProcessWrapper(debug=self.verbose)
-        self.pob.start([f'{data_dir}/luajit.exe', f'{data_dir}\\cli.lua'], cwd=pob_path)
+        self.pob.start([f'{data_dir}\\luajit.exe', f'{data_dir}\\cli.lua'], cwd=pob_path)
         atexit.register(self.kill)
 
     def require(self, module):
@@ -122,10 +122,12 @@ class PathOfBuilding:
         lines = [_pob_line_to_html(line) for line in lines]
         output = '\n'.join(lines)
         output = _mark_item_groups(output)
-        start_of_comparison = output.find('<hr/>\n</div>\n<hr/>\n<div class="results"><div class="option">')
-        output = output[:start_of_comparison] + '</div>'
+        regex = '\n<hr/>\n<div class="results">.*$'
+        result = re.sub(regex, '', output, flags=re.S)
+        # start_of_comparison = output.find('\n<hr/>\n<div class="results">.*<div class="option">')
+        # result = output[:start_of_comparison] + '</div>'
 
-        return HTML_ITEM_HEADER + output
+        return result
 
     # # Not currently possible without evaluating all possible slots
     # def test_item_effect(self, item_text):

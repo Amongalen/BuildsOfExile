@@ -49,7 +49,8 @@ def run():
     pob_install = r'D:\PathOfBuildingForWebapp'
     pob_path = r'D:\PathOfBuildingForWebapp'  # or %ProgramData%\Path of Building` for installed version
 
-    pob = PathOfBuilding(pob_path, pob_install)
+    pob = PathOfBuilding(pob_path, pob_install, verbose=True)
+    pob2 = PathOfBuilding(pob_path, pob_install, verbose=True)
 
     builds_path = pob.get_builds_dir()
     print("POB Builds:", builds_path)
@@ -60,7 +61,8 @@ def run():
 
     print('\nGenerating HTML from item effects test: ./test-item1.html')
     Path('test-item1.html').write_text(pob.item_as_html(TEST_ITEM_1))
-    Path('test-item2.html').write_text(pob.item_as_html(TEST_ITEM_2))
+    Path('test-item2.html').write_text(pob2.item_as_html(TEST_ITEM_2))
+    Path('test-item3.html').write_text(pob.item_as_html(TEST_ITEM_2))
 
     print('\nFetch data directly from Lua:')
     print('  build.spec.curAscendClassName = ', end='')
