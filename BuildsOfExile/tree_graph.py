@@ -37,8 +37,8 @@ class TreeGraphNode(GraphElement):
 
 @dataclass
 class TreeGraphPath(GraphElement):
-    start_node_id: int
-    end_node_id: int
+    start_node_id: str
+    end_node_id: str
     start_pos: tuple[float, float]
     end_pos: tuple[float, float]
     is_curved: bool
@@ -55,7 +55,7 @@ class TreeGraphPath(GraphElement):
 
 
 class TreeGraph:
-    nodes: dict[int, TreeGraphNode] = {}
+    nodes: dict[str, TreeGraphNode] = {}
     paths: list[TreeGraphPath] = []
     skill_tree: SkillTree
 
@@ -126,6 +126,8 @@ class TreeGraph:
     def _get_nodes_including_taken_nodes(self, taken_node_ids) -> list[GraphElement]:
         nodes = self.nodes.copy()
         for node_id in taken_node_ids:
+            if node_id not in nodes:
+                continue
             new_node = copy.copy(nodes[node_id])
             new_node.is_taken = True
             nodes[node_id] = new_node

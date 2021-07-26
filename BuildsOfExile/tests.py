@@ -55,27 +55,13 @@ class TreeUtilsTests(TestCase):
             filepath = 'BuildsOfExile/trees/3_15_0/data2.json'
             tree = skill_tree.read_tree_data_file(filepath)
 
-    def test_parse_tree_url(self):
-        filepath = 'BuildsOfExile/trees/3_15_0/data.json'
-        tree = skill_tree.read_tree_data_file(filepath)
-        url1 = 'https://www.pathofexile.com/passive-skill-tree/3.15.0/AAAABQYBAbDYAA=='
-        nodes = skill_tree.parse_tree_url(url1, tree)
-        self.assertIn('45272', nodes)
-        self.assertIn('58229', nodes)
-
-    def test_parse_tree_url_raises_exception(self):
-        filepath = 'BuildsOfExile/trees/3_15_0/data.json'
-        tree = skill_tree.read_tree_data_file(filepath)
-        with self.assertRaises(TreeUrlParsingException):
-            url1 = 'https://www.pathofexile.com/passive-skill-tree/3.15.0/SDAFAAAABQYBAbDYAA=='
-            nodes = skill_tree.parse_tree_url(url1, tree)
-
 
 class TreeGraphTests(TestCase):
     def test_tree_graph_to_html(self):
         tree = skill_tree.read_tree_data_file('BuildsOfExile/trees/3_15_0/data.json')
-        url = 'https://www.pathofexile.com/fullscreen-passive-skill-tree/3.15.0/AAAABQYCHg-rIcAkiypNMZ4zozXWPLY_J0rIUUxfsH1bguSKr5ARm7Wjo6xHsNizDr68wefDOspK1S7Wvto76NX0xgA='
-        taken_node_ids = skill_tree.parse_tree_url(url, tree)
         tree_graph = TreeGraph(tree)
-        html = tree_graph.to_html_with_taken_nodes(taken_node_ids)
+        nodes = [35754, 46910, 50862, 39713, 44967, 50422, 15631, 33740, 58833, 55906, 16775, 55373, 26740, 15405,
+                 38048, 63976]
+        nodes = [str(node) for node in nodes]
+        html = tree_graph.to_html_with_taken_nodes(nodes)
         print('html')

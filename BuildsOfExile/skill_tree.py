@@ -55,37 +55,11 @@ class SkillTree:
     nodes: dict[str, TreeNode] = field(default_factory=dict)
     skills_per_orbit: list[int] = field(default_factory=list)
     orbit_radii: list[int] = field(default_factory=list)
-    asc_classes: dict[int, dict[int, str]] = field(default_factory=dict)
 
     def find_group_containing_node(self, node_id):
         for group in self.node_groups.values():
             if node_id in group.node_ids:
                 return group
-
-    def get_asc_start_node_id(self, class_id, asc_id):
-        asc_name = self.asc_classes[class_id][asc_id]
-        return self.asc_start_nodes[asc_name]
-
-
-def parse_tree_url(tree_url: str, tree: SkillTree):
-    try:
-        tree_url = tree_url.rstrip('/')
-        url_parts = tree_url.split('/')
-        encoded_tree = url_parts[-1]
-        byte_tree = base64.urlsafe_b64decode(encoded_tree)
-        total_nodes = (len(byte_tree) - 7) // 2
-        version = int.from_bytes(byte_tree[0:4], byteorder='big')
-        class_id = byte_tree[4]
-        ascendancy_id = byte_tree[5]
-        _ = byte_tree[6]
-        nodes = [str(int.from_bytes([byte_tree[i], byte_tree[i + 1]], byteorder='big')) for i in
-                 range(7, 7 + total_nodes * 2, 2)]
-        if ascendancy_id != '0':
-            start_asc_node = tree.get_asc_start_node_id(class_id, ascendancy_id)
-            nodes.append(start_asc_node)
-    except Exception as err:
-        raise TreeUrlParsingException(err)
-    return nodes
 
 
 def read_tree_data_file(filepath: str) -> SkillTree:
@@ -95,7 +69,6 @@ def read_tree_data_file(filepath: str) -> SkillTree:
 
         groups = _parse_node_groups(skill_tree_json)
         nodes, asc_start_nodes = _parse_nodes(skill_tree_json)
-        asc_classes = _parse_asc_data_json(skill_tree_json)
         skill_tree = SkillTree(
             max_x=skill_tree_json['max_x'],
             max_y=skill_tree_json['max_y'],
@@ -105,17 +78,11 @@ def read_tree_data_file(filepath: str) -> SkillTree:
             orbit_radii=skill_tree_json['constants']['orbitRadii'],
             node_groups=groups,
             nodes=nodes,
-            asc_classes=asc_classes,
             asc_start_nodes=asc_start_nodes
         )
     except Exception as e:
         raise SkillTreeLoadingException(e)
     return skill_tree
-
-
-def _parse_asc_data_json(skill_tree_json):
-    return {class_id: {asc_id+1: ascendancy['id'] for asc_id, ascendancy in enumerate(class_data['ascendancies'])}
-            for class_id, class_data in enumerate(skill_tree_json['classes'])}
 
 
 def _parse_nodes(skill_tree_json):
