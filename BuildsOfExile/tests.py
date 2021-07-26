@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from BuildsOfExile import skill_tree
+from BuildsOfExile.exceptions import SkillTreeLoadingException, TreeUrlParsingException
 from BuildsOfExile.import_export import PoB_import_export
 from BuildsOfExile.tree_graph import TreeGraph
 
@@ -34,14 +35,25 @@ class TreeUtilsTests(TestCase):
         filepath = 'BuildsOfExile/trees/3_15_0/data.json'
         tree = skill_tree.read_tree_data_file(filepath)
 
+    def test_read_tree_data_file_raises_exception(self):
+        with self.assertRaises(SkillTreeLoadingException):
+            filepath = 'BuildsOfExile/trees/3_15_0/data2.json'
+            tree = skill_tree.read_tree_data_file(filepath)
+
     def test_parse_tree_url(self):
         filepath = 'BuildsOfExile/trees/3_15_0/data.json'
         tree = skill_tree.read_tree_data_file(filepath)
         url1 = 'https://www.pathofexile.com/passive-skill-tree/3.15.0/AAAABQYBAbDYAA=='
         nodes = skill_tree.parse_tree_url(url1, tree)
-        self.assertIn(45272, nodes)
-        self.assertIn(55236, nodes)
-        self.assertIn(44683, nodes)
+        self.assertIn('45272', nodes)
+        self.assertIn('58229', nodes)
+
+    def test_parse_tree_url_raises_exception(self):
+        filepath = 'BuildsOfExile/trees/3_15_0/data.json'
+        tree = skill_tree.read_tree_data_file(filepath)
+        with self.assertRaises(TreeUrlParsingException):
+            url1 = 'https://www.pathofexile.com/passive-skill-tree/3.15.0/SDAFAAAABQYBAbDYAA=='
+            nodes = skill_tree.parse_tree_url(url1, tree)
 
 
 class TreeGraphTests(TestCase):
