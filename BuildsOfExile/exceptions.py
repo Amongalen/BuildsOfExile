@@ -4,3 +4,7 @@ class SkillTreeLoadingException(Exception):
 
 class TreeUrlParsingException(Exception):
     pass
+
+
+class PastebinImportException(Exception):
+    pass
