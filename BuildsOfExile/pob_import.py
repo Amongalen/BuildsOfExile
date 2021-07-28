@@ -1,4 +1,6 @@
 import base64
+import datetime
+import timeit
 import zlib
 
 import requests
@@ -37,12 +39,11 @@ def import_build(xml: str):
     ascendancy_name = xml_root.find('Build').get('ascendClassName')
     skill_groups, main_active_skill = extract_skills(xml_root)
     tree_specs, active_tree_spec_index = extract_tree_specs(xml_root)
-    extract_items(xml_root)
     print('test')
 
 
 def extract_items(xml_root):
-    active_item_set = xml_root.find('Items').get('activeItemSet')
+    active_item_set_index = xml_root.find('Items').get('activeItemSet')
     item_sets = []
     for item_set_xml in xml_root.find('Items').findall('ItemSet'):
         title = item_set_xml.get('title')
@@ -57,7 +58,7 @@ def extract_items(xml_root):
                                  set_id=set_id,
                                  slots=slots))
     items = []
-    pob = PathOfBuilding(settings.POB_PATH, settings.POB_PATH)
+    pob = PathOfBuilding(settings.POB_PATH, settings.POB_PATH, verbose=True)
     for item_xml in xml_root.find('Items').findall('Item'):
         item_id = int(item_xml.get('id'))
         item_str = item_xml.text.strip()
@@ -70,7 +71,8 @@ def extract_items(xml_root):
                           name=item_name,
                           rarity=item_rarity,
                           display_html=item_display_html))
-    print('test')
+    pob.kill()
+    return items, item_sets, active_item_set_index
 
 
 def extract_tree_specs(xml_root):

@@ -124,8 +124,6 @@ class PathOfBuilding:
         output = _mark_item_groups(output)
         regex = '\n<hr/>\n<div class="results">.*$'
         result = re.sub(regex, '', output, flags=re.S)
-        # start_of_comparison = output.find('\n<hr/>\n<div class="results">.*<div class="option">')
-        # result = output[:start_of_comparison] + '</div>'
 
         return result
 
