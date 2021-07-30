@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from BuildsOfExile import skill_tree, pob_import
 from BuildsOfExile.exceptions import SkillTreeLoadingException, PastebinImportException
+from BuildsOfExile.skill_tree import SkillTreeService
 from BuildsOfExile.tree_graph import TreeGraph
 
 
@@ -44,20 +45,27 @@ class PobImportTests(TestCase):
 class TreeUtilsTests(TestCase):
     def test_read_tree_data_file(self):
         filepath = 'BuildsOfExile/trees/3_15/data.json'
-        tree = skill_tree.read_tree_data_file(filepath)
-        self.assertEqual('9644', tree.max_x)
+        tree = skill_tree._read_tree_data_file(filepath)
+        self.assertEqual(9644, tree.max_x)
         self.assertEqual(2341, len(tree.nodes))
         self.assertEqual(727, len(tree.node_groups))
 
     def test_read_tree_data_file_raises_exception(self):
         with self.assertRaises(SkillTreeLoadingException):
             filepath = 'BuildsOfExile/trees/3_15/data2.json'
-            _ = skill_tree.read_tree_data_file(filepath)
+            _ = skill_tree._read_tree_data_file(filepath)
+
+    def test_skill_tree_service(self):
+        skill_tree_service = SkillTreeService()
+        tree_3_15 = skill_tree_service.skill_trees['3_15']
+        self.assertEqual(9644, tree_3_15.max_x)
+        self.assertEqual(2341, len(tree_3_15.nodes))
+        self.assertEqual(727, len(tree_3_15.node_groups))
 
 
 class TreeGraphTests(TestCase):
     def test_tree_graph_to_html(self):
-        tree = skill_tree.read_tree_data_file('BuildsOfExile/trees/3_15/data.json')
+        tree = skill_tree._read_tree_data_file('BuildsOfExile/trees/3_15/data.json')
         tree_graph = TreeGraph(tree)
         nodes = [35754, 46910, 50862, 39713, 44967, 50422, 15631, 33740, 58833, 55906, 16775, 55373, 26740, 15405,
                  38048, 63976]

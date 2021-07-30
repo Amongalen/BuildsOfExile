@@ -1,4 +1,5 @@
 import json
+import os
 from dataclasses import dataclass, field
 
 from BuildsOfExile.exceptions import SkillTreeLoadingException
@@ -61,7 +62,18 @@ class SkillTree:
                 return group
 
 
-def read_tree_data_file(filepath: str) -> SkillTree:
+class SkillTreeService:
+    skill_trees: dict[str, SkillTree] = {}
+
+    def __init__(self, trees_dir='BuildsOfExile/trees'):
+        for f in os.scandir(trees_dir):
+            if f.is_dir():
+                version = f.path.split('\\')[-1]
+                self.skill_trees[version] = _read_tree_data_file(f.path + '/data.json')
+                print(f'loaded tree {version=}')
+
+
+def _read_tree_data_file(filepath: str) -> SkillTree:
     try:
         with open(filepath, 'r') as f:
             skill_tree_json = json.load(f)
