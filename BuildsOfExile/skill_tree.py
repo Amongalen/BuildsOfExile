@@ -1,8 +1,7 @@
-import base64
 import json
 from dataclasses import dataclass, field
 
-from BuildsOfExile.exceptions import SkillTreeLoadingException, TreeUrlParsingException
+from BuildsOfExile.exceptions import SkillTreeLoadingException
 
 
 @dataclass

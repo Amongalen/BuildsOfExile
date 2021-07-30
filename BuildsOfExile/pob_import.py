@@ -1,14 +1,11 @@
 import base64
-import datetime
-import timeit
+import xml.etree.ElementTree as ET
 import zlib
 
 import requests
 
 from BuildsOfExile import settings
 from BuildsOfExile.exceptions import PastebinImportException, BuildXmlParsingException
-import xml.etree.ElementTree as ET
-
 from BuildsOfExile.models import SkillGem, SkillGroup, TreeSpec, ItemSet, Item, PobDetails
 from pob_wrapper import PathOfBuilding
 
@@ -54,7 +51,6 @@ def parse_pob_details(xml: str):
 
 
 def extract_items(xml_root):
-    active_item_set_index = xml_root.find('Items').get('activeItemSet')
     item_sets = []
     for item_set_xml in xml_root.find('Items').findall('ItemSet'):
         title = item_set_xml.get('title')
@@ -68,6 +64,7 @@ def extract_items(xml_root):
         item_sets.append(ItemSet(title=title,
                                  set_id=set_id,
                                  slots=slots))
+
     items = []
     pob = PathOfBuilding(settings.POB_PATH, settings.POB_PATH)
     for item_xml in xml_root.find('Items').findall('Item'):
@@ -83,6 +80,9 @@ def extract_items(xml_root):
                           rarity=item_rarity,
                           display_html=item_display_html))
     pob.kill()
+
+    active_item_set_index = xml_root.find('Items').get('activeItemSet')
+    active_item_set_index = int(active_item_set_index) if active_item_set_index != 'nil' else 0
     return items, item_sets, active_item_set_index
 
 
@@ -113,9 +113,9 @@ def extract_skills(xml_root):
                                        gems=gems))
     main_socket_group_index = int(xml_root.find('Build').get('mainSocketGroup'))
     main_skill_index_within_group = skill_groups[main_socket_group_index].main_active_skill_index
-    main_active_skill_index = skill_groups[main_socket_group_index].gems[main_skill_index_within_group].name
+    main_active_skill = skill_groups[main_socket_group_index - 1].gems[main_skill_index_within_group - 1].name
 
-    return skill_groups, main_active_skill_index
+    return skill_groups, main_active_skill
 
 
 def parse_bool(xml):
