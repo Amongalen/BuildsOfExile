@@ -122,7 +122,7 @@ class PathOfBuilding:
         lines = [_pob_line_to_html(line) for line in lines]
         output = '\n'.join(lines)
         output = _mark_item_groups(output)
-        regex = '\n<hr/>\n<div class="results">.*$'
+        regex = '\n<hr/>\n</div>\n<hr/>\n<div class="results">.*$'
         result = re.sub(regex, '', output, flags=re.S)
 
         return result
