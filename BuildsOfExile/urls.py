@@ -13,8 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
 
+from BuildsOfExile import views
+
 urlpatterns = [
+    path('', views.IndexView.as_view(), name='index'),
+    path('show/<int:pk>/', views.IndexView.as_view(), name='build_guide'),
+    path('new/', views.new_guide_view, name='new_guide'),
+    path('signup/', views.signup_view, name="signup"),
+    path('sent/', views.activation_sent_view, name="activation_sent"),
+    path('activate/<slug:uidb64>/<slug:token>/', views.activate, name='activate'),
+
+]
+
+# Add Django site authentication urls (for login, logout, password management)
+
+urlpatterns += [
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

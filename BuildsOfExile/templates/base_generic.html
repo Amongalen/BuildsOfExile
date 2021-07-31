@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" class="vw-100" style="overflow-x: hidden">
+<head>
+    {% load static %}
+    {% block title %}<title>Builds of Exile</title>{% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link type="text/css" href="{% static 'BuildsOfExile/css/main.css' %}" rel="stylesheet" media="screen"/>
+    <link type="text/css" href="{% static 'BuildsOfExile/css/core.css' %}" rel="stylesheet"/>
+</head>
+<body class="bg-secondary">
+{% block navbar %}{% include 'navbar.html' %}{% endblock %}
+<div class="container py-lg-3 px-lg-3 bg-dark rounded-lg text-light ">
+    {% block content %}<!-- default content text (typically empty) -->{% endblock %}
+</div>
+</body>
+</html>
