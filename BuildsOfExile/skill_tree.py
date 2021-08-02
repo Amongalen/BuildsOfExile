@@ -13,7 +13,7 @@ class NodeGroup:
     node_ids: list[str] = field(default_factory=list)
 
 
-@dataclass()
+@dataclass
 class TreeNode:
     id: int
     name: str
@@ -44,7 +44,7 @@ class TreeNode:
             not other_node.is_class_start_node) and (self.ascendancy_name == other_node.ascendancy_name)
 
 
-@dataclass()
+@dataclass
 class SkillTree:
     max_x: int
     max_y: int

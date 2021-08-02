@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from subprocess import PIPE, STDOUT
+from subprocess import PIPE
 from typing import *
 
 from .popen_job import Popen
@@ -35,7 +35,7 @@ class ProcessWrapper:
     def start(self, args: List[str], cwd=None):
         cwd = cwd or os.getcwd()
         self.process = Popen(args, stdin=PIPE, stdout=PIPE, stderr=sys.stderr, universal_newlines=True, cwd=cwd,
-                             bufsize=1)
+                             bufsize=1, encoding='utf-8')
         firstline = self.process.stdout.readline()
         if firstline == '':
             err = self.process.stderr.readline()

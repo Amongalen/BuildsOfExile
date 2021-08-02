@@ -69,6 +69,14 @@ function getFilename(path)
     return name
 end
 
+function indexOfChar(table, object)
+    for i, v in ipairs(table) do
+        if object == v.char.name then
+            return i
+        end
+    end
+end
+
 
 function pobinterface.skillString(skill)
     local skill = skill or pobinterface.readSkillSelection()
@@ -144,6 +152,73 @@ function pobinterface.updateBuild()
     build.calcsTab:BuildOutput()
     build:RefreshStatList()
     build:RefreshSkillSelectControls(build.controls, build.mainSocketGroup, "")
+
+end
+
+function pobinterface.importBuild(accountName, charName)
+    build.importTab.charImportMode = "GETACCOUNTNAME"
+    build.importTab.controls.accountName.buf = accountName
+
+    -- Check importing is configured correctly in PoB itself
+    if not isValidString(build.importTab.controls.accountName.buf) then
+        error("Update failed: Account name must be set within PoB before it can be automatically updated")
+    end
+
+    -- Check importer is in the right state
+    if build.importTab.charImportMode ~= "GETACCOUNTNAME" then
+        error("Update failed: Unknown import error - is PoB importing set up correctly?")
+    end
+
+    -- Get character list
+    build.importTab:DownloadCharacterList()
+
+    local charsList = build.importTab.controls.charSelect.list
+
+    build.importTab.controls.charSelect.selIndex = indexOfChar(charsList, charName)
+
+    -- Get the character PoB selected and check it actually matches the last import hash
+    local char = charsList[build.importTab.controls.charSelect.selIndex]
+    if char == nil then
+        return ""
+    end
+    print("Character selected: "..char.char.name)
+
+
+    -- Check importer is in the right state
+    if build.importTab.charImportMode ~= "SELECTCHAR" then
+        error("Update failed: Import not fully set up on this build")
+    end
+
+    -- Import tree and jewels
+    print("Downloading passive tree...")
+    build.importTab.controls.charImportTreeClearJewels.state = true
+    build.importTab:DownloadPassiveTree()
+
+    -- Check importer is in the right state
+    if build.importTab.charImportMode ~= "SELECTCHAR" then
+        error("Update failed: Unable to download the passive tree")
+    end
+
+    -- Import items and skills
+    print("Downloading items and skills...")
+    build.importTab.controls.charImportItemsClearItems.state = true
+    build.importTab.controls.charImportItemsClearSkills.state = true
+    build.importTab:DownloadItems()
+
+    -- Check importer is in the right state
+    if build.importTab.charImportMode ~= "SELECTCHAR" then
+        error("Update failed: Unable to download items and skills")
+    end
+
+    -- Update skills
+    print("Completing update...")
+    build.outputRevision = build.outputRevision + 1
+    build.buildFlag = false
+    build.calcsTab:BuildOutput()
+    build:RefreshStatList()
+    build:RefreshSkillSelectControls(build.controls, build.mainSocketGroup, "")
+    xml = build.importTab.build:SaveDB("code")
+    return xml
 
 end
 

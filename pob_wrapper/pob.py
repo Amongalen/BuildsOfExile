@@ -127,6 +127,10 @@ class PathOfBuilding:
 
         return result
 
+    def import_build_as_xml(self, account_name, char_name):
+        lines = self._send(f'importBuild("{account_name}", "{char_name}")')
+        return lines
+
     # # Not currently possible without evaluating all possible slots
     # def test_item_effect(self, item_text):
     #     '''Run the item through the tester, returning the stat diffs.'''

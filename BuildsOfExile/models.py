@@ -104,9 +104,10 @@ class BuildGuide(models.Model):
     pob_details = models.EmbeddedField(model_container=PobDetails)
     title = models.CharField(max_length=255)
     text = models.CharField(max_length=40000)
-    unique_items = models.ManyToManyField(Keystone, related_name='unique_items_related_builds')
+    unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
-    objects = models.DjongoManager()
+
+    # objects = models.DjongoManager()
 
 
 @receiver(post_save, sender=User)
