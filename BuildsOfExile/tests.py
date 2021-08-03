@@ -100,9 +100,9 @@ class TestImportBuildsScript(TestCase):
             ladder_imports.get_acc_and_chars_from_json(ladder_json)
 
     def test_get_pob_xml(self):
-        ladder_imports.get_pob_xml("Papawembe", "WembeㆍRicciForTheStars")
+        ladder_imports.get_pob_xml(acc_name='cycliox', char_name='gladysfkyourself')
 
     def test_save_as_guide(self):
         skill_tree_service = skill_tree.SkillTreeService()
-        ladder_imports.save_as_guide('Hogooo', 'Holoc', 1, skill_tree_service)
+        ladder_imports.save_as_guide('cycliox', 'gladysfkyourself', 1, skill_tree_service)
         self.assertEqual(1, BuildGuide.objects.count())

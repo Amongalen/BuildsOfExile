@@ -116,7 +116,7 @@ def extract_skills(xml_root):
         skill_groups.append(SkillGroup(is_enabled=is_group_enabled,
                                        main_active_skill_index=main_active_skill_index,
                                        gems=gems))
-    main_socket_group_index = int(xml_root.find('Build').get('mainSocketGroup'))
+    main_socket_group_index = int(xml_root.find('Build').get('mainSocketGroup')) - 1
 
     if len(skill_groups) == 0:
         return skill_groups, []
