@@ -26,18 +26,13 @@ class IndexView(generic.ListView):
         return BuildGuide.objects.all()
 
 
-class ShowGuideView(generic.DetailView):
-    model = BuildGuide
-    template_name = 'show_guide.html'
-
-
 def show_guide_view(request, pk):
     guide = get_object_or_404(BuildGuide, build_id=pk)
-    tree_specs = guide.pob_details.tree_specs
+    tree_specs = guide.pob_details['tree_specs']
     tree_graphs = {
-        tree_spec.title: skill_tree_service.get_html_with_taken_nodes(tree_spec.nodes, tree_spec.tree_version)
+        tree_spec['title']: skill_tree_service.get_html_with_taken_nodes(tree_spec['nodes'], tree_spec['tree_version'])
         for tree_spec in tree_specs}
-    return render(request, 'show_guide.html', {'build_guide': guide, 'tree_graphs': tree_graphs})
+    return render(request, 'show_guide.html', {'pk': pk, 'build_guide': guide, 'tree_graphs': tree_graphs})
 
 
 def new_guide_view(request):
@@ -57,17 +52,18 @@ def new_guide_view(request):
 
 
 def edit_guide_view(request, pk):
+    guide = BuildGuide.objects.get(build_id=pk)
     if request.method == 'POST':
         form = EditGuideForm(request.POST)
         if form.is_valid():
-            new_build_guide = BuildGuide.objects.get(build_id=pk)
-            new_build_guide.title = form.cleaned_data['title']
-            new_build_guide.text = form.cleaned_data['text']
-            new_build_guide.save()
-            return redirect('show_guide', pk=new_build_guide.build_id)
+            guide.title = form.cleaned_data['title']
+            guide.text = form.cleaned_data['text']
+            guide.save()
+            return redirect('show_guide', pk=guide.build_id)
 
     else:
-        form = EditGuideForm()
+        form = EditGuideForm({'title': guide.title,
+                              'text': guide.text})
 
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk})
 

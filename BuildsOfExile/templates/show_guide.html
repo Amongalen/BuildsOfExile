@@ -1,1 +1,6 @@
 {% extends "base_generic.html" %}
+{% block content %}
+    <button>
+        <a href="{% url 'edit_guide' pk %}">Edit</a>
+    </button>
+{% endblock %}

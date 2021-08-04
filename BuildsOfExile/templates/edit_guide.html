@@ -5,4 +5,15 @@
         {{ form }}
         <input type="submit" value="Submit">
     </form>
+
+    <script>
+        function addText() {
+            editor.commands.insertContent('<i>test</i>')
+            {#var targ = event.target || event.srcElement;#}
+            {#var item_name = targ.textContent#}
+            {#console.log('test')#}
+            {#document.getElementById("text-tiptap-editor-div").firstElementChild.innerHTML += '<i>some</i> <b>TEST</b>';#}
+        }
+    </script>
+    <button onclick="addText()">test</button>
 {% endblock %}

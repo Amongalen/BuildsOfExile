@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.forms import Form
 
 from BuildsOfExile import pob_import
+from django_tiptap.widgets import TipTapWidget
 
 
 class SignUpForm(UserCreationForm):
@@ -36,4 +37,4 @@ class NewGuideForm(Form):
 
 class EditGuideForm(Form):
     title = forms.CharField(max_length=255)
-    text = forms.CharField(max_length=40000)
+    text = forms.CharField(max_length=40000, widget=TipTapWidget())
