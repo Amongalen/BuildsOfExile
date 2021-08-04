@@ -3,10 +3,9 @@ import json
 import logging
 from time import sleep
 
-import jsonpickle
-
 from BuildsOfExile import settings, pob_import, skill_tree
-from BuildsOfExile.models import BuildGuide, Keystone, UniqueItem, UserProfile
+from BuildsOfExile.build_guide import create_build_guide
+from BuildsOfExile.models import UserProfile
 from pob_wrapper import PathOfBuilding
 
 
@@ -29,33 +28,13 @@ def save_as_guide(acc_name, char_name, count, skill_tree_service):
     if not build_xml:
         return
     build_details = pob_import.parse_pob_details(build_xml)
-
-    tree = build_details.tree_specs[0]
-    all_nodes = skill_tree_service.skill_trees[tree.tree_version].nodes
-    keystone_names = [all_nodes[node_id].name for node_id in tree.nodes if
-                      node_id in all_nodes and all_nodes[node_id].is_keystone]
-    keystones = [Keystone.objects.get_or_create(name=name)[0] for name in keystone_names]
-    for keystone in keystones:
-        keystone.save()
-
-    unique_items_names = [item.name for item in build_details.items if item.rarity == 'UNIQUE']
-    unique_items = [UniqueItem.objects.get_or_create(name=name)[0] for name in unique_items_names]
-    for item in unique_items:
-        item.save()
-
+    title = 'Auto-imported build ' + str(count)
+    text = 'Auto-imported build ' + str(count)
     author = UserProfile.objects.get_or_create(user__username='Importer')[0]
     author.save()
+    pob_string = pob_import.xml_to_base64(build_xml)
 
-    build_details_dict = jsonpickle.decode(jsonpickle.encode(build_details, unpicklable=False))
-    new_guide = BuildGuide(title='Auto-imported build ' + str(count),
-                           pob_details=build_details_dict,
-                           pob_string=pob_import.xml_to_base64(build_xml),
-                           text='Auto-imported build ' + str(count),
-                           )
-    new_guide.save()
-    new_guide.author = author
-    new_guide.keystones.set(keystones)
-    new_guide.unique_items.set(unique_items)
+    create_build_guide(author, build_details, pob_string, skill_tree_service, text, title)
 
 
 def run():

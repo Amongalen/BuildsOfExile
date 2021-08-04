@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -49,3 +49,60 @@ class PobDetails:
     items: list[Item]
     item_sets: list[ItemSet]
     active_item_set_index: int
+
+
+@dataclass
+class NodeGroup:
+    x: int
+    y: int
+    orbitals: list[int] = field(default_factory=list)
+    node_ids: list[str] = field(default_factory=list)
+
+
+@dataclass
+class TreeNode:
+    id: int
+    name: str
+    ascendancy_name: str
+    is_keystone: bool
+    is_mastery: bool
+    is_notable: bool
+    orbit_radii: int
+    orbit_index: int
+    class_start_index: int
+    is_ascendancy_start: bool
+    connected_nodes: list[str] = field(default_factory=list)
+
+    @property
+    def is_class_start_node(self):
+        return self.class_start_index != -1
+
+    @property
+    def size(self):
+        if self.is_keystone:
+            return 54
+        if self.is_notable:
+            return 46
+        return 28
+
+    def is_connected_to(self, other_node: "TreeNode"):
+        return (not self.is_mastery) and (not self.is_class_start_node) and (not other_node.is_mastery) and (
+            not other_node.is_class_start_node) and (self.ascendancy_name == other_node.ascendancy_name)
+
+
+@dataclass
+class SkillTree:
+    max_x: int
+    max_y: int
+    min_x: int
+    min_y: int
+    asc_start_nodes: dict[str, str]
+    node_groups: dict[str, NodeGroup] = field(default_factory=dict)
+    nodes: dict[str, TreeNode] = field(default_factory=dict)
+    skills_per_orbit: list[int] = field(default_factory=list)
+    orbit_radii: list[int] = field(default_factory=list)
+
+    def find_group_containing_node(self, node_id):
+        for group in self.node_groups.values():
+            if node_id in group.node_ids:
+                return group

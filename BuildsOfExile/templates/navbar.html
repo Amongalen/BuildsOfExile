@@ -13,7 +13,9 @@
                        href="{% url 'index' %}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'new_guide' %}">New guide</a>
+                    {% url 'new_guide' as new_guide_url %}
+                    <a class="nav-link {% if request.get_full_path == new_guide_url %} active {% endif %}"
+                       href="{% url 'new_guide' %}">New guide</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'index' %}">Placeholder</a>

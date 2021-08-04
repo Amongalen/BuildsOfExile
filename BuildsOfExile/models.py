@@ -107,8 +107,6 @@ class BuildGuide(models.Model):
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
 
-    # objects = models.DjongoManager()
-
 
 @receiver(post_save, sender=User)
 def update_profile_signal(sender, instance, created, **kwargs):

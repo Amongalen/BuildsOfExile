@@ -1,7 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 # Create your views here.
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
@@ -9,21 +9,67 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import generic
 
 from BuildsOfExile.models import BuildGuide
-from .forms import SignUpForm
+from . import skill_tree, build_guide
+from .forms import SignUpForm, NewGuideForm, EditGuideForm
 from .tokens import account_activation_token
+
+skill_tree_service = skill_tree.SkillTreeService()
 
 
 class IndexView(generic.ListView):
     template_name = 'index.html'
     context_object_name = 'build_guide_list'
+    paginate_by = 100
 
     def get_queryset(self):
         """Return the last five published questions."""
         return BuildGuide.objects.all()
 
 
+class ShowGuideView(generic.DetailView):
+    model = BuildGuide
+    template_name = 'show_guide.html'
+
+
+def show_guide_view(request, pk):
+    guide = get_object_or_404(BuildGuide, build_id=pk)
+    tree_specs = guide.pob_details.tree_specs
+    tree_graphs = {
+        tree_spec.title: skill_tree_service.get_html_with_taken_nodes(tree_spec.nodes, tree_spec.tree_version)
+        for tree_spec in tree_specs}
+    return render(request, 'show_guide.html', {'build_guide': guide, 'tree_graphs': tree_graphs})
+
+
 def new_guide_view(request):
-    return render(request, 'new_guide.html')
+    if request.method == 'POST':
+        form = NewGuideForm(request.POST)
+        if form.is_valid():
+            build_details, pob_string = form.cleaned_data['pob_input']
+            author = request.user.userprofile
+            new_build_guide = build_guide.create_build_guide(author, build_details, pob_string, skill_tree_service)
+            new_build_guide.save()
+            return redirect('edit_guide', pk=new_build_guide.build_id)
+
+    else:
+        form = NewGuideForm()
+
+    return render(request, 'new_guide.html', {'form': form})
+
+
+def edit_guide_view(request, pk):
+    if request.method == 'POST':
+        form = EditGuideForm(request.POST)
+        if form.is_valid():
+            new_build_guide = BuildGuide.objects.get(build_id=pk)
+            new_build_guide.title = form.cleaned_data['title']
+            new_build_guide.text = form.cleaned_data['text']
+            new_build_guide.save()
+            return redirect('show_guide', pk=new_build_guide.build_id)
+
+    else:
+        form = EditGuideForm()
+
+    return render(request, 'edit_guide.html', {'form': form, 'pk': pk})
 
 
 def signup_view(request):

@@ -19,8 +19,9 @@ from BuildsOfExile import views
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    path('show/<int:pk>/', views.IndexView.as_view(), name='build_guide'),
-    path('new/', views.new_guide_view, name='new_guide'),
+    path('guide/<int:pk>/', views.ShowGuideView.as_view(), name='show_guide'),
+    path('guide/new/', views.new_guide_view, name='new_guide'),
+    path('guide/<int:pk>/edit', views.edit_guide_view, name='edit_guide'),
     path('signup/', views.signup_view, name="signup"),
     path('sent/', views.activation_sent_view, name="activation_sent"),
     path('activate/<slug:uidb64>/<slug:token>/', views.activate, name='activate'),

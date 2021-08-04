@@ -3,7 +3,7 @@ import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from BuildsOfExile.skill_tree import SkillTree, NodeGroup, TreeNode
+from BuildsOfExile.data_classes import NodeGroup, TreeNode, SkillTree
 
 
 @dataclass
