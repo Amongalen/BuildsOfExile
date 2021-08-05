@@ -36,5 +36,5 @@ class NewGuideForm(Form):
 
 
 class EditGuideForm(Form):
-    title = forms.CharField(max_length=255)
+    title = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
     text = forms.CharField(max_length=40000, widget=TipTapWidget())

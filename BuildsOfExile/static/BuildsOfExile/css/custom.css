@@ -1,0 +1,46 @@
+
+.poe-line {
+    line-height: 0.8rem;
+    padding: 0.15rem 0.3rem;
+}
+
+.poeitem {
+    font-size: small;
+}
+
+.poegem-enabled {
+    color: #15ad15;
+}
+
+.poegem-disabled {
+    color: #6f9d6f;
+}
+
+.poeitem-unique {
+    color: #AF6025;
+}
+
+.poeitem-rare {
+    color: #FFFF77;
+}
+
+.poeitem-magic {
+    color: #418bfd;
+}
+
+.poeitem-normal {
+    color: white;
+}
+
+.poe-container {
+    max-height: 500px;
+    width: 255px;
+    border: 1px solid #adb5bd;
+    overflow: auto;
+}
+
+button.link {
+    background: none;
+    border: none;
+    text-align: left;
+}

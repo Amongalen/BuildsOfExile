@@ -65,7 +65,7 @@ def edit_guide_view(request, pk):
         form = EditGuideForm({'title': guide.title,
                               'text': guide.text})
 
-    return render(request, 'edit_guide.html', {'form': form, 'pk': pk})
+    return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': guide})
 
 
 def signup_view(request):

@@ -44,8 +44,8 @@
     overflow-y: hidden;
     min-height: fit-content;
     max-width: 65vw;
-    background: white;
-    color: black;
+    background: #2f2927;
+    color: #adb5bd;
     position: relative;
     border-radius: 6px;
 }
@@ -53,7 +53,7 @@
 .the-editor-area::after {
     content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath d='M22,22H20V20H22V22M22,18H20V16H22V18M18,22H16V20H18V22M18,18H16V16H18V18M14,22H12V20H14V22M22,14H20V12H22V14Z' /%3E%3C/svg%3E");
     position: absolute;
-    color: white;
+    color: #2f2927;
     bottom: 0;
     right: 0;
     width: 1em;
@@ -93,15 +93,15 @@
     flex-wrap: wrap;
     justify-content: center;
     border-bottom: 2px solid grey;
-    padding: 1rem 0.5rem;
+    padding: 0.4rem 0.4rem;
 }
 
 .menubar button {
-    margin: 0 4px 2px 2px;
-    height: 30px;
-    min-width: 30px;
+    margin: 0 2px 2px 2px;
+    height: 27px;
+    min-width: 27px;
     font-size: 1.3em;
-    background-color: white;
+    background-color: #6c757d;
     border: none;
     border-radius: 4px;
     outline: none;
@@ -211,7 +211,7 @@ button[id$="-addTable"]
     display: inline;
     color: #ee0e29;
     font-weight: bold;
-    font-size: 1.3em;
+    font-size: 1em;
     height: 100%;
     align-self: center;
     margin: 0 0 0 0.5rem;
@@ -226,8 +226,8 @@ button[id$="-addTable"]
 }
 
 .ProseMirror {
-    color: black !important;
-    padding: 1rem 1.75rem;
+    color: #adb5bd !important;
+    padding: 0.5rem 1rem;
     outline: none !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -235,7 +235,7 @@ button[id$="-addTable"]
 }
 
 .ProseMirror * {
-    color: black !important;
+    color: #adb5bd !important;
 }
 
 .ProseMirror p {

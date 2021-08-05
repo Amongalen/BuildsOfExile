@@ -120,7 +120,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATICFILES_DIRS = [
+    BASE_DIR / "BuildsOfExile/static",
+    BASE_DIR / "django_tiptap/static",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -215,6 +218,11 @@ DJANGO_TIPTAP_CONFIG = {
         "column": "Column",
         "add": "Add"
     },
-    "custom_extensions": []
+    "custom_extensions": [
+        {
+            "source_static": "BuildsOfExile/tiptap_extension/span_extension.js",
+            "module_name": "SpanExtension",
+        }
+    ]
 
 }
