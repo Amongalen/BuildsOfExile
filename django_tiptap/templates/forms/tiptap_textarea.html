@@ -324,8 +324,8 @@
         {% endif %}
 
         {% for custom_extension in widget.config.custom_extensions %}
-            <div class="spacer"></div>
             {% if custom_extension.toolbar_include %}
+                <div class="spacer"></div>
                 {% include custom_extension.toolbar_include %}
             {% endif %}
         {% endfor %}
@@ -1198,10 +1198,10 @@
             if (notSavedWarningSpacer && notSavedWarningSpan) {
                 if (currentEditorContent === initialEditorContent) {
                     notSavedWarningSpan.classList.remove('show')
-                    notSavedWarningSpacer.classList.remove('show')
+                    {#notSavedWarningSpacer.classList.remove('show')#}
                 } else {
                     notSavedWarningSpan.classList.add('show')
-                    notSavedWarningSpacer.classList.add('show')
+                    {#notSavedWarningSpacer.classList.add('show')#}
                 }
             }
         },

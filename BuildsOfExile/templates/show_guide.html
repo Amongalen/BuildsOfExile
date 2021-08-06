@@ -3,4 +3,5 @@
     <button>
         <a href="{% url 'edit_guide' pk %}">Edit</a>
     </button>
+    {{ build_guide.text|safe }}
 {% endblock %}

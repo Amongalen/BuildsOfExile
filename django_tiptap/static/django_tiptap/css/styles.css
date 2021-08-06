@@ -210,11 +210,9 @@ button[id$="-addTable"]
 .not-saved-text.show {
     display: inline;
     color: #ee0e29;
-    font-weight: bold;
     font-size: 1em;
     height: 100%;
     align-self: center;
-    margin: 0 0 0 0.5rem;
 }
 
 .not-saved-text-spacer {
@@ -226,7 +224,8 @@ button[id$="-addTable"]
 }
 
 .ProseMirror {
-    color: #adb5bd !important;
+    /*color: #adb5bd !important;*/
+    /*color: #adb5bd;*/
     padding: 0.5rem 1rem;
     outline: none !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
@@ -235,7 +234,7 @@ button[id$="-addTable"]
 }
 
 .ProseMirror * {
-    color: #adb5bd !important;
+    /*color: #adb5bd;*/
 }
 
 .ProseMirror p {

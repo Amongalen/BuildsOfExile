@@ -2,12 +2,8 @@
 .poe-line {
     line-height: 0.8rem;
     padding: 0.15rem 0.3rem;
-}
-
-.poeitem {
     font-size: small;
 }
-
 .poegem-enabled {
     color: #15ad15;
 }
@@ -33,7 +29,7 @@
 }
 
 .poe-container {
-    max-height: 500px;
+    height: 500px;
     width: 255px;
     border: 1px solid #adb5bd;
     overflow: auto;
