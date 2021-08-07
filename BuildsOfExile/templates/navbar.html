@@ -24,15 +24,15 @@
             </ul>
             <div class="text-end navbar-nav ">
                 {% if user.is_authenticated %}
-                    <div class="text-light nav-item me-1">User: {{ user.get_username }}</div>
-                    <button class="me-1 btn btn-outline-light text-white"
+                    <div class="text-light nav-item me-1 my-auto">User: {{ user.get_username }}</div>
+                    <button class="me-1 btn btn-outline-light btn-secondary"
                             onclick="location.href='{% url 'logout' %}?next={{ request.path }}'">Logout
                     </button>
                 {% else %}
-                    <button class="me-1 btn btn-outline-light text-white"
+                    <button class="me-1 btn btn-outline-light btn-secondary"
                             onclick="location.href='{% url 'login' %}?next={{ request.path }}'">Login
                     </button>
-                    <button class="me-1 btn btn-outline-light text-white"
+                    <button class="me-1 btn btn-outline-light btn-secondary"
                             onclick="location.href='{% url 'signup' %}?next={{ request.path }}'">Sign up
                     </button>
                 {% endif %}

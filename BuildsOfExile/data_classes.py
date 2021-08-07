@@ -53,6 +53,7 @@ class PobDetails:
 
 @dataclass
 class NodeGroup:
+    group_id: int
     x: int
     y: int
     orbitals: list[int] = field(default_factory=list)
@@ -80,9 +81,9 @@ class TreeNode:
     @property
     def size(self):
         if self.is_keystone:
-            return 54
+            return 48
         if self.is_notable:
-            return 46
+            return 32
         return 28
 
     def is_connected_to(self, other_node: "TreeNode"):

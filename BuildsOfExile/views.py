@@ -29,9 +29,10 @@ class IndexView(generic.ListView):
 def show_guide_view(request, pk):
     guide = get_object_or_404(BuildGuide, build_id=pk)
     tree_specs = guide.pob_details['tree_specs']
-    tree_graphs = {
-        tree_spec['title']: skill_tree_service.get_html_with_taken_nodes(tree_spec['nodes'], tree_spec['tree_version'])
-        for tree_spec in tree_specs}
+    tree_graphs = {}
+    for tree_spec in tree_specs:
+        title = tree_spec['title'] if tree_spec['title'] else 'Default'
+        tree_graphs[title] = skill_tree_service.get_html_with_taken_nodes(tree_spec['nodes'], tree_spec['tree_version'])
     return render(request, 'show_guide.html', {'pk': pk, 'build_guide': guide, 'tree_graphs': tree_graphs})
 
 

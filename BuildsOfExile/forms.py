@@ -20,7 +20,8 @@ class SignUpForm(UserCreationForm):
 
 class NewGuideForm(Form):
     pob_input = forms.CharField(max_length=40000,
-                                label="Enter Path of Building export code or a Pastebin link containing it")
+                                label="Enter Path of Building export code or a Pastebin link containing it",
+                                widget=forms.TextInput(attrs={'class': ' form-control'}))
 
     def clean_pob_input(self):
         data = self.cleaned_data['pob_input']

@@ -1,18 +1,19 @@
-import copy
 import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from BuildsOfExile import settings
 from BuildsOfExile.data_classes import NodeGroup, TreeNode, SkillTree
 
 
-@dataclass
+@dataclass(frozen=True)
 class GraphElement(ABC):
     is_taken: bool
+    is_hidden: bool
 
     @property
     def color(self):
-        return "hsl(0, 100%, 50%)" if self.is_taken else "hsl(180, 100%, 50%)"
+        return "hsl(0, 100%, 50%)" if self.is_taken else "#736d6a"
 
     @property
     @abstractmethod
@@ -20,8 +21,9 @@ class GraphElement(ABC):
         pass
 
 
-@dataclass
+@dataclass(frozen=True)
 class TreeGraphNode(GraphElement):
+    node_id: str
     pos_x: float
     pos_y: float
     size: int
@@ -32,10 +34,12 @@ class TreeGraphNode(GraphElement):
 
     @property
     def svg_string(self):
-        return f'<circle cx="{self.pos_x}" cy="{self.pos_y}" r="{self.size}" fill="{self.color}"/>\n'
+        if self.is_hidden:
+            return ''
+        return f'<circle cx="{self.pos_x}" cy="{self.pos_y}" r="{self.size}" fill="{self.color}" data-id="{self.node_id}"/>\n'
 
 
-@dataclass
+@dataclass(frozen=True)
 class TreeGraphPath(GraphElement):
     start_node_id: str
     end_node_id: str
@@ -45,21 +49,31 @@ class TreeGraphPath(GraphElement):
     radius: int
     is_clockwise: bool
 
+    def __eq__(self, other):
+        if isinstance(other, TreeGraphPath):
+            return ((self.start_node_id == other.start_node_id and self.end_node_id == other.end_node_id) or
+                    (self.start_node_id == other.end_node_id and self.end_node_id == other.start_node_id))
+        return False
+
     @property
     def svg_string(self):
+        if self.is_hidden:
+            return ''
         if self.is_curved:
             reverse = 0 if self.is_clockwise else 1
-            return f'<path d="M {self.start_pos[0]} {self.start_pos[1]} A {self.radius} {self.radius} 0 0 {reverse} {self.end_pos[0]} {self.end_pos[1]}" fill="transparent" stroke="{self.color}" stroke-width="14"/>\n'
+            return f'<path d="M {self.start_pos[0]} {self.start_pos[1]} A {self.radius} {self.radius} 0 0 {reverse} {self.end_pos[0]} {self.end_pos[1]}" fill="transparent" stroke="{self.color}" stroke-width="24"/>\n'
         else:
-            return f'<line fill="transparent" stroke="{self.color}" stroke-width="14" x1="{self.start_pos[0]}" y1="{self.start_pos[1]}" x2="{self.end_pos[0]}" y2="{self.end_pos[1]}"/>\n'
+            return f'<line fill="transparent" stroke="{self.color}" stroke-width="24" x1="{self.start_pos[0]}" y1="{self.start_pos[1]}" x2="{self.end_pos[0]}" y2="{self.end_pos[1]}"/>\n'
 
 
 class TreeGraph:
-    nodes: dict[str, TreeGraphNode] = {}
-    paths: list[TreeGraphPath] = []
+    nodes: dict[str, TreeGraphNode]
+    paths: list[TreeGraphPath]
     skill_tree: SkillTree
 
     def __init__(self, skill_tree):
+        self.nodes = {}
+        self.paths = []
         self.skill_tree = skill_tree
         self._init_nodes()
         self._init_paths()
@@ -73,9 +87,11 @@ class TreeGraph:
                 if node.is_mastery or node.is_class_start_node:
                     continue
                 pos_x, pos_y = self._calculate_node_position(group, node)
-                self.nodes[node_id] = TreeGraphNode(pos_x=pos_x, pos_y=pos_y, size=node.size, is_taken=False)
+                self.nodes[node_id] = TreeGraphNode(node_id=node_id, pos_x=pos_x, pos_y=pos_y, size=node.size,
+                                                    is_taken=False, is_hidden=False)
 
     def _init_paths(self):
+        paths_list = []
         for node_id, node in self.skill_tree.nodes.items():
             if node.is_mastery or node.is_class_start_node:
                 continue
@@ -90,15 +106,12 @@ class TreeGraph:
                 is_curved = (start_node_group == end_node_group) and node.orbit_radii == connected_node.orbit_radii
                 radius = self.skill_tree.orbit_radii[node.orbit_radii]
                 is_path_clockwise = _are_nodes_clockwise(start_pos, end_position, start_node_group)
-                self.paths.append(TreeGraphPath(start_node_id=node_id,
-                                                end_node_id=connected_node_id,
-                                                start_pos=start_pos,
-                                                end_pos=end_position,
-                                                is_curved=is_curved,
-                                                radius=radius,
-                                                is_taken=False,
-                                                is_clockwise=is_path_clockwise
-                                                ))
+
+                new_path = TreeGraphPath(start_node_id=node_id, end_node_id=connected_node_id, start_pos=start_pos,
+                                         end_pos=end_position, is_curved=is_curved, radius=radius, is_taken=False,
+                                         is_clockwise=is_path_clockwise, is_hidden=False)
+                paths_list.append(new_path)
+        self.paths = list(set(paths_list))
 
     @property
     def tree_dimensions(self):
@@ -106,11 +119,14 @@ class TreeGraph:
         min_y = self.skill_tree.min_y
         size_x = self.skill_tree.max_x - min_x
         size_y = self.skill_tree.max_y - min_y
-        return min_x - 500, min_y - 500, size_x + 1000, size_y + 1000
+        return min_x + 2400, min_y + 800, size_x - 2800, size_y - 1100
 
     def to_html_with_taken_nodes(self, taken_node_ids):
         min_x, min_y, size_x, size_y = self.tree_dimensions
         html = f'<svg style="background-color: transparent;" viewBox="{min_x} {min_y} {size_x} {size_y}">\n'
+        asc_tree_x = settings.ASC_TREE_X
+        asc_tree_y = settings.ASC_TREE_Y
+        html += f'<circle cx="{asc_tree_x}" cy="{asc_tree_y}" r="700" fill="#352e2b"/>\n'
         graph_elements = self._get_all_graph_elements_including_taken_nodes(taken_node_ids)
         graph_elements.sort(key=lambda v: v.is_taken)
         html += ''.join(el.svg_string for el in graph_elements)
@@ -118,25 +134,34 @@ class TreeGraph:
         return html
 
     def _get_all_graph_elements_including_taken_nodes(self, taken_node_ids) -> list[GraphElement]:
-        nodes = self._get_nodes_including_taken_nodes(taken_node_ids)
-        paths = self._get_paths_including_taken_nodes(taken_node_ids)
+        asc_name = self._find_asc_name(taken_node_ids)
+        nodes = self._get_nodes_including_taken_nodes(taken_node_ids, asc_name)
+        paths = self._get_paths_including_taken_nodes(taken_node_ids, asc_name)
 
         return nodes + paths
 
-    def _get_nodes_including_taken_nodes(self, taken_node_ids) -> list[GraphElement]:
-        nodes = self.nodes.copy()
-        for node_id in taken_node_ids:
-            if node_id not in nodes:
-                continue
-            new_node = copy.copy(nodes[node_id])
-            new_node.is_taken = True
-            nodes[node_id] = new_node
-        return list(nodes.values())
+    def _get_nodes_including_taken_nodes(self, taken_node_ids, asc_name) -> list[GraphElement]:
+        nodes = []
+        for node_id, node in self.nodes.items():
+            is_hidden = (self.skill_tree.nodes[node_id].ascendancy_name != ''
+                         and self.skill_tree.nodes[node_id].ascendancy_name != asc_name)
+            new_node = TreeGraphNode(node_id=node_id,
+                                     pos_x=node.pos_x,
+                                     pos_y=node.pos_y,
+                                     size=node.size,
+                                     is_taken=(node_id in taken_node_ids),
+                                     is_hidden=is_hidden)
+            nodes.append(new_node)
+        return nodes
 
-    def _get_paths_including_taken_nodes(self, taken_node_ids) -> list[GraphElement]:
+    def _get_paths_including_taken_nodes(self, taken_node_ids, asc_name) -> list[GraphElement]:
         paths = []
         for path in self.paths:
             is_taken = path.start_node_id in taken_node_ids and path.end_node_id in taken_node_ids
+            is_hidden = (self.skill_tree.nodes[path.start_node_id].ascendancy_name != ''
+                         and self.skill_tree.nodes[path.start_node_id].ascendancy_name != asc_name
+                         and self.skill_tree.nodes[path.end_node_id].ascendancy_name != ''
+                         and self.skill_tree.nodes[path.end_node_id].ascendancy_name != asc_name)
             paths.append(TreeGraphPath(start_node_id=path.start_node_id,
                                        end_node_id=path.end_node_id,
                                        start_pos=path.start_pos,
@@ -144,7 +169,8 @@ class TreeGraph:
                                        is_curved=path.is_curved,
                                        radius=path.radius,
                                        is_clockwise=path.is_clockwise,
-                                       is_taken=is_taken))
+                                       is_taken=is_taken,
+                                       is_hidden=is_hidden))
         return paths
 
     def _calculate_node_position(self, group: NodeGroup, node: TreeNode) -> tuple[float, float]:
@@ -155,6 +181,12 @@ class TreeGraph:
         pos_x = math.cos(angle_radians) * orbit_radius + group.x
         pos_y = math.sin(angle_radians) * orbit_radius + group.y
         return pos_x, pos_y
+
+    def _find_asc_name(self, taken_node_ids):
+        for name, node_id in self.skill_tree.asc_start_nodes.items():
+            if node_id in taken_node_ids:
+                return name
+        return ''
 
 
 def _are_nodes_clockwise(start_pos, end_position, node_group):

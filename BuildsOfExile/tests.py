@@ -38,7 +38,7 @@ class PobImportTests(TestCase):
             url = 'https://pastebin.com/pnSQVi92asdfadsfzxcvasdf'
             _ = pob_import.import_from_pastebin(url)
 
-    def test_import_from_pastebin_not_pastebin(self):
+    def test_import_from_pastebin_different_site(self):
         with self.assertRaises(PastebinImportException):
             url = 'https://somerandomsite.com/pnSQVi92'
             _ = pob_import.import_from_pastebin(url)

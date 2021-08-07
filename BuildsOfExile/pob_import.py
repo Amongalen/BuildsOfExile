@@ -112,11 +112,11 @@ def extract_skills(xml_root):
             gems.append(SkillGem(name=gem_xml.get('nameSpec'), is_enabled=is_gem_enabled))
         is_group_enabled = parse_bool(group_xml.get('enabled'))
         main_active_skill_index = group_xml.get('mainActiveSkill')
-        main_active_skill_index = int(main_active_skill_index) if not main_active_skill_index == 'nil' else 0
+        main_active_skill_index = int(main_active_skill_index) if not main_active_skill_index == 'nil' else 1
         skill_groups.append(SkillGroup(is_enabled=is_group_enabled,
                                        main_active_skill_index=main_active_skill_index,
                                        gems=gems))
-    main_socket_group_index = int(xml_root.find('Build').get('mainSocketGroup')) - 1
+    main_socket_group_index = int(xml_root.find('Build').get('mainSocketGroup'))
 
     if len(skill_groups) == 0:
         return skill_groups, []

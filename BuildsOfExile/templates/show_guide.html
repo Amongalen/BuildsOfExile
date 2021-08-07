@@ -1,7 +1,59 @@
 {% extends "base_generic.html" %}
 {% block content %}
-    <button>
-        <a href="{% url 'edit_guide' pk %}">Edit</a>
-    </button>
+    <h3><strong>{{ build_guide.title }}</strong></h3>
+    <button class="my-1 btn btn-outline-light btn-secondary" onclick="location.href='{% url 'edit_guide' pk %}'">
+        Edit
+    </button><br/>
+    <div class="col-8">
+        <div class="dropdown my-2">
+            Skill Tree:
+            <button class="mx-1 btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                {% for tree_graph_title in tree_graphs.keys %}
+                    {% if forloop.first %}
+                        {{ tree_graph_title }}
+                    {% endif %}
+                {% endfor %}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                {% for tree_graph_title in tree_graphs.keys %}
+                    <li>
+                        <button class="link dropdown-item {% if forloop.first %}active{% endif %}">
+                            {{ tree_graph_title }}
+                        </button>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% for title, graph in tree_graphs.items %}
+            <div class='tree' data-title="{{ title }}"
+                 style="display: {% if forloop.first %}block{% else %}none{% endif %}">
+                {{ graph|safe }}
+            </div>
+        {% endfor %}
+    </div>
+
+
     {{ build_guide.text|safe }}
+
+    <script>$(function () {
+        $(".dropdown-menu li button").click(function () {
+            $(".btn:first-child").text($(this).text());
+            $(".btn:first-child").val($(this).text());
+            $(".dropdown-menu li button.active").removeClass('active')
+            $(this).addClass('active')
+
+            $("div.tree").each(function (i, element) {
+                let title1 = $(".btn:first-child").text().trim()
+                let title2 = $(element).data("title").trim()
+                if (title1 === title2) {
+                    $(element).show()
+                } else {
+                    $(element).hide()
+                }
+            })
+
+        });
+
+    });</script>
 {% endblock %}

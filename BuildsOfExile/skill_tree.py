@@ -1,8 +1,10 @@
 import json
 import os
+from collections import defaultdict
 
 from BuildsOfExile.data_classes import NodeGroup, TreeNode, SkillTree
 from BuildsOfExile.exceptions import SkillTreeLoadingException
+from BuildsOfExile.settings import ASC_TREE_X, ASC_TREE_Y
 from BuildsOfExile.tree_graph import TreeGraph
 
 
@@ -20,7 +22,7 @@ class SkillTreeService:
                 print(f'loaded tree {version=}')
 
     def get_html_with_taken_nodes(self, taken_node_ids, tree_version):
-        self.tree_graphs[tree_version].to_html_with_taken_nodes(taken_node_ids)
+        return self.tree_graphs[tree_version].to_html_with_taken_nodes(taken_node_ids)
 
 
 def _read_tree_data_file(filepath: str) -> SkillTree:
@@ -30,6 +32,9 @@ def _read_tree_data_file(filepath: str) -> SkillTree:
 
         groups = _parse_node_groups(skill_tree_json)
         nodes, asc_start_nodes = _parse_nodes(skill_tree_json)
+
+        _move_asc_groups_to_pos(groups, nodes, ASC_TREE_X, ASC_TREE_Y)
+
         skill_tree = SkillTree(
             max_x=skill_tree_json['max_x'],
             max_y=skill_tree_json['max_y'],
@@ -44,6 +49,39 @@ def _read_tree_data_file(filepath: str) -> SkillTree:
     except Exception as e:
         raise SkillTreeLoadingException(e)
     return skill_tree
+
+
+def _find_asc_groups(groups, nodes):
+    groups_by_asc = defaultdict(list)
+    for group in groups.values():
+        if not group.node_ids:
+            continue
+        asc_name = nodes[group.node_ids[0]].ascendancy_name
+        if asc_name != '':
+            groups_by_asc[asc_name].append(group)
+    return groups_by_asc
+
+
+def _move_asc_groups_to_pos(groups, nodes, x, y):
+    asc_groups = _find_asc_groups(groups, nodes)
+    for asc in asc_groups.values():
+        _move_asc_to_pos(asc, nodes, x, y)
+
+
+def _find_asc_center_group(asc_groups, nodes):
+    for group in asc_groups:
+        for node_id in group.node_ids:
+            if nodes[node_id].is_ascendancy_start:
+                return group
+
+
+def _move_asc_to_pos(asc, nodes, x, y):
+    asc_center_group = _find_asc_center_group(asc, nodes)
+    move_x = x - asc_center_group.x
+    move_y = y - asc_center_group.y
+    for group in asc:
+        group.x = group.x + move_x
+        group.y = group.y + move_y
 
 
 def _parse_nodes(skill_tree_json):
@@ -69,7 +107,8 @@ def _parse_nodes(skill_tree_json):
 def _parse_node_groups(skill_tree_json):
     groups = {}
     for group_id, group_json in skill_tree_json['groups'].items():
-        groups[group_id] = NodeGroup(x=group_json['x'],
+        groups[group_id] = NodeGroup(group_id=group_id,
+                                     x=group_json['x'],
                                      y=group_json['y'],
                                      orbitals=group_json['orbits'],
                                      node_ids=group_json['nodes'])
