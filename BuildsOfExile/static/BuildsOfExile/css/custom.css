@@ -81,3 +81,12 @@ button.link {
         transform: rotate(360deg);
     }
 }
+
+.tab-pane.fade {
+    transition: all 0.1s;
+    transform: translateY(1rem);
+}
+
+.tab-pane.fade.show {
+    transform: translateY(0rem);
+}

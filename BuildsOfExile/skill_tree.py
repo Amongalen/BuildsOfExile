@@ -24,6 +24,10 @@ class SkillTreeService:
     def get_html_with_taken_nodes(self, taken_node_ids, tree_version):
         return self.tree_graphs[tree_version].to_html_with_taken_nodes(taken_node_ids)
 
+    def get_keystones(self, taken_node_ids, tree_version):
+        return [node for node_id in taken_node_ids if
+                (node := self.skill_trees[tree_version].nodes.get(node_id)) is not None and node.is_keystone]
+
 
 def _read_tree_data_file(filepath: str) -> SkillTree:
     try:
@@ -90,12 +94,16 @@ def _parse_nodes(skill_tree_json):
     for node_id, node_json in skill_tree_json['nodes'].items():
         if node_id == 'root' or 'orbit' not in node_json:
             continue
-        new_node = TreeNode(id=node_json['skill'], name=node_json['name'],
+        new_node = TreeNode(id=node_json['skill'],
+                            name=node_json['name'],
                             ascendancy_name=node_json.get('ascendancyName', ''),
                             is_keystone=node_json.get('isKeystone', False),
                             is_mastery=node_json.get('isMastery', False),
-                            is_notable=node_json.get('isNotable', False), orbit_radii=node_json['orbit'],
-                            orbit_index=node_json['orbitIndex'], connected_nodes=node_json['out'],
+                            is_notable=node_json.get('isNotable', False),
+                            orbit_radii=node_json['orbit'],
+                            orbit_index=node_json['orbitIndex'],
+                            connected_nodes=node_json['out'],
+                            stats=node_json.get('stats', []),
                             class_start_index=node_json.get('classStartIndex', -1),
                             is_ascendancy_start=node_json.get('isAscendancyStart', False))
         nodes[node_id] = new_node

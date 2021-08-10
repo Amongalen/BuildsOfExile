@@ -1,0 +1,61 @@
+<div class="dropdown my-2">
+    Skill Tree:
+    <button class="mx-1 btn btn-secondary text-light dropdown-toggle" type="button" id="dropdownMenuButton2"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        {% for tree_graph_title in trees.keys %}
+            {% if forloop.first %}
+                {{ tree_graph_title }}
+            {% endif %}
+        {% endfor %}
+    </button>
+    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+        {% for tree_graph_title in trees.keys %}
+            <li>
+                <button class="link dropdown-item {% if forloop.first %}active{% endif %}">
+                    {{ tree_graph_title }}
+                </button>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% for title, tree in trees.items %}
+    <div class='tree' data-title="{{ title }}"
+         style="display: {% if forloop.first %}block{% else %}none{% endif %}">
+        <div class="row">
+            <div class="col-8">
+                {{ tree.0|safe }}
+            </div>
+            <div class="col-4 bg">
+                {% for keystone in tree.1 %}
+                    <div class="bg-secondary my-2 p-2">
+                        <h4>{{ keystone.name }}</h4>
+                        {% for keystone_stat in keystone.stats %}
+                            <div class="small">{{ keystone_stat|linebreaksbr }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<script>$(function () {
+    $(".dropdown-menu li button").click(function () {
+        $(".dropdown-toggle").text($(this).text());
+        $(".dropdown-toggle").val($(this).text());
+        $(".dropdown-menu li button.active").removeClass('active')
+        $(this).addClass('active')
+
+        $("div.tree").each(function (i, element) {
+            let title1 = $(".dropdown-toggle").text().trim()
+            let title2 = $(element).data("title").trim()
+            if (title1 === title2) {
+                $(element).show()
+            } else {
+                $(element).hide()
+            }
+        })
+
+    });
+
+});</script>

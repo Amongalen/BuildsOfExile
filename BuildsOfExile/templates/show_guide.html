@@ -1,59 +1,38 @@
 {% extends "base_generic.html" %}
 {% block content %}
-    <h3><strong>{{ build_guide.title }}</strong></h3>
-    <button class="my-1 btn btn-outline-light btn-secondary" onclick="location.href='{% url 'edit_guide' pk %}'">
-        Edit
-    </button><br/>
-    <div class="col-8">
-        <div class="dropdown my-2">
-            Skill Tree:
-            <button class="mx-1 btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                {% for tree_graph_title in tree_graphs.keys %}
-                    {% if forloop.first %}
-                        {{ tree_graph_title }}
-                    {% endif %}
-                {% endfor %}
+    <div class="row">
+        <div class="col">
+            <h3 class="d-inline-block "><strong>{{ build_guide.title }}</strong></h3></div>
+        <div class="col">
+            <button class="float-end my-1 btn btn-outline-light btn-secondary"
+                    onclick="location.href='{% url 'edit_guide' pk %}'">
+                Edit
             </button>
-            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-                {% for tree_graph_title in tree_graphs.keys %}
-                    <li>
-                        <button class="link dropdown-item {% if forloop.first %}active{% endif %}">
-                            {{ tree_graph_title }}
-                        </button>
-                    </li>
-                {% endfor %}
-            </ul>
         </div>
-        {% for title, graph in tree_graphs.items %}
-            <div class='tree' data-title="{{ title }}"
-                 style="display: {% if forloop.first %}block{% else %}none{% endif %}">
-                {{ graph|safe }}
-            </div>
-        {% endfor %}
+    </div>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-guide-tab" data-bs-toggle="tab" data-bs-target="#nav-guide"
+                    type="button" role="tab" aria-controls="nav-guide" aria-selected="true">Guide
+            </button>
+            <button class="nav-link" id="nav-skill-tree-tab" data-bs-toggle="tab" data-bs-target="#nav-skill-tree"
+                    type="button" role="tab" aria-controls="nav-skill-tree" aria-selected="false">Skill tree
+            </button>
+            <button class="nav-link" id="nav-gear-and-gems-tab" data-bs-toggle="tab" data-bs-target="#nav-gear-and-gems"
+                    type="button" role="tab" aria-controls="nav-gear-and-gems" aria-selected="false">Gear and items
+            </button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-guide" role="tabpanel"
+             aria-labelledby="nav-guide-tab">{{ build_guide.text|safe }}</div>
+        <div class="tab-pane fade" id="nav-skill-tree" role="tabpanel"
+             aria-labelledby="nav-skill-tree-tab">{% include 'skill_tree_tab.html' %}</div>
+        <div class="tab-pane fade" id="nav-gear-and-gems" role="tabpanel"
+             aria-labelledby="nav-gear-and-gems-tab">{% include 'gear_gems_tab.html' %}
+        </div>
     </div>
 
 
-    {{ build_guide.text|safe }}
 
-    <script>$(function () {
-        $(".dropdown-menu li button").click(function () {
-            $(".btn:first-child").text($(this).text());
-            $(".btn:first-child").val($(this).text());
-            $(".dropdown-menu li button.active").removeClass('active')
-            $(this).addClass('active')
-
-            $("div.tree").each(function (i, element) {
-                let title1 = $(".btn:first-child").text().trim()
-                let title2 = $(element).data("title").trim()
-                if (title1 === title2) {
-                    $(element).show()
-                } else {
-                    $(element).hide()
-                }
-            })
-
-        });
-
-    });</script>
 {% endblock %}

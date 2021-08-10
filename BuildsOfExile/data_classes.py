@@ -72,6 +72,7 @@ class TreeNode:
     orbit_index: int
     class_start_index: int
     is_ascendancy_start: bool
+    stats: list[str] = field(default_factory=list)
     connected_nodes: list[str] = field(default_factory=list)
 
     @property
@@ -98,10 +99,10 @@ class SkillTree:
     min_x: int
     min_y: int
     asc_start_nodes: dict[str, str]
-    node_groups: dict[str, NodeGroup] = field(default_factory=dict)
-    nodes: dict[str, TreeNode] = field(default_factory=dict)
-    skills_per_orbit: list[int] = field(default_factory=list)
-    orbit_radii: list[int] = field(default_factory=list)
+    node_groups: dict[str, NodeGroup]
+    nodes: dict[str, TreeNode]
+    skills_per_orbit: list[int]
+    orbit_radii: list[int]
 
     def find_group_containing_node(self, node_id):
         for group in self.node_groups.values():
