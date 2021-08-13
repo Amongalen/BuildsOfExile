@@ -78,10 +78,15 @@ def extract_items(xml_root):
         parts = item_str.split('\n')
         item_rarity = parts[0].split(': ')[1].strip()
         item_name = parts[1].strip()
+        if item_rarity in ['UNIQUE', 'RARE']:
+            base_name = parts[2].strip()
+        else:
+            base_name = parts[1].strip()
 
         item_display_html = pob.item_as_html(item_str)
         items.append(Item(item_id_in_itemset=item_id,
                           name=item_name,
+                          base_name=base_name,
                           rarity=item_rarity,
                           display_html=item_display_html))
     pob.kill()

@@ -9,11 +9,12 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import generic
 
 from GuideToExile.models import BuildGuide
-from . import skill_tree, build_guide
+from . import skill_tree, build_guide, items_service
 from .forms import SignUpForm, NewGuideForm, EditGuideForm
 from .tokens import account_activation_token
 
 skill_tree_service = skill_tree.SkillTreeService()
+items_service = items_service.ItemsService()
 
 
 class IndexView(generic.ListView):
@@ -35,7 +36,10 @@ def show_guide_view(request, pk):
         tree_html = skill_tree_service.get_html_with_taken_nodes(tree_spec['nodes'], tree_spec['tree_version'])
         keystones = skill_tree_service.get_keystones(tree_spec['nodes'], tree_spec['tree_version'])
         trees[title] = (tree_html, keystones)
-    return render(request, 'show_guide.html', {'pk': pk, 'build_guide': guide, 'trees': trees})
+    items_service.assign_assets_to_items(guide.pob_details['items'])
+    item_sets = items_service.get_item_sets_details(guide)
+
+    return render(request, 'show_guide.html', {'pk': pk, 'build_guide': guide, 'trees': trees, "item_sets": item_sets})
 
 
 def new_guide_view(request):
@@ -67,7 +71,7 @@ def edit_guide_view(request, pk):
     else:
         form = EditGuideForm({'title': guide.title,
                               'text': guide.text})
-
+    items_service.assign_assets_to_items(guide.pob_details['items'])
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': guide})
 
 

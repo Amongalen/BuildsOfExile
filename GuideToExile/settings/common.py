@@ -186,6 +186,10 @@ DJANGO_TIPTAP_CONFIG = {
         {
             "source_static": "tiptap_extension/span_extension.js",
             "module_name": "SpanExtension",
+            "toolbar_include": False,
+            "buttonsconfig_include": False,
+            "configuration_statement": False,
+            "css_include": False,
         }
     ]
 

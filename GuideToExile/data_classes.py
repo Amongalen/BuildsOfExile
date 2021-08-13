@@ -33,6 +33,7 @@ class ItemSet:
 class Item:
     item_id_in_itemset: int
     name: str
+    base_name: str
     rarity: str
     display_html: str
 

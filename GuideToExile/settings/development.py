@@ -7,7 +7,6 @@ from .common import *
 # uncomment the following line to include i18n
 # from .i18n import *
 
-
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = True
 
@@ -46,3 +45,7 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+ASSET_DIR = r'poe_assets'
+BASE_ITEMS_LOOKUP_FILE = r'poe_assets\base_items_lookup.json'
+UNIQUE_ITEMS_LOOKUP_FILE = r'poe_assets\unique_items_lookup.json'

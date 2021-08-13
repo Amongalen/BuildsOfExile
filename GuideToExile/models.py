@@ -45,6 +45,7 @@ class ItemSet(models.Model):
 class Item(models.Model):
     item_id_in_itemset = models.IntegerField()
     name = models.CharField(max_length=255)
+    base_name = models.CharField(max_length=255)
     rarity = models.CharField(max_length=255)
     display_html = models.CharField(max_length=5000)
 

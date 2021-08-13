@@ -4,6 +4,7 @@
     padding: 0.15rem 0.3rem;
     font-size: small;
 }
+
 .poegem-enabled {
     color: #15ad15;
 }
@@ -89,4 +90,9 @@ button.link {
 
 .tab-pane.fade.show {
     transform: translateY(0rem);
+}
+
+hr {
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
 }
