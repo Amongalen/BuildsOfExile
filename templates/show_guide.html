@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <h3 class="d-inline-block "><strong>{{ build_guide.title }}</strong></h3></div>
+        <div class="col">
+            <button class="float-end my-1 btn btn-outline-light btn-secondary"
+                    onclick="location.href='{% url 'edit_guide' pk %}'">
+                Edit
+            </button>
+        </div>
+    </div>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button class="nav-link active" id="nav-guide-tab" data-bs-toggle="tab" data-bs-target="#nav-guide"
+                    type="button" role="tab" aria-controls="nav-guide" aria-selected="true">Guide
+            </button>
+            <button class="nav-link" id="nav-skill-tree-tab" data-bs-toggle="tab" data-bs-target="#nav-skill-tree"
+                    type="button" role="tab" aria-controls="nav-skill-tree" aria-selected="false">Skill tree
+            </button>
+            <button class="nav-link" id="nav-gear-and-gems-tab" data-bs-toggle="tab" data-bs-target="#nav-gear-and-gems"
+                    type="button" role="tab" aria-controls="nav-gear-and-gems" aria-selected="false">Gear and items
+            </button>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-guide" role="tabpanel"
+             aria-labelledby="nav-guide-tab">{{ build_guide.text|safe }}</div>
+        <div class="tab-pane fade" id="nav-skill-tree" role="tabpanel"
+             aria-labelledby="nav-skill-tree-tab">{% include 'skill_tree_tab.html' %}</div>
+        <div class="tab-pane fade" id="nav-gear-and-gems" role="tabpanel"
+             aria-labelledby="nav-gear-and-gems-tab">{% include 'gear_gems_tab.html' %}
+        </div>
+    </div>
+
+
+
+{% endblock %}
