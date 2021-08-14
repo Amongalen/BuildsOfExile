@@ -1,8 +1,8 @@
+import atexit
 import os
 import re
 from typing import *
 
-import atexit
 import pkg_resources
 
 from .process_wrapper import ProcessWrapper, safe_string
@@ -44,7 +44,9 @@ def _num_string(value):
 
 def _pob_line_to_html(line):
     line = re.sub(r'\^8', r'^x888888', line)  # ^8 is grey
-    line = re.sub(r'\^x([0-9A-F]{6})(.*?)(?=$|\^)', r'<span style="color:#\1">\2</span>', line, re.MULTILINE)
+    line = re.sub(r'\^1', r'^xFF0000', line)  # ^1 is red
+    line = re.sub(r'\^x([0-9A-F]{6})(.*?)(?=\Z|\^)', r'<span style="color:#\1">\2</span>', line,
+                  flags=re.MULTILINE | re.DOTALL)
     line = re.sub(r'\^7', r'', line)  # ^7 resets to default
     if line == '----':
         line = '<hr/>'
@@ -124,6 +126,8 @@ class PathOfBuilding:
         output = _mark_item_groups(output)
         regex = '\n<hr/>\n</div>\n<hr/>\n<div class="results">.*$'
         result = re.sub(regex, '', output, flags=re.S)
+        regex = '\n<hr/>\n<div class="results">.*$'
+        result = re.sub(regex, '', result, flags=re.S)
 
         return result
 
