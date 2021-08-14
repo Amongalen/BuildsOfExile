@@ -1,16 +1,16 @@
 <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark vw-100">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'index' %}">Builds of Exile</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto mb-4 mb-md-0">
-                <li class="nav-item">
-                    {% url 'index' as index_url %}
-                    <a class="nav-link {% if request.get_full_path == index_url %} active {% endif %}"
-                       href="{% url 'index' %}">Home</a>
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'index' %}">Guide to Exile</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-4 mb-md-0">
+        <li class="nav-item">
+          {% url 'index' as index_url %}
+          <a class="nav-link {% if request.get_full_path == index_url %} active {% endif %}"
+             href="{% url 'index' %}">Home</a>
                 </li>
                 <li class="nav-item">
                     {% url 'new_guide' as new_guide_url %}
