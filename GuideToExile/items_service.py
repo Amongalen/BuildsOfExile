@@ -4,6 +4,13 @@ from django.contrib.staticfiles import finders
 
 from GuideToExile.settings.development import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE
 
+COLOR_FOR_RARITY = {
+    'UNIQUE': '#AF6025',
+    'RARE': '#FFFF77',
+    'MAGIC': '#8888FF',
+    'NORMAL': '#FFFFFF',
+}
+
 
 class ItemsService:
     def __init__(self):
@@ -16,10 +23,12 @@ class ItemsService:
         item_sets = guide.pob_details['item_sets']
         for item_set in item_sets:
             slots_with_items = {}
+            item_set['title'] = item_set['title'] if item_set['title'] else 'Default'
             for slot, item_id in item_set['slots'].items():
                 for item in items:
                     if item['item_id_in_itemset'] == item_id:
                         slots_with_items[slot] = item
+                        item['color'] = COLOR_FOR_RARITY[item['rarity']]
                         break
             item_set['slots_with_items'] = slots_with_items
         return item_sets

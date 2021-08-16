@@ -30,7 +30,7 @@
 }
 
 .poe-container {
-    height: 500px;
+    height: 580px;
     width: 255px;
     border: 1px solid #adb5bd;
     overflow: auto;
@@ -57,7 +57,7 @@ button.link {
     height: 20px;
     margin: 8px;
     border: 4px solid;
-    border-radius: 50%;
+    border-radius: 58%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: #fff transparent transparent transparent;
 }
@@ -95,4 +95,102 @@ button.link {
 hr {
     margin-top: 0.2rem;
     margin-bottom: 0.2rem;
+}
+
+.gear-container {
+    display: grid;
+    grid-template-columns: 52px 52px 52px 52px 52px 52px 52px 52px;
+    grid-template-rows: 52px 52px 52px 52px 52px 52px 52px 52px;
+    gap: 5px 5px;
+    grid-auto-flow: row dense;
+    justify-content: center;
+    align-content: center;
+    grid-template-areas:
+    "gear-weapon-1 gear-weapon-1 . gear-helmet gear-helmet . gear-weapon-2 gear-weapon-2"
+    "gear-weapon-1 gear-weapon-1 . gear-helmet gear-helmet . gear-weapon-2 gear-weapon-2"
+    "gear-weapon-1 gear-weapon-1 . gear-body-armour gear-body-armour gear-amulet gear-weapon-2 gear-weapon-2"
+    "gear-weapon-1 gear-weapon-1 gear-ring-1 gear-body-armour gear-body-armour gear-ring-2 gear-weapon-2 gear-weapon-2"
+    ". gear-gloves gear-gloves gear-body-armour gear-body-armour gear-boots gear-boots ."
+    ". gear-gloves gear-gloves gear-belt gear-belt gear-boots gear-boots ."
+    "gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks"
+    "gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks";
+}
+
+.gear-weapon-1 {
+    grid-area: gear-weapon-1;
+}
+
+.gear-weapon-2 {
+    grid-area: gear-weapon-2;
+}
+
+.gear-helmet {
+    grid-area: gear-helmet;
+}
+
+.gear-body-armour {
+    grid-area: gear-body-armour;
+}
+
+.gear-belt {
+    grid-area: gear-belt;
+}
+
+.gear-ring-1 {
+    grid-area: gear-ring-1;
+}
+
+.gear-ring-2 {
+    grid-area: gear-ring-2;
+}
+
+.gear-amulet {
+    grid-area: gear-amulet;
+}
+
+.gear-boots {
+    grid-area: gear-boots;
+}
+
+.gear-gloves {
+    grid-area: gear-gloves;
+}
+
+.gear-flasks {
+    display: grid;
+    grid-template-columns: 52px 52px 52px 52px 52px 52px 52px;
+    grid-template-rows: 52px 52px;
+    gap: 0 5px;
+    grid-auto-flow: row;
+    grid-template-areas:
+    ". gear-flask-1 gear-flask-2 gear-flask-3 gear-flask-4 gear-flask-5 ."
+    ". gear-flask-1 gear-flask-2 gear-flask-3 gear-flask-4 gear-flask-5 .";
+    grid-area: gear-flasks;
+    justify-self: center;
+}
+
+.gear-flask-1 {
+    grid-area: gear-flask-1;
+}
+
+.gear-flask-2 {
+    grid-area: gear-flask-2;
+}
+
+.gear-flask-3 {
+    grid-area: gear-flask-3;
+}
+
+.gear-flask-4 {
+    grid-area: gear-flask-4;
+}
+
+.gear-flask-5 {
+    grid-area: gear-flask-5;
+}
+
+
+.tooltip {
+    font-size: 0.95rem;
+    line-height: 1.4;
 }

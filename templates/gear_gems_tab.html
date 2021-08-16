@@ -1,5 +1,254 @@
-{% with items=build_guide.pob_details.items %}
-    {% for item in items %}
-
+{% load static %}
+<div class="row">
+  <div class="col-6">
+    <div class="dropdown my-2">
+      Item set:
+      <button class="mx-1 btn btn-secondary text-light dropdown-toggle dropdown-toggle-gear" type="button"
+              id="dropdownMenuButton2"
+              data-bs-toggle="dropdown" aria-expanded="false">
+        {% for item_set in item_sets %}
+          {% if forloop.first %}
+            {{ item_set.title }}
+          {% endif %}
+        {% endfor %}
+      </button>
+      <ul class="dropdown-menu dropdown-menu-gear dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+        {% for item_set in item_sets %}
+          <li>
+            <button class="link dropdown-item {% if forloop.first %}active{% endif %}">
+              {{ item_set.title }}
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% for item_set in item_sets %}
+      <div class='gear' data-title="{{ item_set.title }}"
+           style="display: {% if forloop.first %}block{% else %}none{% endif %}">
+        <div class="align-content-center justify-content-center">
+          <div class="gear-container">
+            {% if 'weapon_1' in item_set.slots_with_items %}
+              <div class="gear-weapon-1">
+                {% with item_set.slots_with_items.weapon_1 as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'weapon_2' in item_set.slots_with_items %}
+              <div class="gear-weapon-2">
+                {% with item_set.slots_with_items.weapon_2 as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'helmet' in item_set.slots_with_items %}
+              <div class="gear-helmet">
+                {% with item_set.slots_with_items.helmet as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'body_armour' in item_set.slots_with_items %}
+              <div class="gear-body-armour">
+                {% with item_set.slots_with_items.body_armour as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'belt' in item_set.slots_with_items %}
+              <div class="gear-belt">
+                {% with item_set.slots_with_items.belt as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'ring_1' in item_set.slots_with_items %}
+              <div class="gear-ring-1">
+                {% with item_set.slots_with_items.ring_1 as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'ring_2' in item_set.slots_with_items %}
+              <div class="gear-ring-2">
+                {% with item_set.slots_with_items.ring_2 as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'amulet' in item_set.slots_with_items %}
+              <div class="gear-amulet">
+                {% with item_set.slots_with_items.amulet as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'boots' in item_set.slots_with_items %}
+              <div class="gear-boots">
+                {% with item_set.slots_with_items.boots as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            {% if 'gloves' in item_set.slots_with_items %}
+              <div class="gear-gloves">
+                {% with item_set.slots_with_items.gloves as item %}
+                  <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                       data-bs-toggle="tooltip" data-bs-html="true"
+                       title="{{ item.display_html }}"
+                       alt="{{ item.name }}"
+                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                         border: 2px solid {{ item.color }}48;
+                         width: 100%; height: 100%;"/>
+                {% endwith %}
+              </div>
+            {% endif %}
+            <div class="gear-flasks">
+              {% if 'flask_1' in item_set.slots_with_items %}
+                <div class="gear-flask-1">
+                  {% with item_set.slots_with_items.flask_1 as item %}
+                    <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                         data-bs-toggle="tooltip" data-bs-html="true"
+                         title="{{ item.display_html }}"
+                         alt="{{ item.name }}"
+                         style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                           border: 2px solid {{ item.color }}48;
+                           width: 100%; height: 100%;"/>
+                  {% endwith %}
+                </div>
+              {% endif %}
+              {% if 'flask_2' in item_set.slots_with_items %}
+                <div class="gear-flask-2">
+                  {% with item_set.slots_with_items.flask_2 as item %}
+                    <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                         data-bs-toggle="tooltip" data-bs-html="true"
+                         title="{{ item.display_html }}"
+                         alt="{{ item.name }}"
+                         style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                           border: 2px solid {{ item.color }}48;
+                           width: 100%; height: 100%;"/>
+                  {% endwith %}
+                </div>
+              {% endif %}
+              {% if 'flask_3' in item_set.slots_with_items %}
+                <div class="gear-flask-3">
+                  {% with item_set.slots_with_items.flask_3 as item %}
+                    <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                         data-bs-toggle="tooltip" data-bs-html="true"
+                         title="{{ item.display_html }}"
+                         alt="{{ item.name }}"
+                         style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                           border: 2px solid {{ item.color }}48;
+                           width: 100%; height: 100%;"/>
+                  {% endwith %}
+                </div>
+              {% endif %}
+              {% if 'flask_4' in item_set.slots_with_items %}
+                <div class="gear-flask-4">
+                  {% with item_set.slots_with_items.flask_4 as item %}
+                    <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                         data-bs-toggle="tooltip" data-bs-html="true"
+                         title="{{ item.display_html }}"
+                         alt="{{ item.name }}"
+                         style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                           border: 2px solid {{ item.color }}48;
+                           width: 100%; height: 100%;"/>
+                  {% endwith %}
+                </div>
+              {% endif %}
+              {% if 'flask_5' in item_set.slots_with_items %}
+                <div class="gear-flask-5">
+                  {% with item_set.slots_with_items.flask_5 as item %}
+                    <img srcset='{% static item.asset %} 1.5x' data-bs-placement="bottom"
+                         data-bs-toggle="tooltip" data-bs-html="true"
+                         title="{{ item.display_html }}"
+                         alt="{{ item.name }}"
+                         style="box-shadow: 0 0 25px {{ item.color }}32 inset;
+                           border: 2px solid {{ item.color }}48;
+                           width: 100%; height: 100%;"/>
+                  {% endwith %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
     {% endfor %}
-{% endwith %}
+
+  </div>
+  <div class="col-6">
+  </div>
+</div>
+
+<script>$(function () {
+  $(".dropdown-menu-gear li button").click(function () {
+    $(".dropdown-toggle-gear").text($(this).text());
+    $(".dropdown-toggle-gear").val($(this).text());
+    $(".dropdown-menu-gear li button.active").removeClass('active')
+    $(this).addClass('active')
+
+    $("div.gear").each(function (i, element) {
+      let title1 = $(".dropdown-toggle-gear").text().trim()
+      let title2 = $(element).data("title").trim()
+      if (title1 === title2) {
+        $(element).show()
+      } else {
+        $(element).hide()
+      }
+    })
+  });
+});</script>
