@@ -231,6 +231,29 @@
 
   </div>
   <div class="col-6">
+    {% for skill_group in build_guide.pob_details.skill_groups %}
+      <div class="bg-secondary rounded-3 my-2 p-2">
+        {% for gem in skill_group.gems %}
+          <div class="row">
+            <div class="col-10">
+              <img srcset='{% static gem.asset %} 2.2x' alt="{{ gem.name }}"/>
+              <span
+                class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>
+              {% if gem.is_item_provided %}
+                <span class="small"><em>(provided by an item)</em></span>
+              {% endif %}
+            </div>
+            <div class="col">
+              <div class="float-end row small g-0 justify-content-between text-center" style="width: 45px">
+                <div class="col-4">{{ gem.level }}</div>
+                <div class="col-4">/</div>
+                <div class="col-4">{{ gem.quality }}</div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
   </div>
 </div>
 

@@ -35,7 +35,12 @@ class ItemsService:
 
     def assign_assets_to_items(self, items):
         for item in items:
-            item['asset'] = self.asset_mapping.get_asset_name(item)
+            item['asset'] = self.asset_mapping.get_asset_name_for_gear(item)
+
+    def assign_assets_to_gems(self, skill_groups):
+        for skill_group in skill_groups:
+            for gem in skill_group['gems']:
+                gem['asset'] = self.asset_mapping.get_asset_name_for_gem(gem)
 
 
 class AssetMapping:
@@ -54,7 +59,10 @@ class AssetMapping:
                 for name, art_name in lang.items():
                     self.mapping[name] = f'{asset_dir}/{art_name}.png'
 
-    def get_asset_name(self, item):
+    def get_asset_name_for_gem(self, gem):
+        return self.mapping.get(gem['name'], None)
+
+    def get_asset_name_for_gear(self, item):
         if item['rarity'] == 'UNIQUE':
             return self.mapping.get(item['name'], None)
         if item['rarity'] == 'RARE':

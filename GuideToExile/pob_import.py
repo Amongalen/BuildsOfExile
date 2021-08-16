@@ -113,12 +113,18 @@ def extract_skills(xml_root):
     skill_groups = []
     for group_xml in xml_root.find('Skills'):
         gems = []
+        source = group_xml.get('source')
         for gem_xml in group_xml:
             is_gem_enabled = parse_bool(gem_xml.get('enabled'))
             gem_id = gem_xml.get('gemId')
             is_active_skill = gem_id is not None and 'SkillGem' in gem_id
+            level = gem_xml.get('level')
+            quality = gem_xml.get('quality')
+            is_item_provided = source is not None
+            name = gem_xml.get('nameSpec') if is_active_skill else f'{gem_xml.get("nameSpec")} Support'
             gems.append(
-                SkillGem(name=gem_xml.get('nameSpec'), is_enabled=is_gem_enabled, is_active_skill=is_active_skill))
+                SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
+                         level=level, quality=quality, is_item_provided=is_item_provided))
         is_group_enabled = parse_bool(group_xml.get('enabled'))
         main_active_skill_index = group_xml.get('mainActiveSkill')
         main_active_skill_index = int(main_active_skill_index) if not main_active_skill_index == 'nil' else 1

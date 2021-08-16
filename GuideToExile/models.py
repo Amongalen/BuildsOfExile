@@ -8,6 +8,9 @@ class SkillGem(models.Model):
     is_enabled = models.BooleanField()
     name = models.CharField(max_length=255)
     is_active_skill = models.BooleanField()
+    level = models.IntegerField()
+    quality = models.IntegerField()
+    is_item_provided = models.BooleanField()
 
     class Meta:
         abstract = True

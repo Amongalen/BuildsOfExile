@@ -26,10 +26,10 @@
             <div class="col-8">
                 {{ tree.0|safe }}
             </div>
-            <div class="col-4 bg">
-                {% for keystone in tree.1 %}
-                    <div class="bg-secondary my-2 p-2">
-                        <h4>{{ keystone.name }}</h4>
+          <div class="col-4">
+            {% for keystone in tree.1 %}
+              <div class="bg-secondary rounded-3 my-2 p-2">
+                <h4>{{ keystone.name }}</h4>
                         {% for keystone_stat in keystone.stats %}
                             <div class="small">{{ keystone_stat|linebreaksbr }}</div>
                         {% endfor %}

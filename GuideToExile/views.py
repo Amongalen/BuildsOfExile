@@ -37,6 +37,7 @@ def show_guide_view(request, pk):
         keystones = skill_tree_service.get_keystones(tree_spec['nodes'], tree_spec['tree_version'])
         trees[title] = (tree_html, keystones)
     items_service.assign_assets_to_items(guide.pob_details['items'])
+    items_service.assign_assets_to_gems(guide.pob_details['skill_groups'])
     item_sets = items_service.get_item_sets_details(guide)
 
     return render(request, 'show_guide.html', {'pk': pk, 'build_guide': guide, 'trees': trees, "item_sets": item_sets})

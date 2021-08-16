@@ -6,6 +6,9 @@ class SkillGem:
     is_enabled: bool
     name: str
     is_active_skill: bool
+    level: int
+    quality: int
+    is_item_provided: bool
 
 
 @dataclass
