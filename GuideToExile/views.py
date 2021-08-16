@@ -68,7 +68,10 @@ def edit_guide_view(request, pk):
     active_skills.sort(key=lambda v: v[0] == imported_primary_skill, reverse=True)
 
     if request.method == 'POST':
-        form = EditGuideForm(active_skills, request.POST)
+        data = request.POST.copy()
+        if 'primary_skills' not in data:
+            data['primary_skills'] = imported_primary_skill
+        form = EditGuideForm(active_skills, data)
         if form.is_valid():
             guide.title = form.cleaned_data['title']
             guide.text = form.cleaned_data['text']
