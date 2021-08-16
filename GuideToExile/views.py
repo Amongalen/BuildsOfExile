@@ -60,24 +60,27 @@ def new_guide_view(request):
 
 def edit_guide_view(request, pk):
     guide = BuildGuide.objects.get(build_id=pk)
+    active_skills = set((gem['name'], gem['name']) for skill_group in guide.pob_details['skill_groups']
+                        for gem in skill_group['gems']
+                        if gem['is_active_skill'])
+    active_skills = list(active_skills)
+    imported_primary_skill = guide.pob_details['imported_primary_skill']
+    active_skills.sort(key=lambda v: v[0] == imported_primary_skill, reverse=True)
+
     if request.method == 'POST':
-        form = EditGuideForm(request.POST)
+        form = EditGuideForm(active_skills, request.POST)
         if form.is_valid():
             guide.title = form.cleaned_data['title']
             guide.text = form.cleaned_data['text']
+            guide.pob_details['main_active_skills'] = form.cleaned_data['primary_skills']
             guide.save()
             return redirect('show_guide', pk=guide.build_id)
 
     else:
-        imported_primary_skill = guide.pob_details['imported_primary_skill']
-        active_skills = set((gem['name'], gem['name']) for skill_group in guide.pob_details['skill_groups']
-                            for gem in skill_group['gems']
-                            if gem['is_active_skill'])
-        active_skills = list(active_skills)
-        active_skills.sort(key=lambda v: v == imported_primary_skill)
+
         form = EditGuideForm(active_skills, {'title': guide.title,
                                              'text': guide.text,
-                                             'primary_skills': imported_primary_skill}, )
+                                             'primary_skills': guide.pob_details['main_active_skills']}, )
     items_service.assign_assets_to_items(guide.pob_details['items'])
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': guide})
 
