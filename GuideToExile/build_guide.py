@@ -3,7 +3,8 @@ import jsonpickle
 from GuideToExile.models import BuildGuide, UniqueItem, Keystone
 
 
-def create_build_guide(author, build_details, pob_string, skill_tree_service, text='', title='') -> BuildGuide:
+def create_build_guide(author, build_details, pob_string, skill_tree_service, text='Content',
+                       title='Title') -> BuildGuide:
     keystones = get_or_create_keystones(build_details, skill_tree_service)
     unique_items = get_or_create_unique_items(build_details)
     build_details_dict = jsonpickle.decode(jsonpickle.encode(build_details, unpicklable=False))

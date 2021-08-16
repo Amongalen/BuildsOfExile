@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 class SkillGem:
     is_enabled: bool
     name: str
+    is_active_skill: bool
 
 
 @dataclass
@@ -45,6 +46,7 @@ class PobDetails:
     ascendancy_name: str
     skill_groups: list[SkillGroup]
     main_active_skills: list[str]
+    imported_primary_skill: str
     tree_specs: list[TreeSpec]
     active_tree_spec_index: int
     items: list[Item]

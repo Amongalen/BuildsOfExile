@@ -39,7 +39,7 @@ def parse_pob_details(xml: str):
     build_stats = {stat.get('stat'): stat.get('value') for stat in xml_root.find('Build')}
     class_name = xml_root.find('Build').get('className')
     ascendancy_name = xml_root.find('Build').get('ascendClassName')
-    skill_groups, main_active_skills = extract_skills(xml_root)
+    skill_groups, main_active_skill = extract_skills(xml_root)
     tree_specs, active_tree_spec_index = extract_tree_specs(xml_root)
     items, item_sets, active_item_set_index = extract_items(xml_root)
     return PobDetails(
@@ -47,7 +47,8 @@ def parse_pob_details(xml: str):
         class_name=class_name,
         ascendancy_name=ascendancy_name,
         skill_groups=skill_groups,
-        main_active_skills=main_active_skills,
+        main_active_skills=[main_active_skill],
+        imported_primary_skill=main_active_skill,
         tree_specs=tree_specs,
         active_tree_spec_index=active_tree_spec_index,
         items=items,
@@ -114,7 +115,10 @@ def extract_skills(xml_root):
         gems = []
         for gem_xml in group_xml:
             is_gem_enabled = parse_bool(gem_xml.get('enabled'))
-            gems.append(SkillGem(name=gem_xml.get('nameSpec'), is_enabled=is_gem_enabled))
+            gem_id = gem_xml.get('gemId')
+            is_active_skill = gem_id is not None and 'SkillGem' in gem_id
+            gems.append(
+                SkillGem(name=gem_xml.get('nameSpec'), is_enabled=is_gem_enabled, is_active_skill=is_active_skill))
         is_group_enabled = parse_bool(group_xml.get('enabled'))
         main_active_skill_index = group_xml.get('mainActiveSkill')
         main_active_skill_index = int(main_active_skill_index) if not main_active_skill_index == 'nil' else 1
@@ -129,7 +133,7 @@ def extract_skills(xml_root):
     main_skill_index_within_group = skill_groups[main_socket_group_index].main_active_skill_index
     main_active_skill = skill_groups[main_socket_group_index - 1].gems[main_skill_index_within_group - 1].name
 
-    return skill_groups, [main_active_skill]
+    return skill_groups, main_active_skill
 
 
 def parse_bool(xml):

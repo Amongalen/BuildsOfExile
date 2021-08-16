@@ -69,8 +69,15 @@ def edit_guide_view(request, pk):
             return redirect('show_guide', pk=guide.build_id)
 
     else:
-        form = EditGuideForm({'title': guide.title,
-                              'text': guide.text})
+        imported_primary_skill = guide.pob_details['imported_primary_skill']
+        active_skills = set((gem['name'], gem['name']) for skill_group in guide.pob_details['skill_groups']
+                            for gem in skill_group['gems']
+                            if gem['is_active_skill'])
+        active_skills = list(active_skills)
+        active_skills.sort(key=lambda v: v == imported_primary_skill)
+        form = EditGuideForm(active_skills, {'title': guide.title,
+                                             'text': guide.text,
+                                             'primary_skills': imported_primary_skill}, )
     items_service.assign_assets_to_items(guide.pob_details['items'])
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': guide})
 

@@ -7,6 +7,7 @@ from djongo import models
 class SkillGem(models.Model):
     is_enabled = models.BooleanField()
     name = models.CharField(max_length=255)
+    is_active_skill = models.BooleanField()
 
     class Meta:
         abstract = True
@@ -71,6 +72,8 @@ class PobDetails(models.Model):
         model_container=SkillGroup
     )
     main_active_skills = models.JSONField()
+    imported_primary_skill = models.CharField(max_length=255)
+
     tree_specs = models.ArrayField(
         model_container=TreeSpec
     )

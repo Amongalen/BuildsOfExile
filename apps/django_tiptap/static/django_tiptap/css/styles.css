@@ -38,7 +38,7 @@
 .the-editor-area {
     display: flex;
     flex-direction: column;
-    border: 2px solid #b0b7be;
+    border: 1px solid #b0b7be;
     overflow-x: auto;
     overflow-y: hidden;
     min-height: fit-content;
@@ -46,7 +46,7 @@
     background: #352e2b;
     color: #b0b7be;
     position: relative;
-    border-radius: 6px;
+    border-radius: 0.25rem;
 }
 
 .the-editor-area::after {

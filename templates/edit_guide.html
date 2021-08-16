@@ -8,16 +8,29 @@
     <div class="col-7">
       <form action="{% url 'edit_guide' pk %}" method="post">
         {% csrf_token %}
-        {{ form }}
+        {{ form.non_field_errors }}
+        <div class="fieldWrapper">
+          {{ form.title.label_tag }}
+          {{ form.title }}
+          {{ form.title.errors }}
+        </div>
+        <div class="fieldWrapper">
+          {{ form.primary_skills.label_tag }}
+          {{ form.primary_skills }}
+        </div>
+        <div class="fieldWrapper">
+          {{ form.text.label_tag }}
+          {{ form.text.errors }}
+          {{ form.text }}
+        </div>
         <input type="submit" class="my-2 btn btn-outline-light btn-secondary" value="Submit">
       </form>
     </div>
     <div class="col">
       <div class="row">
         <div class="col">
-          <h5>Items: <abbr
-            title="Double-click to add to the editor. Tooltip will be visible after publishing.">
-            <sup style="font-size:small">?</sup></abbr></h5>
+          <h5>Items: <sup style="font-size:small"><abbr
+            title="Double-click to add to the editor. Tooltip will be visible after publishing.">?</abbr></sup></h5>
           <div class="poe-container">
             {% for item in guide.pob_details.items %}
               <div class="poe-line">
@@ -33,8 +46,7 @@
           </div>
         </div>
         <div class="col">
-          <h5>Gems: <abbr title="Double-click to add to the editor"><sup
-            style="font-size:small">?</sup></abbr></h5>
+          <h5>Gems: <sup style="font-size:small"><abbr title="Double-click to add to the editor">?</abbr></sup></h5>
           <div class="poe-container">
             {% for skill_group in guide.pob_details.skill_groups %}
               {% for gem in skill_group.gems %}
@@ -56,6 +68,10 @@
     </div>
   </div>
   <script>
+    $(".chosen-select option[value='{{ guide.pob_details.imported_primary_skill }}']").prop('disabled', true)
+    $(".chosen-select option[value='{{ guide.pob_details.imported_primary_skill }}']").prop('selected', true)
+    $(".chosen-select").chosen({disable_search_threshold: 6, width: '100%'})
+
     const menubar = document.querySelector('#text-menubar')
     if (menubar) menubar.classList.add('show')
 

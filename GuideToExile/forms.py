@@ -37,5 +37,13 @@ class NewGuideForm(Form):
 
 
 class EditGuideForm(Form):
-    title = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    text = forms.CharField(max_length=40000, widget=TipTapWidget())
+    def __init__(self, skill_choices, *args, **kwargs):
+        super(EditGuideForm, self).__init__(*args, **kwargs)
+        self.fields['primary_skills'].choices = skill_choices
+
+    title = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}),
+                            help_text=None)
+    primary_skills = forms.MultipleChoiceField(choices=(),
+                                               widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
+                                               help_text=None)
+    text = forms.CharField(max_length=40000, widget=TipTapWidget(), help_text=None)
