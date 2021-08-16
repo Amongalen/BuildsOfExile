@@ -1,1 +1,1 @@
-# BuildsOfExile
+# GuideToExile
