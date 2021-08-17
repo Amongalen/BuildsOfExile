@@ -53,6 +53,7 @@ class PobImportTests(TestCase):
         self.assertEqual(5, len(pob_details.tree_specs))
         self.assertEqual(37, len(pob_details.items))
 
+
 class TreeUtilsTests(TestCase):
     def test_read_tree_data_file(self):
         filepath = 'GuideToExile/trees/3_15/data.json'

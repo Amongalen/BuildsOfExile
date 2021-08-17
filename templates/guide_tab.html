@@ -1,0 +1,297 @@
+{% load mathfilters %}
+{% load humanize %}
+<div class="row px-1 py-2">
+  <div class="col-8 bg-secondary rounded-3 m-1 p-2">
+    {{ build_guide.text|safe }}
+  </div>
+  <div class="col bg-secondary rounded-3 m-1 p-3">
+    <h3>Statistics:<sup><abbr
+      title="Note that all statistics are imported from PoB. They highly depend on settings made before exporting and might be misleading.">?</abbr></sup>
+    </h3>
+    {% with build_guide.pob_details.build_stats as stats %}
+      <div class="small">
+
+      <div class="py-1">
+        {% if 'averagedamage' in stats %}
+          <div class="row">
+            <div class="col-7">Average Damage</div>
+            <div class="col text-end">{{ stats.averagedamage }}</div>
+          </div>
+        {% endif %}
+        {% if 'speed' in stats %}
+          <div class="row">
+            <div class="col-7">Attack Speed/Cast Rate</div>
+            <div class="col text-end">{{ stats.speed }}</div>
+          </div>
+        {% endif %}
+        {% if 'preeffectivecritchance' in stats %}
+          <div class="row">
+            <div class="col-7">Crit Chance</div>
+            <div class="col text-end">{{ stats.preeffectivecritchance }}%</div>
+          </div>
+        {% endif %}
+        {% if 'preeffectivecritchance' in stats and 'critchance' in stats and stats.critchance != stats.preeffectivecritchance %}
+          <div class="row">
+            <div class="col-7">Effective Crit Chance</div>
+            <div class="col text-end">{{ stats.critchance }}%</div>
+          </div>
+        {% endif %}
+        {% if 'critmultiplier' in stats %}
+          <div class="row">
+            <div class="col-7">Crit Chance</div>
+            <div class="col text-end">{{ stats.critmultiplier|mul:100 }}%</div>
+          </div>
+        {% endif %}
+        {% if 'hitchance' in stats %}
+          <div class="row">
+            <div class="col-7">Hit Chance</div>
+            <div class="col text-end">{{ stats.hitchance }}%</div>
+          </div>
+        {% endif %}
+        {% if 'totaldps' in stats %}
+          <div class="row">
+            <div class="col-7">Total DPS</div>
+            <div class="col text-end">{{ stats.totaldps }}</div>
+          </div>
+        {% endif %}
+        {% if 'manacost' in stats and stats.manacost != 0 %}
+          <div class="row">
+            <div class="col-7">Mana Cost</div>
+            <div class="col text-end">{{ stats.manacost }}</div>
+          </div>
+        {% endif %}
+        {% if 'lifecost' in stats and stats.lifecost != 0 %}
+          <div class="row">
+            <div class="col-7">Life Cost</div>
+            <div class="col text-end">{{ stats.lifecost }}</div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="py-1">
+        {% if 'str' in stats %}
+          <div class="row">
+            <div class="col-7" style="color: #dc3545">Strength</div>
+            <div class="col text-end">{{ stats.str }}</div>
+          </div>
+        {% endif %}
+        {% if 'dex' in stats %}
+          <div class="row">
+            <div class="col-7" style="color: #198754">Dexterity</div>
+            <div class="col text-end">{{ stats.dex }}</div>
+          </div>
+        {% endif %}
+        {% if 'int' in stats %}
+          <div class="row">
+            <div class="col-7" style="color: #0d6efd">Intelligence</div>
+            <div class="col text-end">{{ stats.int }}</div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="py-1">
+        {% if 'life' in stats %}
+          <div class="row">
+            <div class="col-7">Life</div>
+            <div class="col text-end">{{ stats.life|intcomma }}</div>
+          </div>
+        {% endif %}
+        {% if 'spec_lifeinc' in stats %}
+          <div class="row">
+            <div class="col-7">%Inc Life</div>
+            <div class="col text-end">{{ stats.spec_lifeinc|intcomma }}%</div>
+          </div>
+        {% endif %}
+        {% if 'lifeunreservedpercent' in stats and stats.lifeunreservedpercent != 100 %}
+          <div class="row">
+            <div class="col-7">Unreserved Life %</div>
+            <div class="col text-end">{{ stats.lifeunreservedpercent }}%</div>
+          </div>
+          {% if 'lifeunreserved' in stats %}
+            <div class="row">
+              <div class="col-7">Unreserved Life</div>
+              <div class="col text-end">{{ stats.lifeunreserved|intcomma }}</div>
+            </div>
+          {% endif %}
+        {% endif %}
+        {% if 'liferegen' in stats and stats.liferegen != 0 %}
+          <div class="row">
+            <div class="col-7">Life Regen</div>
+            <div class="col text-end">{{ stats.liferegen|intcomma }}</div>
+          </div>
+        {% endif %}
+        {% if 'lifeleechgainrate' in stats and stats.lifeleechgainrate != 0 %}
+          <div class="row">
+            <div class="col-7">Life Leech/On Hit Rate</div>
+            <div class="col text-end">{{ stats.lifeleechgainrate|intcomma }}</div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="py-1">
+        {% if 'mana' in stats %}
+          <div class="row">
+            <div class="col-7">Mana</div>
+            <div class="col text-end">{{ stats.mana|intcomma }}</div>
+          </div>
+        {% endif %}
+        {% if 'spec_manainc' in stats %}
+          <div class="row">
+            <div class="col-7">%Inc Mana</div>
+            <div class="col text-end">{{ stats.spec_manainc }}%</div>
+          </div>
+        {% endif %}
+        {% if 'manaunreservedpercent' in stats and stats.manaunreservedpercent != 100 %}
+          <div class="row">
+            <div class="col-7">Unreserved Mana %</div>
+            <div class="col text-end">{{ stats.manaunreservedpercent }}%</div>
+          </div>
+          {% if 'manaunreserved' in stats %}
+            <div class="row">
+              <div class="col-7">Unreserved Mana</div>
+              <div class="col text-end">{{ stats.manaunreserved|intcomma }}</div>
+            </div>
+          {% endif %}
+        {% endif %}
+        {% if 'manaregen' in stats and stats.manaregen != 0 %}
+          <div class="row">
+            <div class="col-7">Mana Regen</div>
+            <div class="col text-end">{{ stats.manaregen|intcomma }}</div>
+          </div>
+        {% endif %}
+        {% if 'manaleechgainrate' in stats and stats.manaleechgainrate != 0 %}
+          <div class="row">
+            <div class="col-7">Mana Leech/On Hit Rate</div>
+            <div class="col text-end">{{ stats.manaleechgainrate|intcomma }}</div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="py-1">
+        {% if 'evasion' in stats and stats.evasion != 0 %}
+          <div class="row">
+            <div class="col-7">Evasion</div>
+            <div class="col text-end">{{ stats.evasion|intcomma }}</div>
+          </div>
+          {% if 'spec_evasioninc' in stats %}
+            <div class="row">
+              <div class="col-7">%Inc Evasion</div>
+              <div class="col text-end">{{ stats.spec_evasioninc }}%</div>
+            </div>
+          {% endif %}
+        {% endif %}
+        {% if 'meleeevadechance' in stats and 'projectileevadechance' in stats %}
+          {% if  stats.meleeevadechance == stats.projectileevadechance and stats.meleeevadechance != 0 %}
+            <div class="row">
+              <div class="col-7">Evade Chance</div>
+              <div class="col text-end">{{ stats.meleeevadechance|floatformat:0 }}%</div>
+            </div>
+          {% else %}
+            {% if stats.meleeevadechance != 0 %}
+              <div class="row">
+                <div class="col-7">Melee Evade Chance</div>
+                <div class="col text-end">{{ stats.meleeevadechance|floatformat:0 }}%</div>
+              </div>
+            {% endif %}
+            {% if stats.projectileevadechance != 0 %}
+              <div class="row">
+                <div class="col-7">Projectile Evade Chance</div>
+                <div class="col text-end">{{ stats.projectileevadechance|floatformat:0 }}%</div>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="py-1">
+        {% if 'armour' in stats and stats.armour != 0 %}
+          <div class="row">
+            <div class="col-7">Armour</div>
+            <div class="col text-end">{{ stats.armour|intcomma }}</div>
+          </div>
+          {% if 'spec_armourinc' in stats %}
+            <div class="row">
+              <div class="col-7">%Inc Armour</div>
+              <div class="col text-end">{{ stats.spec_armourinc }}%</div>
+            </div>
+          {% endif %}
+        {% endif %}
+        {% if 'physicaldamagereduction' in stats and stats.physicaldamagereduction != 0 %}
+          <div class="row">
+            <div class="col-7">Phys. Damage Reduction</div>
+            <div class="col text-end">{{ stats.physicaldamagereduction|floatformat:0 }}%</div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="py-1">
+        {% if 'effectivemovementspeedmod' in stats %}
+          <div class="row">
+            <div class="col-7">Movement Speed Modifier</div>
+            <div class="col text-end">{{ stats.effectivemovementspeedmod|mul:100|sub:100|floatformat:0|intcomma }}%
+            </div>
+          </div>
+        {% endif %}
+        {% if 'attackdodgechance' in stats and 'spelldodgechance' in stats %}
+          {% if stats.attackdodgechance == stats.spelldodgechance and stats.spelldodgechance != 0 %}
+            <div class="row">
+              <div class="col-7">Dodge Chance</div>
+              <div class="col text-end">{{ stats.attackdodgechance|floatformat:0 }}%</div>
+            </div>
+          {% else %}
+            {% if stats.attackdodgechance != 0 %}
+              <div class="row">
+                <div class="col-7">Attack Dodge Chance</div>
+                <div class="col text-end">{{ stats.attackdodgechance|floatformat:0 }}%</div>
+              </div>
+            {% endif %}
+            {% if stats.spelldodgechance != 0 %}
+              <div class="row">
+                <div class="col-7">Spell Dodge Chance</div>
+                <div class="col text-end">{{ stats.spelldodgechance|floatformat:0 }}%</div>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      </div>
+
+      <div class="py-1">
+        {% if 'fireresist' in stats and 'fireresistovercap' in stats %}
+          <div class="row">
+            <div class="col-7" style="color: #b98523">Fire Resistance</div>
+            <div class="col text-end"><span {% if stats.fireresist < 0 %}
+              style="color: #dd0022" {% endif %}>{{ stats.fireresist|floatformat:0 }}%</span>
+              (+{{ stats.fireresistovercap|floatformat:0 }}%)
+            </div>
+          </div>
+        {% endif %}
+        {% if 'coldresist' in stats and 'coldresistovercap' in stats %}
+          <div class="row">
+            <div class="col-7" style="color: #3f6db3">Cold Resistance</div>
+            <div class="col text-end"><span {% if stats.coldresist < 0 %}
+              style="color: #dd0022" {% endif %}>{{ stats.coldresist|floatformat:0 }}%</span>
+              (+{{ stats.coldresistovercap|floatformat:0 }}%)
+            </div>
+          </div>
+        {% endif %}
+        {% if 'lightningresist' in stats and 'lightningresistovercap' in stats %}
+          <div class="row">
+            <div class="col-7" style="color: #adaa47">Lightning Resistance</div>
+            <div class="col text-end"><span {% if stats.lightningresist < 0 %}
+              style="color: #dd0022" {% endif %}>{{ stats.lightningresist|floatformat:0 }}%</span>
+              (+{{ stats.lightningresistovercap|floatformat:0 }}%)
+            </div>
+          </div>
+        {% endif %}
+        {% if 'chaosresist' in stats and 'chaosresistovercap' in stats %}
+          <div class="row">
+            <div class="col-7" style="color: #d02090">Chaos Resistance</div>
+            <div class="col text-end"><span {% if stats.chaosresist < 0 %}
+              style="color: #dd0022" {% endif %}>{{ stats.chaosresist }}%</span> (+{{ stats.chaosresistovercap }}%)
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endwith %}
+    </div>
+  </div>
+</div>

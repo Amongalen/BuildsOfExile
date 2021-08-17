@@ -36,7 +36,7 @@ def parse_pob_details(xml: str):
     except Exception as err:
         raise BuildXmlParsingException(err)
 
-    build_stats = {stat.get('stat'): stat.get('value') for stat in xml_root.find('Build')}
+    build_stats = extract_stats(xml_root)
     class_name = xml_root.find('Build').get('className')
     ascendancy_name = xml_root.find('Build').get('ascendClassName')
     skill_groups, main_active_skill = extract_skills(xml_root)
@@ -54,6 +54,28 @@ def parse_pob_details(xml: str):
         items=items,
         item_sets=item_sets,
         active_item_set_index=active_item_set_index)
+
+
+def extract_stats(xml_root):
+    stats = {}
+    for stat in xml_root.find('Build'):
+        value_str = stat.get('value')
+        if value_str is None:
+            continue
+        try:
+            value = int(value_str)
+            name = stat.get('stat').lower().replace(":", '_')
+            stats[name] = value
+            continue
+        except ValueError:
+            pass
+        try:
+            value = round(float(value_str), 2)
+            name = stat.get('stat').lower().replace(":", '_')
+            stats[name] = value
+        except ValueError:
+            pass
+    return stats
 
 
 def extract_items(xml_root):
@@ -136,8 +158,10 @@ def extract_skills(xml_root):
     if len(skill_groups) == 0:
         return skill_groups, []
 
-    main_skill_index_within_group = skill_groups[main_socket_group_index].main_active_skill_index
-    main_active_skill = skill_groups[main_socket_group_index - 1].gems[main_skill_index_within_group - 1].name
+    main_skill_index_within_group = skill_groups[main_socket_group_index - 1].main_active_skill_index
+    gems_in_main_group = skill_groups[main_socket_group_index - 1].gems
+    active_gems_in_main_group = list(filter(lambda x: x.is_active_skill, gems_in_main_group))
+    main_active_skill = active_gems_in_main_group[main_skill_index_within_group - 1].name
 
     return skill_groups, main_active_skill
 

@@ -47,6 +47,8 @@ DEFAULT_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'apps.django_tiptap',
+    'mathfilters',
+    'django.contrib.humanize',
 ]
 
 # Middlewares
