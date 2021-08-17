@@ -116,8 +116,8 @@ def extract_skills(xml_root):
         source = group_xml.get('source')
         for gem_xml in group_xml:
             is_gem_enabled = parse_bool(gem_xml.get('enabled'))
-            gem_id = gem_xml.get('gemId')
-            is_active_skill = gem_id is not None and 'SkillGem' in gem_id
+            skill_id = gem_xml.get('skillId')
+            is_active_skill = skill_id is not None and 'Support' not in skill_id
             level = gem_xml.get('level')
             quality = gem_xml.get('quality')
             is_item_provided = source is not None
