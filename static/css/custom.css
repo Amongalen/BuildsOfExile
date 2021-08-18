@@ -116,6 +116,19 @@ hr {
     "gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks gear-flasks";
 }
 
+.gear-slot {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.gear-slot > img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .gear-weapon-1 {
     grid-area: gear-weapon-1;
 }

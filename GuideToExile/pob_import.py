@@ -87,7 +87,7 @@ def extract_items(xml_root):
         for slot_xml in item_set_xml:
             item_id = int(slot_xml.get('itemId'))
             if item_id != 0:
-                slot_name = slot_xml.get('name').lower().replace(' ', '_')
+                slot_name = slot_xml.get('name').lower().replace(' ', '-')
                 slots[slot_name] = item_id
         item_sets.append(ItemSet(title=title,
                                  set_id=set_id,
