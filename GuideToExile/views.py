@@ -35,7 +35,7 @@ def show_guide_view(request, pk):
         title = tree_spec['title'] if tree_spec['title'] else 'Default'
         tree_html = skill_tree_service.get_html_with_taken_nodes(tree_spec['nodes'], tree_spec['tree_version'])
         keystones = skill_tree_service.get_keystones(tree_spec['nodes'], tree_spec['tree_version'])
-        trees[title] = (tree_html, keystones)
+        trees[title] = (tree_html, keystones, tree_spec['url'])
     items_service.assign_assets_to_items(guide.pob_details['items'])
     items_service.assign_assets_to_gems(guide.pob_details['skill_groups'])
     item_sets = items_service.get_item_sets_details(guide)

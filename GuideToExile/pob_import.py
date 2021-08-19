@@ -125,7 +125,7 @@ def extract_tree_specs(xml_root):
         nodes = list(map(str, spec_xml.get('nodes').split(',')))
         tree_specs.append(TreeSpec(title=spec_xml.get('title'),
                                    nodes=nodes,
-                                   url=spec_xml.find('URL'),
+                                   url=spec_xml.find('URL').text.strip(),
                                    tree_version=spec_xml.get('treeVersion')))
     active_tree_spec_index = int(xml_root.find('Tree').get('activeSpec'))
     return tree_specs, active_tree_spec_index
