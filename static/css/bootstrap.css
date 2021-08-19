@@ -2308,8 +2308,9 @@ progress {
 }
 
 .form-control:disabled, .form-control[readonly] {
-  background-color: #e9ecef;
-  opacity: 1;
+    background-color: #423d3a;
+    border-color: #b0b7be;
+    opacity: 1;
 }
 
 .form-control::file-selector-button {
@@ -2508,7 +2509,8 @@ textarea.form-control-lg {
 }
 
 .form-select:disabled {
-  background-color: #e9ecef;
+    background-color: #e9ecef;
+    border-color: #b0b7be;
 }
 
 .form-select:-moz-focusring {
@@ -11502,4 +11504,5 @@ fieldset:disabled .btn {
     display: none !important;
   }
 }
-/*# sourceMappingURL=bootstrap.css.map */
+
+/*# sourceMappingURL=main.css.map */
