@@ -22,8 +22,9 @@
 {% for title, tree in trees.items %}
   <div class="my-2">
     <small>Link to passive tree:</small>
-    <input id="treeUrl" class='align-middle w-25 d-inline form-control form-control-sm' value="{{ tree.2 }}"/>
-    <button style='width:75px' class="btn btn-sm btn-outline-light btn-secondary" onclick="copyTreeUrl(this)">Copy
+    <input id="treeUrl" class='align-middle w-25 d-inline form-control form-control-sm' disabled value="{{ tree.2 }}"/>
+    <button id="treeUrlCopyBtn" style='width:75px' class="btn btn-sm btn-outline-light btn-secondary"
+            onclick="copyTreeUrl(this)">Copy
     </button>
   </div>
   <div class='tree' data-title="{{ title }}"
@@ -78,5 +79,10 @@ function copyTreeUrl(button) {
   navigator.clipboard.writeText(copyText.value);
 
   button.innerHTML = 'Copied!';
+
+  setTimeout(function () {
+    var copybtn = document.getElementById('treeUrlCopyBtn')
+    copybtn.innerText = 'Copy'
+  }, 3000);
 }
 </script>
