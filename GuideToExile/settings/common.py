@@ -1,4 +1,5 @@
 # Python imports
+import json
 import sys
 from os.path import abspath, basename, dirname, join, normpath
 
@@ -91,6 +92,10 @@ USE_I18N = False
 # We store the secret key here
 # The required SECRET_KEY is fetched at the end of this file
 SECRET_FILE = normpath(join(PROJECT_ROOT, 'run', 'SECRET.key'))
+
+# We store the database config here
+# It is fetched at the end of this file
+DATABASE_CONFIG_FILE = normpath(join(PROJECT_ROOT, 'run', 'database.config'))
 
 # these persons receive error notification
 ADMINS = (
@@ -212,3 +217,9 @@ except IOError:
             f.write(SECRET_KEY)
     except IOError:
         raise Exception('Could not open %s for writing!' % SECRET_FILE)
+
+DATABASES = {}
+
+# load database settings
+with open(DATABASE_CONFIG_FILE, 'r') as f:
+    DATABASES['default'] = json.load(f)

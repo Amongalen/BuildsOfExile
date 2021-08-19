@@ -13,7 +13,7 @@ class GraphElement(ABC):
 
     @property
     def color(self):
-        return "hsl(0, 100%, 50%)" if self.is_taken else "#736d6a"
+        return "#FF0000" if self.is_taken else "#736d6a"
 
     @property
     @abstractmethod

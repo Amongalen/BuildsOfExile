@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Union
 
 
 @dataclass
@@ -44,7 +45,7 @@ class Item:
 
 @dataclass
 class PobDetails:
-    build_stats: dict[str, str]
+    build_stats: dict[str, Union[int, float]]
     class_name: str
     ascendancy_name: str
     skill_groups: list[SkillGroup]

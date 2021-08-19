@@ -19,28 +19,28 @@ class ItemsService:
 
     @staticmethod
     def get_item_sets_details(guide):
-        items = guide.pob_details['items']
-        item_sets = guide.pob_details['item_sets']
+        items = guide.pob_details.items
+        item_sets = guide.pob_details.item_sets
         for item_set in item_sets:
             slots_with_items = {}
-            item_set['title'] = item_set['title'] if item_set['title'] else 'Default'
-            for slot, item_id in item_set['slots'].items():
+            item_set.title = item_set.title if item_set.title else 'Default'
+            for slot, item_id in item_set.slots.items():
                 for item in items:
-                    if item['item_id_in_itemset'] == item_id:
+                    if item.item_id_in_itemset == item_id:
                         slots_with_items[slot] = item
-                        item['color'] = COLOR_FOR_RARITY[item['rarity']]
+                        item.color = COLOR_FOR_RARITY[item.rarity]
                         break
-            item_set['slots_with_items'] = slots_with_items
+            item_set.slots_with_items = slots_with_items
         return item_sets
 
     def assign_assets_to_items(self, items):
         for item in items:
-            item['asset'] = self.asset_mapping.get_asset_name_for_gear(item)
+            item.asset = self.asset_mapping.get_asset_name_for_gear(item)
 
     def assign_assets_to_gems(self, skill_groups):
         for skill_group in skill_groups:
-            for gem in skill_group['gems']:
-                gem['asset'] = self.asset_mapping.get_asset_name_for_gem(gem)
+            for gem in skill_group.gems:
+                gem.asset = self.asset_mapping.get_asset_name_for_gem(gem)
 
 
 class AssetMapping:
@@ -60,16 +60,16 @@ class AssetMapping:
                     self.mapping[name] = f'{asset_dir}/{art_name}.png'
 
     def get_asset_name_for_gem(self, gem):
-        return self.mapping.get(gem['name'], None)
+        return self.mapping.get(gem.name, None)
 
     def get_asset_name_for_gear(self, item):
-        if item['rarity'] == 'UNIQUE':
-            return self.mapping.get(item['name'], None)
-        if item['rarity'] == 'RARE':
-            return self.mapping.get(item['base_name'], None)
+        if item.rarity == 'UNIQUE':
+            return self.mapping.get(item.name, None)
+        if item.rarity == 'RARE':
+            return self.mapping.get(item.base_name, None)
 
         # hacks for dealing with prefix and suffix
-        name = item['base_name']
+        name = item.base_name
         if x := self.mapping.get(name, None):
             return x
         prefixless_name = name.split(' ', maxsplit=1)[1]
