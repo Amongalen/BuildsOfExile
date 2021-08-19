@@ -13,14 +13,6 @@ DEBUG = True
 # allow all hosts during development
 ALLOWED_HOSTS = ['*']
 
-# ##### DATABASE CONFIGURATION ############################
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'myapp-djongo-db',
-    }
-}
-
 # ##### APPLICATION CONFIGURATION #########################
 
 INSTALLED_APPS = DEFAULT_APPS
