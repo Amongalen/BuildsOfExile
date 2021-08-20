@@ -23,8 +23,8 @@ class IndexView(generic.ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        """Return the last five published questions."""
-        return BuildGuide.objects.all()
+        results = BuildGuide.objects.all()
+        return results
 
 
 def show_guide_view(request, pk):

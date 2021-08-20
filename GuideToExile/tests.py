@@ -3,10 +3,11 @@ import json
 import requests
 from django.test import TestCase
 
-from GuideToExile import skill_tree, pob_import, settings
+from GuideToExile import skill_tree, pob_import
 from GuideToExile.exceptions import SkillTreeLoadingException, PastebinImportException
 from GuideToExile.models import BuildGuide
 from GuideToExile.scripts import ladder_imports
+from GuideToExile.settings.development import POB_PATH
 from GuideToExile.skill_tree import SkillTreeService
 from GuideToExile.tree_graph import TreeGraph
 from apps.pob_wrapper import PathOfBuilding
@@ -88,7 +89,7 @@ class TreeGraphTests(TestCase):
 
 class TestPobWrapper(TestCase):
     def test_pob_char_import(self):
-        pob = PathOfBuilding(settings.POB_PATH, settings.POB_PATH)
+        pob = PathOfBuilding(POB_PATH, POB_PATH)
         pob.import_build_as_xml('TheFriendly', 'TheFriendlyWidePeepow')
 
 
@@ -100,9 +101,9 @@ class TestImportBuildsScript(TestCase):
             ladder_imports.get_acc_and_chars_from_json(ladder_json)
 
     def test_get_pob_xml(self):
-        ladder_imports.get_pob_xml(acc_name='cycliox', char_name='gladysfkyourself')
+        ladder_imports.get_pob_xml(acc_name='kamilrogoz', char_name='Riteld')
 
     def test_save_as_guide(self):
         skill_tree_service = skill_tree.SkillTreeService()
-        ladder_imports.save_as_guide('cycliox', 'gladysfkyourself', 1, skill_tree_service)
+        ladder_imports.save_as_guide('kamilrogoz', 'Riteld', 1, skill_tree_service)
         self.assertEqual(1, BuildGuide.objects.count())

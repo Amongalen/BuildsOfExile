@@ -3,9 +3,10 @@ import json
 import logging
 from time import sleep
 
-from GuideToExile import settings, pob_import, skill_tree
+from GuideToExile import pob_import, skill_tree
 from GuideToExile.build_guide import create_build_guide
 from GuideToExile.models import UserProfile
+from GuideToExile.settings.development import POB_PATH
 from apps.pob_wrapper import PathOfBuilding
 
 
@@ -16,7 +17,7 @@ def get_acc_and_chars_from_json(ladder_json):
 
 
 def get_pob_xml(acc_name, char_name):
-    pob = PathOfBuilding(settings.POB_PATH, settings.POB_PATH, verbose=True)
+    pob = PathOfBuilding(POB_PATH, POB_PATH)
     xml = pob.import_build_as_xml(acc_name, char_name)
     pob.kill()
     return xml

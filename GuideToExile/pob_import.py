@@ -139,6 +139,8 @@ def extract_skills(xml_root):
         for gem_xml in group_xml:
             is_gem_enabled = parse_bool(gem_xml.get('enabled'))
             skill_id = gem_xml.get('skillId')
+            if 'Enchantment' in skill_id:
+                continue
             is_active_skill = skill_id is not None and 'Support' not in skill_id
             level = gem_xml.get('level')
             quality = gem_xml.get('quality')
@@ -147,6 +149,11 @@ def extract_skills(xml_root):
             gems.append(
                 SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
                          level=level, quality=quality, is_item_provided=is_item_provided))
+
+        if not gems:
+            continue
+        if source is not None and 'Tree' in source:
+            continue
         is_group_enabled = parse_bool(group_xml.get('enabled'))
         main_active_skill_index = group_xml.get('mainActiveSkill')
         main_active_skill_index = int(main_active_skill_index) if not main_active_skill_index == 'nil' else 1
@@ -161,8 +168,8 @@ def extract_skills(xml_root):
     main_skill_index_within_group = skill_groups[main_socket_group_index - 1].main_active_skill_index
     gems_in_main_group = skill_groups[main_socket_group_index - 1].gems
     active_gems_in_main_group = list(filter(lambda x: x.is_active_skill, gems_in_main_group))
-    main_active_skill = active_gems_in_main_group[main_skill_index_within_group - 1].name
-
+    main_active_skill = (active_gems_in_main_group[main_skill_index_within_group - 1].name
+                         if active_gems_in_main_group else None)
     return skill_groups, main_active_skill
 
 
