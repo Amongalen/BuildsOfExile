@@ -30,10 +30,11 @@
 }
 
 .poe-container {
-    height: 580px;
+    height: 615px;
     width: 255px;
     border: 1px solid #adb5bd;
     overflow: auto;
+    background: #352e2b;
 }
 
 button.link {
