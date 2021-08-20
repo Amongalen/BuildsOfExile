@@ -47,14 +47,14 @@ class AssetMapping:
     def __init__(self, asset_dir, base_items_lookup_file, unique_items_lookup_file):
         self.mapping = {}
         with open(base_items_lookup_file, 'r', encoding='utf-8') as file:
-            data = json.load(file)
+            data = json.load(file, object_pairs_hook=_dict_skip_duplicates)
             for details in data.values():
                 for name in details['names'].values():
                     if 'artName' in details:
                         self.mapping[name] = f'{asset_dir}/{details["artName"]}.png'
 
         with open(unique_items_lookup_file, 'r', encoding='utf-8') as file:
-            data = json.load(file)
+            data = json.load(file, object_pairs_hook=_dict_skip_duplicates)
             for lang in data.values():
                 for name, art_name in lang.items():
                     self.mapping[name] = f'{asset_dir}/{art_name}.png'
@@ -81,3 +81,14 @@ class AssetMapping:
         stripped_name = prefixless_name.split(' of ')[0]
         if x := self.mapping.get(stripped_name, None):
             return x
+
+
+def _dict_skip_duplicates(ordered_pairs):
+    """Reject duplicate keys."""
+    d = {}
+    for k, v in ordered_pairs:
+        if k in d:
+            continue
+        else:
+            d[k] = v
+    return d
