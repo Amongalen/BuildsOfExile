@@ -1,5 +1,9 @@
 from dataclasses import dataclass, field
-from typing import Union
+from typing import Union, Optional
+
+from GuideToExile import items_service
+
+assetMapping = items_service.AssetMapping()
 
 
 @dataclass
@@ -9,11 +13,17 @@ class SkillGem:
     is_active_skill: bool
     level: int
     quality: int
-    is_item_provided: bool
+    is_item_provided: bool = field(default=False)
+
+    @property
+    def asset(self):
+        return assetMapping.get_asset_name_for_gem(self.name)
 
 
 @dataclass
 class SkillGroup:
+    slot: Optional[str]
+    source: Optional[str]
     is_enabled: bool
     main_active_skill_index: int
     gems: list[SkillGem]
@@ -28,19 +38,24 @@ class TreeSpec:
 
 
 @dataclass
-class ItemSet:
-    set_id: int
-    title: str
-    slots: dict[str, int]
-
-
-@dataclass
 class Item:
     item_id_in_itemset: int
     name: str
     base_name: str
     rarity: str
     display_html: str
+    support_gems: list[SkillGem]
+
+    @property
+    def asset(self):
+        return assetMapping.get_asset_name_for_gear(self)
+
+
+@dataclass
+class ItemSet:
+    set_id: int
+    title: str
+    slots: dict[str, Item]
 
 
 @dataclass

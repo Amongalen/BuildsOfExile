@@ -8,7 +8,7 @@ from GuideToExile.data_classes import PobDetails
 class BuildDetailsJsonEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, PobDetails):
-            obj_str = jsonpickle.encode(obj)
+            obj_str = jsonpickle.encode(obj, make_refs=False)
             obj_dict = json.loads(obj_str)
             return obj_dict
 
@@ -22,6 +22,5 @@ class BuildDetailsJsonDecoder(json.JSONDecoder):
     @staticmethod
     def object_hook(obj):
         if "py/object" in obj.keys() and obj["py/object"] == "GuideToExile.data_classes.PobDetails":
-            test = json.dumps(obj)
-            return jsonpickle.decode(test)
+            return jsonpickle.decode(json.dumps(obj))
         return obj

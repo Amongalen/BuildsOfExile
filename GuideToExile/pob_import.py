@@ -1,4 +1,5 @@
 import base64
+import re
 import xml.etree.ElementTree as ET
 import zlib
 
@@ -8,6 +9,9 @@ from GuideToExile.data_classes import SkillGem, SkillGroup, TreeSpec, ItemSet, I
 from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException
 from GuideToExile.settings.development import POB_PATH
 from apps.pob_wrapper import PathOfBuilding
+
+SLOTS_ORDER = ['Weapon 1', 'Weapon 2', 'Body Armour', 'Gloves', 'Helmet', 'Boots', 'Amulet', 'Ring 1', 'Ring 2',
+               'Belt', 'Unassigned']
 
 
 def import_from_pastebin(url: str):
@@ -36,24 +40,28 @@ def parse_pob_details(xml: str):
     except Exception as err:
         raise BuildXmlParsingException(err)
 
-    build_stats = extract_stats(xml_root)
-    class_name = xml_root.find('Build').get('className')
-    ascendancy_name = xml_root.find('Build').get('ascendClassName')
-    skill_groups, main_active_skill = extract_skills(xml_root)
-    tree_specs, active_tree_spec_index = extract_tree_specs(xml_root)
-    items, item_sets, active_item_set_index = extract_items(xml_root)
+    skill_groups = extract_skills_groups(xml_root)
+    tree_specs = extract_tree_specs(xml_root)
+    items = extract_items(xml_root)
+    item_sets = extract_item_sets(xml_root, items)
+    main_active_skill = get_main_active_skill(skill_groups, xml_root)
     return PobDetails(
-        build_stats=build_stats,
-        class_name=class_name,
-        ascendancy_name=ascendancy_name,
+        build_stats=(extract_stats(xml_root)),
+        class_name=(xml_root.find('Build').get('className')),
+        ascendancy_name=(xml_root.find('Build').get('ascendClassName')),
         skill_groups=skill_groups,
-        main_active_skills=[main_active_skill],
+        main_active_skills=[main_active_skill] if main_active_skill else [],
         imported_primary_skill=main_active_skill,
         tree_specs=tree_specs,
-        active_tree_spec_index=active_tree_spec_index,
+        active_tree_spec_index=(int(xml_root.find('Tree').get('activeSpec')) - 1),
         items=items,
         item_sets=item_sets,
-        active_item_set_index=active_item_set_index)
+        active_item_set_index=(extract_active_item_set_index(xml_root)))
+
+
+def extract_active_item_set_index(xml_root):
+    return int(active_item_set_index) - 1 if (active_item_set_index := xml_root.find('Items').get(
+        'activeItemSet')) != 'nil' else 0
 
 
 def extract_stats(xml_root):
@@ -79,20 +87,6 @@ def extract_stats(xml_root):
 
 
 def extract_items(xml_root):
-    item_sets = []
-    for item_set_xml in xml_root.find('Items').findall('ItemSet'):
-        title = item_set_xml.get('title')
-        set_id = item_set_xml.get('id')
-        slots = {}
-        for slot_xml in item_set_xml:
-            item_id = int(slot_xml.get('itemId'))
-            if item_id != 0:
-                slot_name = slot_xml.get('name').lower().replace(' ', '-')
-                slots[slot_name] = item_id
-        item_sets.append(ItemSet(title=title,
-                                 set_id=set_id,
-                                 slots=slots))
-
     items = []
     pob = PathOfBuilding(POB_PATH, POB_PATH)
     for item_xml in xml_root.find('Items').findall('Item'):
@@ -111,44 +105,61 @@ def extract_items(xml_root):
                           name=item_name,
                           base_name=base_name,
                           rarity=item_rarity,
-                          display_html=item_display_html))
+                          display_html=item_display_html,
+                          support_gems=extract_support_gems_from_item(parts)))
     pob.kill()
+    return items
 
-    active_item_set_index = xml_root.find('Items').get('activeItemSet')
-    active_item_set_index = int(active_item_set_index) if active_item_set_index != 'nil' else 0
-    return items, item_sets, active_item_set_index
+
+def extract_support_gems_from_item(item_lines):
+    result = []
+    for line in item_lines:
+        match = re.match(r'^Socketed Gems are Supported by Level (\d+) (.*)$', line)
+        if match:
+            level = int(match.group(1))
+            name = f'{match.group(2)} Support'
+            result.append(SkillGem(name=name, level=level, quality=0, is_enabled=True, is_active_skill=False,
+                                   is_item_provided=True))
+    return result
+
+
+def extract_item_sets(xml_root, items):
+    items_by_id = {item.item_id_in_itemset: item for item in items}
+    item_sets = []
+    for item_set_xml in xml_root.find('Items').findall('ItemSet'):
+        title = title if (title := item_set_xml.get('title')) is not None else 'Default'
+        set_id = item_set_xml.get('id')
+        slots = {}
+        for slot_xml in item_set_xml:
+            item_id = int(slot_xml.get('itemId'))
+            if item_id != 0:
+                slot_name = slot_xml.get('name').lower().replace(' ', '-')
+                slots[slot_name] = items_by_id[item_id]
+        item_sets.append(ItemSet(title=title,
+                                 set_id=set_id,
+                                 slots=slots))
+    return item_sets
 
 
 def extract_tree_specs(xml_root):
     tree_specs = []
     for spec_xml in xml_root.find('Tree'):
         nodes = list(map(str, spec_xml.get('nodes').split(',')))
-        tree_specs.append(TreeSpec(title=spec_xml.get('title'),
+        title = title if (title := spec_xml.get('title')) is not None else 'Default'
+        tree_specs.append(TreeSpec(title=title,
                                    nodes=nodes,
                                    url=spec_xml.find('URL').text.strip(),
                                    tree_version=spec_xml.get('treeVersion')))
-    active_tree_spec_index = int(xml_root.find('Tree').get('activeSpec'))
-    return tree_specs, active_tree_spec_index
+
+    return tree_specs
 
 
-def extract_skills(xml_root):
+def extract_skills_groups(xml_root):
     skill_groups = []
     for group_xml in xml_root.find('Skills'):
-        gems = []
         source = group_xml.get('source')
-        for gem_xml in group_xml:
-            is_gem_enabled = parse_bool(gem_xml.get('enabled'))
-            skill_id = gem_xml.get('skillId')
-            if 'Enchantment' in skill_id:
-                continue
-            is_active_skill = skill_id is not None and 'Support' not in skill_id
-            level = gem_xml.get('level')
-            quality = gem_xml.get('quality')
-            is_item_provided = source is not None
-            name = gem_xml.get('nameSpec') if is_active_skill else f'{gem_xml.get("nameSpec")} Support'
-            gems.append(
-                SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
-                         level=level, quality=quality, is_item_provided=is_item_provided))
+        slot = slot if (slot := group_xml.get('slot')) else 'Unassigned'
+        gems = extract_gems_in_group(group_xml)
 
         if not gems:
             continue
@@ -156,21 +167,41 @@ def extract_skills(xml_root):
             continue
         is_group_enabled = parse_bool(group_xml.get('enabled'))
         main_active_skill_index = group_xml.get('mainActiveSkill')
-        main_active_skill_index = int(main_active_skill_index) if not main_active_skill_index == 'nil' else 1
+        main_active_skill_index = int(main_active_skill_index) - 1 if not main_active_skill_index == 'nil' else 0
         skill_groups.append(SkillGroup(is_enabled=is_group_enabled,
                                        main_active_skill_index=main_active_skill_index,
-                                       gems=gems))
-    main_socket_group_index = int(xml_root.find('Build').get('mainSocketGroup'))
+                                       gems=gems, source=source, slot=slot))
+    skill_groups.sort(key=lambda x: SLOTS_ORDER.index(x.slot))
+    return skill_groups
 
-    if len(skill_groups) == 0:
-        return skill_groups, []
 
-    main_skill_index_within_group = skill_groups[main_socket_group_index - 1].main_active_skill_index
-    gems_in_main_group = skill_groups[main_socket_group_index - 1].gems
-    active_gems_in_main_group = list(filter(lambda x: x.is_active_skill, gems_in_main_group))
-    main_active_skill = (active_gems_in_main_group[main_skill_index_within_group - 1].name
+def extract_gems_in_group(group_xml):
+    gems = []
+    for gem_xml in group_xml:
+        is_gem_enabled = parse_bool(gem_xml.get('enabled'))
+        skill_id = gem_xml.get('skillId')
+        if 'Enchantment' in skill_id:
+            continue
+        is_active_skill = skill_id is not None and 'Support' not in skill_id
+        level = gem_xml.get('level')
+        quality = gem_xml.get('quality')
+        name = gem_xml.get('nameSpec') if is_active_skill else f'{gem_xml.get("nameSpec")} Support'
+        gems.append(
+            SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
+                     level=level, quality=quality))
+    return gems
+
+
+def get_main_active_skill(skill_groups, xml_root):
+    if not len(skill_groups):
+        return None
+    main_socket_group_index = int(xml_root.find('Build').get('mainSocketGroup')) - 1
+    main_socket_group = skill_groups[main_socket_group_index]
+    main_skill_index_within_group = main_socket_group.main_active_skill_index
+    active_gems_in_main_group = list(filter(lambda x: x.is_active_skill, main_socket_group.gems))
+    main_active_skill = (active_gems_in_main_group[main_skill_index_within_group].name
                          if active_gems_in_main_group else None)
-    return skill_groups, main_active_skill
+    return main_active_skill
 
 
 def parse_bool(xml):

@@ -203,10 +203,33 @@ hr {
     grid-area: gear-flask-5;
 }
 
+.gear-bg-normal {
+    box-shadow: 0 0 25px #FFFFFF32 inset;
+    border: 2px solid #FFFFFF48;
+}
+
+.gear-bg-magic {
+    box-shadow: 0 0 25px #8888FF32 inset;
+    border: 2px solid #8888FF48;
+}
+
+.gear-bg-rare {
+    box-shadow: 0 0 25px #FFFF7732 inset;
+    border: 2px solid #FFFF7748;
+}
+
+.gear-bg-unique {
+    box-shadow: 0 0 25px #AF602532 inset;
+    border: 2px solid #AF602548;
+}
 
 .tooltip {
     font-size: 0.95rem;
     line-height: 1.4;
+}
+
+.tooltip-inner {
+    position: relative;
 }
 
 .chosen-container {
@@ -315,4 +338,15 @@ hr {
     border: 1px solid #9a9795;
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.gems-tooltip {
+    position: absolute;
+    left: 101%;
+    top: 0;
+    padding: 0.5rem 0.5rem;
+    background-color: #000;
+    border-radius: 0.25rem;
+    width: 500px;
+    text-align: initial;
 }

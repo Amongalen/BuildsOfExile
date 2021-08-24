@@ -1,99 +1,129 @@
 {% load static %}
-<div class="row">
-  <div class="col-6">
-    <div class="dropdown my-2">
-      Item set:
-      <button class="mx-1 btn btn-secondary text-light dropdown-toggle dropdown-toggle-gear" type="button"
-              id="dropdownMenuButton2"
-              data-bs-toggle="dropdown" aria-expanded="false">
-        {% for item_set in item_sets %}
-          {% if forloop.first %}
-            {{ item_set.title }}
+<div class="dropdown my-2">
+  Item set:
+  <button class="mx-1 btn btn-secondary text-light dropdown-toggle dropdown-toggle-item-set" type="button"
+          id="dropdownMenuButton2"
+          data-bs-toggle="dropdown" aria-expanded="false">
+    {% for item_set in item_sets %}
+      {% if forloop.first %}
+        {{ item_set.title }}
+      {% endif %}
+    {% endfor %}
+  </button>
+  <ul class="dropdown-menu dropdown-menu-item-set dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+    {% for item_set in item_sets %}
+      <li>
+        <button
+          class="link dropdown-item {% if forloop.counter == build_guide.pob_details.active_item_set_index %}active{% endif %}">
+          {{ item_set.title }}
+        </button>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% for item_set in item_sets %}
+  <div class="item-set" data-title="{{ item_set.title }}"
+       style="display: {% if forloop.first %}block{% else %}none{% endif %}">
+    {% if item_set.unassigned_skill_groups.values %}
+      <div class="row">
+      <div class="col-6">
+    {% endif %}
+    <div class="align-content-center justify-content-center">
+      <div class="gear-container">
+        {% for slot_name, item in item_set.slots.items %}
+          {% if 'flask' not in slot_name and 'abyssal' not in slot_name %}
+            <div class="gear-{{ slot_name }} gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                 data-bs-html="true" data-bs-placement="top" title="{{ item.display_html }}</div>
+                     {% if item.skill_groups %}
+                     <div class='gems-tooltip'>
+                        {% for skill_group in item.skill_groups %}
+                          {% for gem in skill_group.gems %}
+                            <div class='row'>
+                              <div class='col-10'>
+                                <img srcset='{% static gem.asset %}' alt='{{ gem.name }}' style='max-width:30px; max-height: 30px'/>
+                                <span
+                                  class='{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}'>{{ gem.name }}</span>
+                              </div>
+                              <div class='col'>
+                                <div class='w-100 float-end row small g-0 justify-content-between text-center' style='width: 45px'>
+                                  <div class='col-4'>{{ gem.level }}</div>
+                                  <div class='col-4'>/</div>
+                                  <div class='col-4'>{{ gem.quality }}</div>
+                                </div>
+                              </div>
+                            </div>
+                          {% endfor %}
+                          {% if not forloop.last %}
+                            <hr>
+                          {% endif %}
+                        {% endfor %}
+                     </div>
+                    {% endif %}">
+              <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+            </div>
           {% endif %}
         {% endfor %}
-      </button>
-      <ul class="dropdown-menu dropdown-menu-gear dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-        {% for item_set in item_sets %}
-          <li>
-            <button class="link dropdown-item {% if forloop.first %}active{% endif %}">
-              {{ item_set.title }}
-            </button>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% for item_set in item_sets %}
-      <div class='gear' data-title="{{ item_set.title }}"
-           style="display: {% if forloop.first %}block{% else %}none{% endif %}">
-        <div class="align-content-center justify-content-center">
-          <div class="gear-container">
-            {% for slot_name, item in item_set.slots_with_items.items %}
-              {% if 'flask' not in slot_name and 'abyssal' not in slot_name %}
-                <div class="gear-{{ slot_name }} gear-slot" data-bs-toggle="tooltip" data-bs-html="true"
-                     data-bs-placement="bottom" title="{{ item.display_html }}"
-                     alt="{{ item.name }}"
-                     style="box-shadow: 0 0 25px {{ item.color }}32 inset;
-                       border: 2px solid {{ item.color }}48;">
-                  <img srcset='{% static item.asset %} 1.6x'>
-                </div>
-              {% endif %}
-            {% endfor %}
 
-            <div class="gear-flasks">
-              {% for slot_name, item in item_set.slots_with_items.items %}
-                {% if 'flask' in slot_name %}
-                  <div class="gear-{{ slot_name }} gear-slot" data-bs-toggle="tooltip" data-bs-html="true"
-                       data-bs-placement="bottom" title="{{ item.display_html }}"
-                       alt="{{ item.name }}"
-                       style="box-shadow: 0 0 25px {{ item.color }}32 inset;
-                         border: 2px solid {{ item.color }}48;">
-                    <img srcset='{% static item.asset %} 1.6x'>
+        <div class="gear-flasks">
+          {% for slot_name, item in item_set.slots.items %}
+            {% if 'flask' in slot_name %}
+              <div class="gear-{{ slot_name }} gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                   data-bs-html="true" data-bs-placement="bottom"
+                   title="{{ item.display_html }}">
+                <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+      {% if item_set.unassigned_skill_groups.values %}
+        </div>
+        </div>
+        <div class="col">
+          <h5>Additional skill gems:</h5>
+          {% for skill_slot in item_set.unassigned_skill_groups.values %}
+            <div class="bg-secondary rounded-3 my-2 p-2">
+              {{ skill_slot.0.slot }}
+              {% for skill_group in skill_slot %}
+                {% for gem in skill_group.gems %}
+                  <div class="row">
+                    <div class="col-10">
+                      <img srcset='{% static gem.asset %}' alt="{{ gem.name }}"
+                           style='max-width:30px; max-height: 30px'/>
+                      <span
+                        class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>
+                    </div>
+                    <div class="col">
+                      <div class="w-100 float-end row small g-0 justify-content-between text-center"
+                           style="width: 45px">
+                        <div class="col-4">{{ gem.level }}</div>
+                        <div class="col-4">/</div>
+                        <div class="col-4">{{ gem.quality }}</div>
+                      </div>
+                    </div>
                   </div>
+                {% endfor %}
+                {% if not forloop.last %}
+                  <hr>
                 {% endif %}
               {% endfor %}
             </div>
-          </div>
+          {% endfor %}
         </div>
-      </div>
-    {% endfor %}
-
+      {% endif %}
+    </div>
   </div>
-  <div class="col-6">
-    {% for skill_group in build_guide.pob_details.skill_groups %}
-      <div class="bg-secondary rounded-3 my-2 p-2">
-        {% for gem in skill_group.gems %}
-          <div class="row">
-            <div class="col-10">
-              <img srcset='{% static gem.asset %} 2.2x' alt="{{ gem.name }}"/>
-              <span
-                class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>
-              {% if gem.is_item_provided %}
-                <span class="small"><em>(provided by an item)</em></span>
-              {% endif %}
-            </div>
-            <div class="col">
-              <div class="float-end row small g-0 justify-content-between text-center" style="width: 45px">
-                <div class="col-4">{{ gem.level }}</div>
-                <div class="col-4">/</div>
-                <div class="col-4">{{ gem.quality }}</div>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% endfor %}
-  </div>
-</div>
+{% endfor %}
 
 <script>$(function () {
-  $(".dropdown-menu-gear li button").click(function () {
-    $(".dropdown-toggle-gear").text($(this).text());
-    $(".dropdown-toggle-gear").val($(this).text());
-    $(".dropdown-menu-gear li button.active").removeClass('active')
+  $(".dropdown-menu-item-set li button").click(function () {
+    $(".dropdown-toggle-item-set").text($(this).text());
+    $(".dropdown-toggle-item-set").val($(this).text());
+    $(".dropdown-menu-item-set li button.active").removeClass('active')
     $(this).addClass('active')
 
-    $("div.gear").each(function (i, element) {
-      let title1 = $(".dropdown-toggle-gear").text().trim()
+    $("div.item-set").each(function (i, element) {
+      let title1 = $(".dropdown-toggle-item-set").text().trim()
       let title2 = $(element).data("title").trim()
       if (title1 === title2) {
         $(element).show()

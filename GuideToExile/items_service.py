@@ -1,66 +1,32 @@
+import copy
 import json
+from collections import defaultdict
 
 from django.contrib.staticfiles import finders
 
 from GuideToExile.settings.development import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE
 
-COLOR_FOR_RARITY = {
-    'UNIQUE': '#AF6025',
-    'RARE': '#FFFF77',
-    'MAGIC': '#8888FF',
-    'NORMAL': '#FFFFFF',
-}
-
-
-class ItemsService:
-    def __init__(self):
-        self.asset_mapping = AssetMapping(ASSET_DIR, finders.find(BASE_ITEMS_LOOKUP_FILE),
-                                          finders.find(UNIQUE_ITEMS_LOOKUP_FILE))
-
-    @staticmethod
-    def get_item_sets_details(guide):
-        items = guide.pob_details.items
-        item_sets = guide.pob_details.item_sets
-        for item_set in item_sets:
-            slots_with_items = {}
-            item_set.title = item_set.title if item_set.title else 'Default'
-            for slot, item_id in item_set.slots.items():
-                for item in items:
-                    if item.item_id_in_itemset == item_id:
-                        slots_with_items[slot] = item
-                        item.color = COLOR_FOR_RARITY[item.rarity]
-                        break
-            item_set.slots_with_items = slots_with_items
-        return item_sets
-
-    def assign_assets_to_items(self, items):
-        for item in items:
-            item.asset = self.asset_mapping.get_asset_name_for_gear(item)
-
-    def assign_assets_to_gems(self, skill_groups):
-        for skill_group in skill_groups:
-            for gem in skill_group.gems:
-                gem.asset = self.asset_mapping.get_asset_name_for_gem(gem)
-
 
 class AssetMapping:
-    def __init__(self, asset_dir, base_items_lookup_file, unique_items_lookup_file):
+    def __init__(self):
+        base_items_lookup_file = finders.find(BASE_ITEMS_LOOKUP_FILE)
+        unique_items_lookup_file = finders.find(UNIQUE_ITEMS_LOOKUP_FILE)
         self.mapping = {}
         with open(base_items_lookup_file, 'r', encoding='utf-8') as file:
             data = json.load(file, object_pairs_hook=_dict_skip_duplicates)
             for details in data.values():
                 for name in details['names'].values():
                     if 'artName' in details:
-                        self.mapping[name] = f'{asset_dir}/{details["artName"]}.png'
+                        self.mapping[name] = f'{ASSET_DIR}/{details["artName"]}.png'
 
         with open(unique_items_lookup_file, 'r', encoding='utf-8') as file:
             data = json.load(file, object_pairs_hook=_dict_skip_duplicates)
             for lang in data.values():
                 for name, art_name in lang.items():
-                    self.mapping[name] = f'{asset_dir}/{art_name}.png'
+                    self.mapping[name] = f'{ASSET_DIR}/{art_name}.png'
 
-    def get_asset_name_for_gem(self, gem):
-        return self.mapping.get(gem.name, None)
+    def get_asset_name_for_gem(self, gem_name):
+        return self.mapping.get(gem_name, None)
 
     def get_asset_name_for_gear(self, item):
         if item.rarity == 'UNIQUE':
@@ -92,3 +58,22 @@ def _dict_skip_duplicates(ordered_pairs):
         else:
             d[k] = v
     return d
+
+
+def assign_skills_to_items(item_sets, skill_groups):
+    item_sets = copy.deepcopy(item_sets)
+    skill_groups_by_slot = defaultdict(list)
+    for skill_group in skill_groups:
+        slot_name = skill_group.slot.lower().replace(' ', '-')
+        skill_groups_by_slot[slot_name].append(skill_group)
+
+    for item_set in item_sets:
+        for slot_name, item in item_set.slots.items():
+            item.skill_groups = []
+            if slot_name in skill_groups_by_slot:
+                skill_groups = copy.deepcopy(skill_groups_by_slot[slot_name])
+                for skill_group in skill_groups:
+                    skill_group.gems.extend(item.support_gems)
+                item.skill_groups.extend(skill_groups)
+        item_set.unassigned_skill_groups = {k: v for k, v in skill_groups_by_slot.items() if k not in item_set.slots}
+    return item_sets

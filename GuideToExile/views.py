@@ -14,7 +14,6 @@ from .forms import SignUpForm, NewGuideForm, EditGuideForm
 from .tokens import account_activation_token
 
 skill_tree_service = skill_tree.SkillTreeService()
-items_service = items_service.ItemsService()
 
 
 class IndexView(generic.ListView):
@@ -32,15 +31,15 @@ def show_guide_view(request, pk):
     tree_specs = guide.pob_details.tree_specs
     trees = {}
     for tree_spec in tree_specs:
-        title = tree_spec.title if tree_spec.title else 'Default'
         tree_html = skill_tree_service.get_html_with_taken_nodes(tree_spec.nodes, tree_spec.tree_version)
         keystones = skill_tree_service.get_keystones(tree_spec.nodes, tree_spec.tree_version)
-        trees[title] = (tree_html, keystones, tree_spec.url)
-    items_service.assign_assets_to_items(guide.pob_details.items)
-    items_service.assign_assets_to_gems(guide.pob_details.skill_groups)
-    item_sets = items_service.get_item_sets_details(guide)
+        trees[tree_spec.title] = (tree_html, keystones, tree_spec.url)
 
-    return render(request, 'show_guide.html', {'pk': pk, 'build_guide': guide, 'trees': trees, "item_sets": item_sets})
+    item_sets_with_skills = items_service.assign_skills_to_items(guide.pob_details.item_sets,
+                                                                 guide.pob_details.skill_groups)
+
+    return render(request, 'show_guide.html',
+                  {'pk': pk, 'build_guide': guide, 'trees': trees, "item_sets": item_sets_with_skills})
 
 
 def new_guide_view(request):
@@ -86,7 +85,6 @@ def edit_guide_view(request, pk):
         form = EditGuideForm(active_skills, {'title': guide.title,
                                              'text': guide.text,
                                              'primary_skills': guide.pob_details.main_active_skills}, )
-    items_service.assign_assets_to_items(guide.pob_details.items)
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': guide})
 
 

@@ -12,7 +12,8 @@
   <ul class="dropdown-menu dropdown-menu-tree dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
     {% for tree_graph_title in trees.keys %}
       <li>
-        <button class="link dropdown-item {% if forloop.first %}active{% endif %}">
+        <button
+          class="link dropdown-item {% if forloop.counter == build_guide.pob_details.active_tree_spec_index %}active{% endif %}">
           {{ tree_graph_title }}
         </button>
       </li>
