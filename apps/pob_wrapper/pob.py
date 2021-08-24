@@ -59,7 +59,8 @@ def _mark_item_groups(output):
     hr_pos = output.rfind('<hr/>')
     output = f'<div class="item">\n{output[:hr_pos]}</div>\n<hr/>\n<div class="results">\n{output[hr_pos + 6:]}\n</div>'
     output = re.sub(r'\n(?:<div>)((?:Equipping|Removing) this item.+:)\n(\(.+\))</div>((?:\n.*</div>)+)',
-                    r'<div class="option">\n<div class="hdr1">\1</div>\n<div class="hdr2">\2</div>\3\n</div>\n', output)
+                    r'<div class="option">\n<div class="hdr1">\1</div>\n<div class="hdr2">\2</div>\3\n</div>\n',
+                    output)
     output = re.sub(r'\n<hr/>\n<hr/>', r'\n<hr/>', output)
     return output
 
@@ -124,12 +125,14 @@ class PathOfBuilding:
         lines = [_pob_line_to_html(line) for line in lines]
         output = '\n'.join(lines)
         output = _mark_item_groups(output)
-        regex = '\n<hr/>\n</div>\n<hr/>\n<div class="results">.*$'
+        regex = r'\n<hr/>\n</div>\n<hr/>\n<div class="results">.*$'
         result = re.sub(regex, '', output, flags=re.S)
-        regex = '\n<hr/>\n<div class="results">.*$'
+        regex = r'\n<hr/>\n<div class="results">.*$'
+        result = re.sub(regex, '', result, flags=re.S)
+        regex = r'(<hr/>|\n)+$'
         result = re.sub(regex, '', result, flags=re.S)
 
-        return result
+        return result + '</div>'
 
     def import_build_as_xml(self, account_name, char_name):
         lines = self._send(f'importBuild("{account_name}", "{char_name}")')

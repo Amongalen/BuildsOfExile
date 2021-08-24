@@ -52,6 +52,7 @@ def parse_pob_details(xml: str):
     tree_specs = extract_tree_specs(xml_root)
     items = extract_items(xml_root)
     item_sets = extract_item_sets(xml_root, items)
+    used_jewels = extract_used_jewels(xml_root, items)
     return PobDetails(
         build_stats=(extract_stats(xml_root)),
         class_name=(xml_root.find('Build').get('className')),
@@ -63,7 +64,34 @@ def parse_pob_details(xml: str):
         active_tree_spec_index=(int(xml_root.find('Tree').get('activeSpec')) - 1),
         items=items,
         item_sets=item_sets,
-        active_item_set_index=(extract_active_item_set_index(xml_root)))
+        active_item_set_index=extract_active_item_set_index(xml_root),
+        used_jewels=used_jewels)
+
+
+def extract_used_jewels(xml_root, items):
+    jewels_in_tree = set(item_id for spec_xml in xml_root.find('Tree')
+                         for socket_xml in spec_xml.find('Sockets')
+                         if (item_id := int(socket_xml.get('itemId'))) != 0)
+    jewels_in_items = set(item_id for item_set_xml in xml_root.find('Items').findall('ItemSet')
+                          for slot_xml in item_set_xml
+                          if (item_id := int(slot_xml.get('itemId'))) != 0
+                          and 'Abyssal' in slot_xml.get('name'))
+    all_jewels = jewels_in_items | jewels_in_tree
+
+    items_by_id = {item.item_id_in_itemset: item for item in items}
+    used_jewels = {'abyssal': [],
+                   'normal': [],
+                   'cluster': []}
+    for jewel_id in all_jewels:
+        jewel = items_by_id[jewel_id]
+        if 'Eye' in jewel.base_name:
+            used_jewels['abyssal'].append(jewel)
+        elif 'Cluster' in jewel.base_name:
+            used_jewels['cluster'].append(jewel)
+        else:
+            used_jewels['normal'].append(jewel)
+
+    return used_jewels
 
 
 def extract_active_item_set_index(xml_root):

@@ -71,6 +71,7 @@ class PobDetails:
     items: list[Item]
     item_sets: list[ItemSet]
     active_item_set_index: int
+    used_jewels: dict[str, list[Item]]
 
 
 @dataclass

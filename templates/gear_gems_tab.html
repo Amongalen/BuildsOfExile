@@ -33,7 +33,7 @@
         {% for slot_name, item in item_set.slots.items %}
           {% if 'flask' not in slot_name and 'abyssal' not in slot_name %}
             <div class="gear-{{ slot_name }} gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
-                 data-bs-html="true" data-bs-placement="top" title="{{ item.display_html }}</div>
+                 data-bs-html="true" data-bs-placement="top" title="{{ item.display_html }}
                      {% if item.skill_groups %}
                      <div class='gems-tooltip'>
                         {% for skill_group in item.skill_groups %}
@@ -76,6 +76,44 @@
           {% endfor %}
         </div>
       </div>
+      {% with build_guide.pob_details.used_jewels as used_jewels %}
+        {% if used_jewels.abyssal %}
+          Abyssal jewels:
+          <div class="gear-jewels-container my-1">
+            {% for item in used_jewels.abyssal %}
+              <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                   data-bs-html="true" data-bs-placement="bottom"
+                   title="{{ item.display_html }}">
+                <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if used_jewels.cluster %}
+          Cluster jewels:
+          <div class="gear-jewels-container my-1">
+            {% for item in used_jewels.cluster %}
+              <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                   data-bs-html="true" data-bs-placement="bottom"
+                   title="{{ item.display_html }}">
+                <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if used_jewels.normal %}
+          Other jewels:
+          <div class="gear-jewels-container my-1">
+            {% for item in used_jewels.normal %}
+              <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                   data-bs-html="true" data-bs-placement="bottom"
+                   title="{{ item.display_html }}">
+                <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
       {% if item_set.unassigned_skill_groups.values %}
         </div>
         </div>
