@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from django.contrib.staticfiles import finders
 
-from GuideToExile.settings import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE
+from GuideToExile.settings import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE, GEMS_FILE
 
 
 class AssetMapping:
@@ -77,3 +77,21 @@ def assign_skills_to_items(item_sets, skill_groups):
                 item.skill_groups.extend(skill_groups)
         item_set.unassigned_skill_groups = {k: v for k, v in skill_groups_by_slot.items() if k not in item_set.slots}
     return item_sets
+
+
+class GemMapping:
+    def __init__(self):
+        gems_file = finders.find(GEMS_FILE)
+        self.mapping = {}
+        with open(gems_file, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            for key, details in data.items():
+                if 'active_skill' in details:
+                    self.mapping[key] = details['active_skill']['display_name']
+                elif 'base_item' in details and details['base_item'] is not None:
+                    self.mapping[key] = details['base_item']['display_name']
+                else:
+                    self.mapping[key] = 'None'
+
+    def get_name(self, skill_id):
+        return self.mapping[skill_id]

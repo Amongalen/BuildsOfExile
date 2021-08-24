@@ -5,6 +5,7 @@ import zlib
 
 import requests
 
+from GuideToExile import items_service
 from GuideToExile.data_classes import SkillGem, SkillGroup, TreeSpec, ItemSet, Item, PobDetails
 from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException
 from GuideToExile.settings import POB_PATH
@@ -12,6 +13,8 @@ from apps.pob_wrapper import PathOfBuilding
 
 SLOTS_ORDER = ['Weapon 1', 'Weapon 2', 'Body Armour', 'Gloves', 'Helmet', 'Boots', 'Amulet', 'Ring 1', 'Ring 2',
                'Belt', 'Unassigned']
+
+GEM_MAPPING = items_service.GemMapping()
 
 
 def import_from_pastebin(url: str):
@@ -185,7 +188,7 @@ def extract_gems_in_group(group_xml):
         is_active_skill = skill_id is not None and 'Support' not in skill_id
         level = gem_xml.get('level')
         quality = gem_xml.get('quality')
-        name = gem_xml.get('nameSpec') if is_active_skill else f'{gem_xml.get("nameSpec")} Support'
+        name = GEM_MAPPING.get_name(skill_id)
         gems.append(
             SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
                      level=level, quality=quality))

@@ -41,3 +41,4 @@ LOGGING = {
 ASSET_DIR = r'poe_assets'
 BASE_ITEMS_LOOKUP_FILE = r'poe_assets\base_items_lookup.json'
 UNIQUE_ITEMS_LOOKUP_FILE = r'poe_assets\unique_items_lookup.json'
+GEMS_FILE = r'poe_assets\gems.min.json'
