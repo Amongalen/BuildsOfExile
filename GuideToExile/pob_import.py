@@ -44,10 +44,14 @@ def parse_pob_details(xml: str):
         raise BuildXmlParsingException(err)
 
     skill_groups = extract_skills_groups(xml_root)
+
+    # sorting must be after picking main skill, in the xml they use index for that, not id
+    main_active_skill = get_main_active_skill(skill_groups, xml_root)
+    skill_groups.sort(key=lambda x: SLOTS_ORDER.index(x.slot))
+
     tree_specs = extract_tree_specs(xml_root)
     items = extract_items(xml_root)
     item_sets = extract_item_sets(xml_root, items)
-    main_active_skill = get_main_active_skill(skill_groups, xml_root)
     return PobDetails(
         build_stats=(extract_stats(xml_root)),
         class_name=(xml_root.find('Build').get('className')),
@@ -174,7 +178,6 @@ def extract_skills_groups(xml_root):
         skill_groups.append(SkillGroup(is_enabled=is_group_enabled,
                                        main_active_skill_index=main_active_skill_index,
                                        gems=gems, source=source, slot=slot))
-    skill_groups.sort(key=lambda x: SLOTS_ORDER.index(x.slot))
     return skill_groups
 
 
