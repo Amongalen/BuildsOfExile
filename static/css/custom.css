@@ -235,6 +235,11 @@ hr {
     border: 2px solid #AF602548;
 }
 
+.gear-bg-placeholder {
+    box-shadow: 0 0 25px #FFFFFF08 inset;
+    border: 2px solid #FFFFFF0A;
+}
+
 .tooltip {
     font-size: 0.95rem;
     line-height: 1.4;
@@ -359,6 +364,6 @@ hr {
     padding: 0.5rem 0.5rem;
     background-color: #000;
     border-radius: 0.25rem;
-    width: 500px;
+    width: 450px;
     text-align: initial;
 }

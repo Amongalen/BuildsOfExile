@@ -15,6 +15,9 @@ from .tokens import account_activation_token
 
 skill_tree_service = skill_tree.SkillTreeService()
 
+GEAR_SLOTS = ['weapon-1', 'weapon-2', 'helmet', 'body-armour', 'belt', 'ring-1', 'ring-2', 'amulet', 'boots', 'gloves',
+              'flask-1', 'flask-2', 'flask-3', 'flask-4', 'flask-5']
+
 
 class IndexView(generic.ListView):
     template_name = 'index.html'
@@ -39,7 +42,8 @@ def show_guide_view(request, pk):
                                                                  guide.pob_details.skill_groups)
 
     return render(request, 'show_guide.html',
-                  {'pk': pk, 'build_guide': guide, 'trees': trees, "item_sets": item_sets_with_skills})
+                  {'pk': pk, 'build_guide': guide, 'trees': trees, 'item_sets': item_sets_with_skills,
+                   'gear_slots': GEAR_SLOTS})
 
 
 def new_guide_view(request):
