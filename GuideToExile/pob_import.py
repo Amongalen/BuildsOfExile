@@ -220,9 +220,11 @@ def extract_gems_in_group(group_xml):
         level = gem_xml.get('level')
         quality = gem_xml.get('quality')
         name = GEM_MAPPING.get_name(skill_id)
+        gem_id = gem_xml.get('gemId')
+        is_item_provided = True if gem_id is None else False
         gems.append(
             SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
-                     level=level, quality=quality))
+                     level=level, quality=quality, is_item_provided=is_item_provided))
     return gems
 
 

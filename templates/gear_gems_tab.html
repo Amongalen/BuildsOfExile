@@ -39,9 +39,14 @@
                           {% for gem in skill_group.gems %}
                             <div class='row'>
                               <div class='col-10'>
-                                <img srcset='{% static gem.asset %}' alt='{{ gem.name }}' style='max-width:30px; max-height: 30px'/>
+                                <img srcset='
+                  {% if gem.is_item_provided %}{% static item.asset %}{% else %}{% static gem.asset %}{% endif %}'
+                                alt='{{ gem.name }}' style='width:30px; height: 30px'/>
                                 <span
                                   class='{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}'>{{ gem.name }}</span>
+                                  {% if gem.is_item_provided %}
+                                    <em class='small'>(Item provided)</em>
+                                  {% endif %}
                               </div>
                               <div class='col'>
                                 <div class='float-end row small g-0 justify-content-between text-center' style='width: 45px'>
