@@ -7,7 +7,7 @@ from GuideToExile import skill_tree, pob_import
 from GuideToExile.exceptions import SkillTreeLoadingException, PastebinImportException
 from GuideToExile.models import BuildGuide
 from GuideToExile.scripts import ladder_imports
-from GuideToExile.settings.development import POB_PATH
+from GuideToExile.settings import POB_PATH
 from GuideToExile.skill_tree import SkillTreeService
 from GuideToExile.tree_graph import TreeGraph
 from apps.pob_wrapper import PathOfBuilding

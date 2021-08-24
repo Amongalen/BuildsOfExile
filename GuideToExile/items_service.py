@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from django.contrib.staticfiles import finders
 
-from GuideToExile.settings.development import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE
+from GuideToExile.settings import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE
 
 
 class AssetMapping:

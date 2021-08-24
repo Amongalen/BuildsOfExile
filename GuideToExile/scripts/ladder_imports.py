@@ -6,7 +6,7 @@ from time import sleep
 from GuideToExile import pob_import, skill_tree
 from GuideToExile.build_guide import create_build_guide
 from GuideToExile.models import UserProfile
-from GuideToExile.settings.development import POB_PATH
+from GuideToExile.settings import POB_PATH
 from apps.pob_wrapper import PathOfBuilding
 
 

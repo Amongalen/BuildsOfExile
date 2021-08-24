@@ -7,7 +7,7 @@ import requests
 
 from GuideToExile.data_classes import SkillGem, SkillGroup, TreeSpec, ItemSet, Item, PobDetails
 from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException
-from GuideToExile.settings.development import POB_PATH
+from GuideToExile.settings import POB_PATH
 from apps.pob_wrapper import PathOfBuilding
 
 SLOTS_ORDER = ['Weapon 1', 'Weapon 2', 'Body Armour', 'Gloves', 'Helmet', 'Boots', 'Amulet', 'Ring 1', 'Ring 2',
