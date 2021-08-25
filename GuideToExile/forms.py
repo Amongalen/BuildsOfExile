@@ -1,4 +1,4 @@
-import traceback
+import logging
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
@@ -8,6 +8,8 @@ from django.forms import Form
 
 from GuideToExile import pob_import
 from apps.django_tiptap.widgets import TipTapWidget
+
+logger = logging.getLogger('guidetoexile')
 
 
 class SignUpForm(UserCreationForm):
@@ -32,7 +34,7 @@ class NewGuideForm(Form):
             xml = pob_import.base64_to_xml(data)
             return pob_import.parse_pob_details(xml), data
         except Exception as err:
-            traceback.print_exc()
+            logger.error('Something went wrong while importing a build', exc_info=True)
             raise ValidationError('Invalid export code or Pastebin link', code='invalid_pob_string')
 
 

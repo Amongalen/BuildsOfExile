@@ -1,4 +1,5 @@
 import base64
+import logging
 import re
 import xml.etree.ElementTree as ET
 import zlib
@@ -11,6 +12,8 @@ from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingExce
 from GuideToExile.settings import POB_PATH
 from apps.pob_wrapper import PathOfBuilding
 
+logger = logging.getLogger('guidetoexile')
+
 SLOTS_ORDER = ['Weapon 1', 'Weapon 2', 'Body Armour', 'Gloves', 'Helmet', 'Boots', 'Amulet', 'Ring 1', 'Ring 2',
                'Belt', 'Unassigned']
 
@@ -18,6 +21,7 @@ GEM_MAPPING = items_service.GemMapping()
 
 
 def import_from_pastebin(url: str):
+    logger.debug('Importing from Pastebin: %s', url)
     parts = url.rsplit('/', maxsplit=1)
     if parts[0] != 'https://pastebin.com':
         raise PastebinImportException('Incorrect Pastebin URL - must start with "https://pastebin.com/"')
@@ -38,6 +42,7 @@ def xml_to_base64(xml):
 
 
 def parse_pob_details(xml: str):
+    logger.debug('Parsing PoB XML')
     try:
         xml_root = ET.fromstring(xml)
     except Exception as err:
@@ -53,6 +58,7 @@ def parse_pob_details(xml: str):
     items = extract_items(xml_root)
     item_sets = extract_item_sets(xml_root, items)
     used_jewels = extract_used_jewels(xml_root, items)
+    logger.debug('Parsed PoB XML')
     return PobDetails(
         build_stats=(extract_stats(xml_root)),
         class_name=(xml_root.find('Build').get('className')),
@@ -69,6 +75,7 @@ def parse_pob_details(xml: str):
 
 
 def extract_used_jewels(xml_root, items):
+    logger.debug('Extracting jewels')
     jewels_in_tree = set(item_id for spec_xml in xml_root.find('Tree')
                          for socket_xml in spec_xml.find('Sockets')
                          if (item_id := int(socket_xml.get('itemId'))) != 0)
@@ -122,6 +129,7 @@ def extract_stats(xml_root):
 
 
 def extract_items(xml_root):
+    logger.debug('Extracting items')
     items = []
     pob = PathOfBuilding(POB_PATH, POB_PATH)
     for item_xml in xml_root.find('Items').findall('Item'):
@@ -159,6 +167,7 @@ def extract_support_gems_from_item(item_lines):
 
 
 def extract_item_sets(xml_root, items):
+    logger.debug('Extracting item sets')
     items_by_id = {item.item_id_in_itemset: item for item in items}
     item_sets = []
     for item_set_xml in xml_root.find('Items').findall('ItemSet'):
@@ -177,6 +186,7 @@ def extract_item_sets(xml_root, items):
 
 
 def extract_tree_specs(xml_root):
+    logger.debug('Extracting tree specs')
     tree_specs = []
     for spec_xml in xml_root.find('Tree'):
         nodes = list(map(str, spec_xml.get('nodes').split(',')))
@@ -190,6 +200,8 @@ def extract_tree_specs(xml_root):
 
 
 def extract_skills_groups(xml_root):
+    logger.debug('Extracting skill groups')
+
     skill_groups = []
     for group_xml in xml_root.find('Skills'):
         source = group_xml.get('source')

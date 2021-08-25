@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
@@ -12,6 +14,8 @@ from GuideToExile.models import BuildGuide
 from . import skill_tree, build_guide, items_service
 from .forms import SignUpForm, NewGuideForm, EditGuideForm
 from .tokens import account_activation_token
+
+logger = logging.getLogger('guidetoexile')
 
 skill_tree_service = skill_tree.SkillTreeService()
 
@@ -30,6 +34,7 @@ class IndexView(generic.ListView):
 
 
 def show_guide_view(request, pk):
+    logger.info('Show guide pk=%s', pk)
     guide = get_object_or_404(BuildGuide, build_id=pk)
     tree_specs = guide.pob_details.tree_specs
     trees = {}
@@ -48,6 +53,7 @@ def show_guide_view(request, pk):
 
 def new_guide_view(request):
     if request.method == 'POST':
+        logger.info('Creating new guide')
         form = NewGuideForm(request.POST)
         if form.is_valid():
             build_details, pob_string = form.cleaned_data['pob_input']
@@ -73,6 +79,7 @@ def edit_guide_view(request, pk):
     active_skills.sort(key=lambda v: v[0] == imported_primary_skill, reverse=True)
 
     if request.method == 'POST':
+        logger.info('Editing guide pk=%s', pk)
         data = request.POST.copy()
         if 'primary_skills' not in data:
             data['primary_skills'] = imported_primary_skill

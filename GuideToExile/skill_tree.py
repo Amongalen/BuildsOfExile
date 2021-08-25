@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from collections import defaultdict
 
@@ -6,6 +7,8 @@ from GuideToExile.data_classes import NodeGroup, TreeNode, SkillTree
 from GuideToExile.exceptions import SkillTreeLoadingException
 from GuideToExile.settings.common import ASC_TREE_X, ASC_TREE_Y
 from GuideToExile.tree_graph import TreeGraph
+
+logger = logging.getLogger('guidetoexile')
 
 
 class SkillTreeService:
@@ -19,7 +22,7 @@ class SkillTreeService:
                 skill_tree = _read_tree_data_file(f.path + '/data.json')
                 self.skill_trees[version] = skill_tree
                 self.tree_graphs[version] = TreeGraph(skill_tree)
-                print(f'loaded tree {version=}')
+                logger.info('Loaded tree version=%s', version)
 
     def get_html_with_taken_nodes(self, taken_node_ids, tree_version):
         return self.tree_graphs[tree_version].to_html_with_taken_nodes(taken_node_ids)
