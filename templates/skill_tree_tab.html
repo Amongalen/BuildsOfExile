@@ -62,7 +62,7 @@
 
     $("div.tree").each(function (i, element) {
       let title1 = $(".dropdown-toggle-tree").text().trim()
-      let title2 = $(element).data("title").trim()
+      let title2 = $(element).data("title").toString().trim()
       if (title1 === title2) {
         $(element).show()
       } else {
