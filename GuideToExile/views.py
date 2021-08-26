@@ -29,7 +29,7 @@ class IndexView(generic.ListView):
     paginate_by = 100
 
     def get_queryset(self):
-        results = BuildGuide.objects.all()
+        results = BuildGuide.objects.defer('pob_details').all()
         return results
 
 
