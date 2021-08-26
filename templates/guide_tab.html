@@ -176,6 +176,32 @@
             </div>
           {% endif %}
         </div>
+        <div class="py-1">
+          {% if 'energyshield' in stats %}
+            <div class="row">
+              <div class="col-7">Energy Shield</div>
+              <div class="col text-end">{{ stats.energyshield|intcomma }}</div>
+            </div>
+          {% endif %}
+          {% if 'spec_energyshieldinc' in stats %}
+            <div class="row">
+              <div class="col-7">%Inc Energy Shield</div>
+              <div class="col text-end">{{ stats.spec_energyshieldinc }}%</div>
+            </div>
+          {% endif %}
+          {% if 'energyshieldregen' in stats and stats.energyshieldregen != 0 %}
+            <div class="row">
+              <div class="col-7">Energy Shield Regen</div>
+              <div class="col text-end">{{ stats.energyshieldregen|intcomma }}</div>
+            </div>
+          {% endif %}
+          {% if 'energyshieldleechgainrate' in stats and stats.energyshieldleechgainrate != 0 %}
+            <div class="row">
+              <div class="col-7">Energy Shield Leech/On Hit Rate</div>
+              <div class="col text-end">{{ stats.energyshieldleechgainrate|intcomma }}</div>
+            </div>
+          {% endif %}
+        </div>
 
         <div class="py-1">
           {% if 'evasion' in stats and stats.evasion != 0 %}
