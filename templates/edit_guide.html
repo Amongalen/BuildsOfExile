@@ -39,7 +39,7 @@
                 <button class="link" ondblclick="addText(this)">
                                 <span class="poeitem-{{ item.rarity|lower }}" data-bs-placement="bottom"
                                       data-bs-toggle="tooltip" data-bs-html="true"
-                                      title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">{{ item.name }}</span>
+                                      title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">{{ item.name }}, {{ item.base_name }}</span>
                 </button>
               </div>
 
