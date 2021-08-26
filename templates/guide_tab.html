@@ -23,48 +23,102 @@
         <div class="small">
 
         <div class="py-1">
-          {% if 'averagedamage' in stats %}
-            <div class="row">
-              <div class="col-7">Average Damage</div>
-              <div class="col text-end">{{ stats.averagedamage }}</div>
-            </div>
+          {% if 'minion_life' in stats %}
+            <strong style="font-size: 1rem;">Minion:</strong>
+            {% if 'minion_averagedamage' in stats %}
+              <div class="row">
+                <div class="col-7">Average Damage</div>
+                <div class="col text-end">{{ stats.minion_averagedamage }}</div>
+              </div>
+            {% endif %}
+            {% if 'minion_speed' in stats %}
+              <div class="row">
+                <div class="col-7">Attack Speed/Cast Rate</div>
+                <div class="col text-end">{{ stats.minion_speed }}</div>
+              </div>
+            {% endif %}
+            {% if 'minion_combineddps' in stats %}
+              <div class="row">
+                <div class="col-7">Combined DPS</div>
+                <div class="col text-end">{{ stats.minion_combineddps }}</div>
+              </div>
+            {% endif %}
+            {% if 'minion_life' in stats %}
+              <div class="row">
+                <div class="col-7">Life</div>
+                <div class="col text-end">{{ stats.minion_life|intcomma }}</div>
+              </div>
+            {% endif %}
+            {% if 'minion_energyshield' in stats %}
+              <div class="row">
+                <div class="col-7">Energy Sield</div>
+                <div class="col text-end">{{ stats.minion_energyshield|intcomma }}</div>
+              </div>
+            {% endif %}
+
+            <div class="mt-2"><strong style="font-size: 1rem;">Player:</strong></div>
+            {% if 'activeminionlimit' in stats %}
+              <div class="row">
+                <div class="col-7">Active Minion Limit</div>
+                <div class="col text-end">{{ stats.activeminionlimit }}</div>
+              </div>
+            {% endif %}
           {% endif %}
+          {% if 'minion_life' not in stats %}
+            {% if 'averagedamage' in stats %}
+              <div class="row">
+                <div class="col-7">Average Damage</div>
+                <div class="col text-end">{{ stats.averagedamage }}</div>
+              </div>
+            {% endif %}
+          {% endif %}
+
           {% if 'speed' in stats %}
             <div class="row">
               <div class="col-7">Attack Speed/Cast Rate</div>
               <div class="col text-end">{{ stats.speed }}</div>
             </div>
           {% endif %}
-          {% if 'preeffectivecritchance' in stats %}
+          {% if 'cooldown' in stats and stats.cooldown != 0 %}
             <div class="row">
-              <div class="col-7">Crit Chance</div>
-              <div class="col text-end">{{ stats.preeffectivecritchance }}%</div>
+              <div class="col-7">Cooldown</div>
+              <div class="col text-end">{{ stats.cooldown }}s</div>
             </div>
           {% endif %}
-          {% if 'preeffectivecritchance' in stats and 'critchance' in stats and stats.critchance != stats.preeffectivecritchance %}
-            <div class="row">
-              <div class="col-7">Effective Crit Chance</div>
-              <div class="col text-end">{{ stats.critchance }}%</div>
-            </div>
+
+          {% if 'minion_life' not in stats %}
+            {% if 'preeffectivecritchance' in stats %}
+              <div class="row">
+                <div class="col-7">Crit Chance</div>
+                <div class="col text-end">{{ stats.preeffectivecritchance }}%</div>
+              </div>
+            {% endif %}
+            {% if 'preeffectivecritchance' in stats and 'critchance' in stats and stats.critchance != stats.preeffectivecritchance %}
+              <div class="row">
+                <div class="col-7">Effective Crit Chance</div>
+                <div class="col text-end">{{ stats.critchance }}%</div>
+              </div>
+            {% endif %}
+            {% if 'critmultiplier' in stats %}
+              <div class="row">
+                <div class="col-7">Crit Multiplier</div>
+                <div class="col text-end">{{ stats.critmultiplier|mul:100 }}%</div>
+              </div>
+            {% endif %}
+            {% if 'hitchance' in stats %}
+              <div class="row">
+                <div class="col-7">Hit Chance</div>
+                <div class="col text-end">{{ stats.hitchance }}%</div>
+              </div>
+            {% endif %}
+            {% if 'combineddps' in stats %}
+              <div class="row">
+                <div class="col-7">Combined DPS</div>
+                <div class="col text-end">{{ stats.combineddps }}</div>
+              </div>
+            {% endif %}
           {% endif %}
-          {% if 'critmultiplier' in stats %}
-            <div class="row">
-              <div class="col-7">Crit Chance</div>
-              <div class="col text-end">{{ stats.critmultiplier|mul:100 }}%</div>
-            </div>
-          {% endif %}
-          {% if 'hitchance' in stats %}
-            <div class="row">
-              <div class="col-7">Hit Chance</div>
-              <div class="col text-end">{{ stats.hitchance }}%</div>
-            </div>
-          {% endif %}
-          {% if 'totaldps' in stats %}
-            <div class="row">
-              <div class="col-7">Total DPS</div>
-              <div class="col text-end">{{ stats.totaldps }}</div>
-            </div>
-          {% endif %}
+
           {% if 'manacost' in stats and stats.manacost != 0 %}
             <div class="row">
               <div class="col-7">Mana Cost</div>

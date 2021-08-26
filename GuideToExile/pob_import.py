@@ -121,7 +121,7 @@ def extract_stats(xml_root):
         except ValueError:
             pass
         try:
-            value = round(float(value_str), 2)
+            value = round(float(value_str), 1)
             name = name_pref + stat.get('stat').lower().replace(":", '_')
             stats[name] = value
         except ValueError:
