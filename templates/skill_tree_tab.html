@@ -28,7 +28,7 @@
       <small>Link to passive tree:</small>
       <input id="treeUrl" class='align-middle w-25 d-inline form-control form-control-sm' disabled
              value="{{ tree.2 }}"/>
-      <button id="treeUrlCopyBtn" style='width:75px' class="btn btn-sm btn-outline-light btn-secondary"
+      <button style='width:75px' class="btn btn-sm btn-outline-light btn-secondary treeUrlCopyBtn"
               onclick="copyTreeUrl(this)">Copy
       </button>
     </div>
@@ -86,8 +86,8 @@ function copyTreeUrl(button) {
   button.innerHTML = 'Copied!';
 
   setTimeout(function () {
-    var copybtn = document.getElementById('treeUrlCopyBtn')
-    copybtn.innerText = 'Copy'
+    var copybtns = document.getElementsByClassName('treeUrlCopyBtn');
+    [].forEach.call(copybtns, element => element.innerText = 'Copy');
   }, 3000);
 }
 </script>
