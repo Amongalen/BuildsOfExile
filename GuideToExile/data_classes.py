@@ -70,7 +70,7 @@ class PobDetails:
     active_tree_spec_index: int
     items: list[Item]
     item_sets: list[ItemSet]
-    active_item_set_index: int
+    active_item_set_id: str
     used_jewels: dict[str, list[Item]]
 
 

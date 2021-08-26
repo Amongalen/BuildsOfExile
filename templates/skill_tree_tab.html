@@ -4,7 +4,7 @@
           id="dropdownMenuButton2"
           data-bs-toggle="dropdown" aria-expanded="false">
     {% for tree_graph_title in trees.keys %}
-      {% if forloop.first %}
+      {% if forloop.counter == build_guide.pob_details.active_tree_spec_index %}
         {{ tree_graph_title }}
       {% endif %}
     {% endfor %}
@@ -21,15 +21,17 @@
   </ul>
 </div>
 {% for title, tree in trees.items %}
-  <div class="my-2">
-    <small>Link to passive tree:</small>
-    <input id="treeUrl" class='align-middle w-25 d-inline form-control form-control-sm' disabled value="{{ tree.2 }}"/>
-    <button id="treeUrlCopyBtn" style='width:75px' class="btn btn-sm btn-outline-light btn-secondary"
-            onclick="copyTreeUrl(this)">Copy
-    </button>
-  </div>
+
   <div class='tree' data-title="{{ title }}"
-       style="display: {% if forloop.first %}block{% else %}none{% endif %}">
+       style="display: {% if forloop.counter == build_guide.pob_details.active_tree_spec_index %}block{% else %}none{% endif %}">
+    <div class="my-2">
+      <small>Link to passive tree:</small>
+      <input id="treeUrl" class='align-middle w-25 d-inline form-control form-control-sm' disabled
+             value="{{ tree.2 }}"/>
+      <button id="treeUrlCopyBtn" style='width:75px' class="btn btn-sm btn-outline-light btn-secondary"
+              onclick="copyTreeUrl(this)">Copy
+      </button>
+    </div>
     <div class="row">
       <div class="col-8">
         {{ tree.0|safe }}

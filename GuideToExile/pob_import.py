@@ -67,10 +67,10 @@ def parse_pob_details(xml: str):
         main_active_skills=[main_active_skill] if main_active_skill else [],
         imported_primary_skill=main_active_skill,
         tree_specs=tree_specs,
-        active_tree_spec_index=(int(xml_root.find('Tree').get('activeSpec')) - 1),
+        active_tree_spec_index=int(xml_root.find('Tree').get('activeSpec')),
         items=items,
         item_sets=item_sets,
-        active_item_set_index=extract_active_item_set_index(xml_root),
+        active_item_set_id=extract_active_item_set_id(xml_root),
         used_jewels=used_jewels)
 
 
@@ -101,9 +101,9 @@ def extract_used_jewels(xml_root, items):
     return used_jewels
 
 
-def extract_active_item_set_index(xml_root):
-    return int(active_item_set_index) - 1 if (active_item_set_index := xml_root.find('Items').get(
-        'activeItemSet')) != 'nil' else 0
+def extract_active_item_set_id(xml_root):
+    return active_item_set_index if (active_item_set_index := xml_root.find('Items').get(
+        'activeItemSet')) != 'nil' else '1'
 
 
 def extract_stats(xml_root):

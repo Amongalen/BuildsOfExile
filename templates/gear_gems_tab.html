@@ -5,7 +5,7 @@
           id="dropdownMenuButton2"
           data-bs-toggle="dropdown" aria-expanded="false">
     {% for item_set in item_sets %}
-      {% if forloop.first %}
+      {% if item_set.set_id == build_guide.pob_details.active_item_set_id %}
         {{ item_set.title }}
       {% endif %}
     {% endfor %}
@@ -14,7 +14,7 @@
     {% for item_set in item_sets %}
       <li>
         <button
-          class="link dropdown-item {% if forloop.counter == build_guide.pob_details.active_item_set_index %}active{% endif %}">
+          class="link dropdown-item {% if item_set.set_id == build_guide.pob_details.active_item_set_id %}active{% endif %}">
           {{ item_set.title }}
         </button>
       </li>
@@ -23,7 +23,7 @@
 </div>
 {% for item_set in item_sets %}
   <div class="item-set" data-title="{{ item_set.title }}"
-       style="display: {% if forloop.first %}block{% else %}none{% endif %}">
+       style="display: {% if item_set.set_id == build_guide.pob_details.active_item_set_id %}block{% else %}none{% endif %}">
 
     <div class="row">
       <div class="col-6">
