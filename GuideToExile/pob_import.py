@@ -110,18 +110,19 @@ def extract_stats(xml_root):
     stats = {}
     for stat in xml_root.find('Build'):
         value_str = stat.get('value')
+        name_pref = 'minion_' if stat.tag == 'MinionStat' else ''
         if value_str is None:
             continue
         try:
             value = int(value_str)
-            name = stat.get('stat').lower().replace(":", '_')
+            name = name_pref + stat.get('stat').lower().replace(":", '_')
             stats[name] = value
             continue
         except ValueError:
             pass
         try:
             value = round(float(value_str), 2)
-            name = stat.get('stat').lower().replace(":", '_')
+            name = name_pref + stat.get('stat').lower().replace(":", '_')
             stats[name] = value
         except ValueError:
             pass
