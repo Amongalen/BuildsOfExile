@@ -26,7 +26,7 @@ GEAR_SLOTS = ['weapon-1', 'weapon-2', 'helmet', 'body-armour', 'belt', 'ring-1',
 class IndexView(generic.ListView):
     template_name = 'index.html'
     context_object_name = 'build_guide_list'
-    paginate_by = 100
+    paginate_by = 50
 
     def get_queryset(self):
         results = BuildGuide.objects.defer('pob_details').all()
