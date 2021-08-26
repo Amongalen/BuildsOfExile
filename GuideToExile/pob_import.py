@@ -17,6 +17,13 @@ logger = logging.getLogger('guidetoexile')
 SLOTS_ORDER = ['Weapon 1', 'Weapon 2', 'Body Armour', 'Gloves', 'Helmet', 'Boots', 'Amulet', 'Ring 1', 'Ring 2',
                'Belt', 'Unassigned']
 
+ALT_QUALITY_PREF_MAPPING = {
+    'Default': '',
+    'Alternate1': 'Anomalous ',
+    'Alternate2': 'Divergent ',
+    'Alternate3': 'Phantasmal ',
+}
+
 GEM_MAPPING = items_service.GemMapping()
 
 
@@ -235,9 +242,11 @@ def extract_gems_in_group(group_xml):
         name = GEM_MAPPING.get_name(skill_id)
         gem_id = gem_xml.get('gemId')
         is_item_provided = True if gem_id is None else False
+        alt_quality_pref = ALT_QUALITY_PREF_MAPPING.get(gem_xml.get('qualityId'), '')
         gems.append(
             SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
-                     level=level, quality=quality, is_item_provided=is_item_provided))
+                     level=level, quality=quality, is_item_provided=is_item_provided,
+                     alt_quality_pref=alt_quality_pref))
     return gems
 
 

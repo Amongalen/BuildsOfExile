@@ -13,6 +13,7 @@ class SkillGem:
     is_active_skill: bool
     level: int
     quality: int
+    alt_quality_pref: str = field(default='')
     is_item_provided: bool = field(default=False)
 
     @property

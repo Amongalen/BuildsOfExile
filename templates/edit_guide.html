@@ -55,7 +55,7 @@
                 <div class="poe-line ">
                   <button class="link" ondblclick="addText(this)">
                     <span
-                      class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>
+                      class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.alt_quality_pref }}{{ gem.name }}</span>
                   </button>
                 </div>
               {% endfor %}
