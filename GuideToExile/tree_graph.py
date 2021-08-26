@@ -126,7 +126,9 @@ class TreeGraph:
         html = f'<svg style="background-color: transparent;" viewBox="{min_x} {min_y} {size_x} {size_y}">\n'
         asc_tree_x = ASC_TREE_X
         asc_tree_y = ASC_TREE_Y
-        html += f'<circle cx="{asc_tree_x}" cy="{asc_tree_y}" r="700" fill="#352e2b"/>\n'
+        asc_name = self._find_asc_name(taken_node_ids)
+        if asc_name:
+            html += f'<circle cx="{asc_tree_x}" cy="{asc_tree_y}" r="700" fill="#352e2b"/>\n'
         graph_elements = self._get_all_graph_elements_including_taken_nodes(taken_node_ids)
         graph_elements.sort(key=lambda v: v.is_taken)
         html += ''.join(el.svg_string for el in graph_elements)
@@ -193,5 +195,5 @@ def _are_nodes_clockwise(start_pos, end_position, node_group):
     center_x = node_group.x
     center_y = node_group.y
     det = (start_pos[0] - center_x) * (end_position[1] - center_y) - (end_position[0] - center_x) * (
-            start_pos[1] - center_y)
+        start_pos[1] - center_y)
     return det <= 0
