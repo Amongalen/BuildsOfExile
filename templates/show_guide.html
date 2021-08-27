@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
   <div class="row">
-    <div class="col">
-      <h3 class="d-inline-block "><strong>{{ build_guide.title }}</strong></h3></div>
+    <div class="col mb-2">
+      <h3 class="mb-0"><strong>{{ build_guide.title }}</strong></h3>
+      Posted by: {{ build_guide.author }}<br/>
+      <div style="font-size: small">
+        Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}.
+        {% if build_guide.creation_datetime != build_guide.modification_datetime %}
+          Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}.
+        {% endif %}
+      </div>
+    </div>
     <div class="col">
       <button class="float-end my-1 btn btn-outline-light btn-secondary"
               onclick="location.href='{% url 'edit_guide' pk %}'">
