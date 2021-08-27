@@ -1,11 +1,13 @@
 import logging
 
+import pytz
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect, get_object_or_404
 # Create your views here.
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import generic
@@ -85,6 +87,9 @@ def edit_guide_view(request, pk):
             data['primary_skills'] = imported_primary_skill
         form = EditGuideForm(active_skills, data)
         if form.is_valid():
+            if not guide.creation_datetime:
+                guide.creation_datetime = timezone.now()
+            guide.modification_datetime = timezone.now()
             guide.title = form.cleaned_data['title']
             guide.text = form.cleaned_data['text']
             guide.pob_details.main_active_skills = form.cleaned_data['primary_skills']
@@ -148,3 +153,11 @@ def activate(request, uidb64, token):
 
 def activation_sent_view(request):
     return render(request, 'registration/activation_sent.html')
+
+
+def set_timezone(request):
+    if request.method == 'POST':
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/')
+    else:
+        return render(request, 'timezone.html', {'timezones': pytz.common_timezones})

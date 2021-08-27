@@ -52,6 +52,8 @@ DEFAULT_APPS = [
     'django.contrib.humanize',
 ]
 
+TIME_ZONE = 'UTC'
+
 # Middlewares
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -61,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'GuideToExile.middleware.TimezoneMiddleware',
 ]
 
 # template stuff
@@ -83,6 +86,8 @@ TEMPLATES = [
         },
     },
 ]
+
+USE_TZ = True
 
 # Internationalization
 USE_I18N = False

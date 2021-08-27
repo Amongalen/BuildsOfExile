@@ -27,6 +27,8 @@ class UserProfile(models.Model):
 class BuildGuide(models.Model):
     build_id = models.BigAutoField(primary_key=True)
     author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
+    creation_datetime = models.DateTimeField(null=True)
+    modification_datetime = models.DateTimeField(null=True)
     pob_string = models.CharField(max_length=40000)
     pob_details = models.JSONField(encoder=json_encoder.BuildDetailsJsonEncoder,
                                    decoder=json_encoder.BuildDetailsJsonDecoder)
