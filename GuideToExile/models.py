@@ -17,8 +17,11 @@ class UniqueItem(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField(max_length=150)
-    bio = models.TextField()
+    twitch_url = models.URLField(blank=True, null=True)
+    youtube_url = models.URLField(blank=True, null=True)
     signup_confirmation = models.BooleanField(default=False)
+    avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
+    timezone = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -27,8 +30,8 @@ class UserProfile(models.Model):
 class BuildGuide(models.Model):
     build_id = models.BigAutoField(primary_key=True)
     author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
-    creation_datetime = models.DateTimeField(null=True)
-    modification_datetime = models.DateTimeField(null=True)
+    creation_datetime = models.DateTimeField(blank=True, null=True)
+    modification_datetime = models.DateTimeField(blank=True, null=True)
     pob_string = models.CharField(max_length=40000)
     pob_details = models.JSONField(encoder=json_encoder.BuildDetailsJsonEncoder,
                                    decoder=json_encoder.BuildDetailsJsonDecoder)

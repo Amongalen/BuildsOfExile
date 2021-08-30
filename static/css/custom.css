@@ -260,11 +260,14 @@ hr {
     user-select: none;
 }
 
+.chosen-container-single .chosen-search input[type="text"] {
+    color: #b0b7be;
+}
+
 .chosen-container .chosen-drop {
     position: absolute;
     top: 100%;
     z-index: 1010;
-    width: 30%;
     border: 1px solid #aaa;
     border-top: 0;
     background: #343a40;
@@ -273,6 +276,10 @@ hr {
     clip: rect(0, 0, 0, 0);
     -webkit-clip-path: inset(100% 100%);
     clip-path: inset(100% 100%);
+}
+
+.chosen-container-multi .chosen-drop {
+    width: 30%;
 }
 
 .chosen-container .chosen-results {
@@ -284,6 +291,10 @@ hr {
     padding: 0 0 0 4px;
     max-height: 240px;
     -webkit-overflow-scrolling: touch;
+}
+
+.chosen-container-active .chosen-choices li.search-field input[type="text"] {
+    color: #b0b7be !important;
 }
 
 .chosen-container .chosen-results li.highlighted {
@@ -357,6 +368,40 @@ hr {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
+.chosen-container-single .chosen-single {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    padding: 0 0 0 8px;
+    height: 35px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background-color: #352e2b;
+    background-image: inherit;
+    background-clip: padding-box;
+    -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+    color: #b0b7be;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 30px;
+}
+
+.chosen-container-single .chosen-single div {
+    padding: 5px 0 0 2px;
+}
+
+.chosen-container-active.chosen-with-drop .chosen-single {
+    border: 1px solid #aaa;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    background-color: #352e2b;
+    background-image: inherit;
+    -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+    color: #b0b7be;
+}
+
 .gems-tooltip {
     position: absolute;
     left: 101%;
@@ -366,4 +411,105 @@ hr {
     border-radius: 0.25rem;
     width: 450px;
     text-align: initial;
+}
+
+.inputfile + label {
+    color: hsl(210, 10%, 72%);
+}
+
+.inputfile + label {
+    border: 1px solid hsl(210, 10%, 72%);
+    border-radius: 0.25rem;
+    background-color: hsl(18, 10%, 20%);
+    padding: 0;
+}
+
+.inputfile:focus + label,
+.inputfile.has-focus + label,
+.inputfile + label:hover {
+    border-color: hsl(210, 10%, 62%);
+}
+
+.inputfile + label span,
+.inputfile + label strong {
+    padding: 0.5rem 0.5rem;
+    /* 10px 20px */
+}
+
+.inputfile + label span {
+    width: 200px;
+    min-height: 2em;
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.inputfile + label strong {
+    height: 100%;
+    color: hsl(210, 10%, 72%);
+    background-color: hsl(18, 10%, 20%);
+    display: inline-block;
+    border: 1px solid hsl(210, 10%, 72%);
+    border-radius: 0.25rem;
+}
+
+.inputfile:focus + label strong,
+.inputfile.has-focus + label strong,
+.inputfile + label:hover strong {
+    background-color: hsl(18, 10%, 10%);
+    border-color: hsl(210, 10%, 62%);
+}
+
+@media screen and (max-width: 50em) {
+    .inputfile + label strong {
+        display: block;
+    }
+}
+
+.js .inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.inputfile + label {
+    max-width: 100%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-block;
+
+}
+
+.no-js .inputfile + label {
+    display: none;
+}
+
+.inputfile:focus + label,
+.inputfile.has-focus + label {
+    outline: 1px dotted #000;
+    outline: -webkit-focus-ring-color auto 5px;
+}
+
+.inputfile + label svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    fill: currentColor;
+    margin-top: -0.25em;
+    /* 4px */
+    margin-right: 0.25em;
+    /* 4px */
+}
+
+.user-avatar {
+    background-color: hsl(18, 10%, 20%);
+    border: 0;
+    border-radius: 0.25rem;
 }

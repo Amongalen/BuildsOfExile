@@ -13,21 +13,24 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.urls import path, include
 
-from GuideToExile import views
+from GuideToExile import views, settings
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
     path('guide/<int:pk>/', views.show_guide_view, name='show_guide'),
     path('guide/new/', views.new_guide_view, name='new_guide'),
     path('guide/<int:pk>/edit', views.edit_guide_view, name='edit_guide'),
+    path('user/settings', views.user_settings_view, name='user_settings'),
     path('signup/', views.signup_view, name="signup"),
     path('sent/', views.activation_sent_view, name="activation_sent"),
     path('activate/<slug:uidb64>/<slug:token>/', views.activate, name='activate'),
-    path('timezone', views.set_timezone, name='set_timezone'),
-
 ]
+
+urlpatterns += static(settings.MEDIA_URL,
+                      document_root=settings.MEDIA_ROOT)
 
 # Add Django site authentication urls (for login, logout, password management)
 

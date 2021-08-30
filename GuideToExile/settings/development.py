@@ -59,14 +59,15 @@ LOGGING = {
         'django': {
             'handlers': ['console'],
             'propagate': True,
+            'level': 'INFO'
         },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
+        # 'django.request': {
+        #     'handlers': ['mail_admins'],
+        #     'level': 'ERROR',
+        #     'propagate': False,
+        # },
         'guidetoexile': {
-            'handlers': ['console', 'mail_admins'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False
         }

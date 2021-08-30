@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="vw-100" style="overflow-x: hidden">
+<html lang="en" class="vw-100 no-js" style="overflow-x: hidden">
 <head>
   {% load static %}
   {% block title %}<title>Guide to Exile</title>{% endblock %}
@@ -21,6 +21,10 @@
   <link type="text/css" href="{% static '/css/core.css' %}" rel="stylesheet"/>
   <link rel="stylesheet" href="https://unpkg.com/chosen-js@1.8.7/chosen.css">
   <link type="text/css" href="{% static '/css/custom.css' %}" rel="stylesheet"/>
+  <script>(function (e, t, n) {
+    var r = e.querySelectorAll("html")[0];
+    r.className = r.className.replace(/(^|\s)no-js(\s|$)/, "$1js$2")
+  })(document, window, 0);</script>
   {% block extrahead %} {% endblock %}
 </head>
 <body class="bg-secondary">

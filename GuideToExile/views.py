@@ -14,7 +14,7 @@ from django.views import generic
 
 from GuideToExile.models import BuildGuide
 from . import skill_tree, build_guide, items_service
-from .forms import SignUpForm, NewGuideForm, EditGuideForm
+from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm
 from .tokens import account_activation_token
 
 logger = logging.getLogger('guidetoexile')
@@ -104,6 +104,29 @@ def edit_guide_view(request, pk):
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': guide})
 
 
+def user_settings_view(request):
+    user_profile = request.user.userprofile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            user_profile.avatar = form.cleaned_data['avatar']
+            user_profile.twitch_url = form.cleaned_data['twitch_url']
+            user_profile.youtube_url = form.cleaned_data['youtube_url']
+
+            # storing timezone both in DB and session, taking from session first
+            user_profile.timezone = request.POST['timezone']
+            request.session['django_timezone'] = request.POST['timezone']
+
+            user_profile.save()
+            return redirect('/', username=request.user.username)
+    else:
+        form = ProfileForm(initial={'avatar': user_profile.avatar,
+                                    'youtube_url': user_profile.youtube_url,
+                                    'twitch_url': user_profile.twitch_url})
+    return render(request, 'user_settings.html',
+                  {'avatar': user_profile.avatar, 'form': form, 'timezones': pytz.common_timezones})
+
+
 def signup_view(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -153,11 +176,3 @@ def activate(request, uidb64, token):
 
 def activation_sent_view(request):
     return render(request, 'registration/activation_sent.html')
-
-
-def set_timezone(request):
-    if request.method == 'POST':
-        request.session['django_timezone'] = request.POST['timezone']
-        return redirect('/')
-    else:
-        return render(request, 'timezone.html', {'timezones': pytz.common_timezones})

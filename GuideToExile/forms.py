@@ -1,12 +1,15 @@
+import io
 import logging
 
+from PIL import Image
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms import Form
+from django.forms import Form, ModelForm
 
 from GuideToExile import pob_import
+from GuideToExile.models import UserProfile
 from apps.django_tiptap.widgets import TipTapWidget
 
 logger = logging.getLogger('guidetoexile')
@@ -49,3 +52,50 @@ class EditGuideForm(Form):
                                                widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
                                                help_text=None)
     text = forms.CharField(max_length=40000, widget=TipTapWidget(), help_text=None)
+
+
+class ProfileForm(ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('twitch_url', 'youtube_url', 'avatar')
+        labels = {
+            "avatar": "Profile image",
+        }
+
+    def clean_twitch_url(self):
+        data = self.cleaned_data['twitch_url']
+        if not data:
+            return data
+        data = data.lower()
+        if (not data.startswith('https://twitch.tv')
+            and not data.startswith('https://www.twitch.tv')
+            and not data.startswith('http://twitch.tv')
+            and not data.startswith('http://www.twitch.tv')):
+            raise ValidationError('URL must start with "twitch.tv"')
+        return data
+
+    def clean_youtube_url(self):
+        data = self.cleaned_data['youtube_url']
+        if not data:
+            return data
+        data = data.lower()
+        if (not data.startswith('https://youtube.com')
+            and not data.startswith('https://www.youtube.com')
+            and not data.startswith('http://youtube.com')
+            and not data.startswith('http://www.youtube.com')):
+            raise ValidationError('URL must start with "youtube.com"')
+        return data
+
+    def clean_avatar(self):
+        data = self.cleaned_data['avatar']
+        if data:
+            im = data.read()
+            image_file = io.BytesIO(im)
+            image = Image.open(image_file)
+            image = image.resize((200, 200), Image.ANTIALIAS)
+
+            image_file = io.BytesIO()
+            image.save(image_file, 'PNG', quality=90)
+
+            data.file = image_file
+        return data
