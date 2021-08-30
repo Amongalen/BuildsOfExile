@@ -11,7 +11,8 @@ class TimezoneMiddleware:
         # storing timezone both in DB and session, taking from session first
         tzname = request.session.get('django_timezone')
         if not tzname and not request.user.is_anonymous:
-            tzname = request.user.user_profile.timezone
+            tzname = request.user.userprofile.timezone
+            request.session['django_timezone'] = tzname
         if tzname and tzname in pytz.common_timezones:
             timezone.activate(pytz.timezone(tzname))
         else:
