@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.utils.text import slugify
 
 from GuideToExile import json_encoder
 
@@ -16,6 +17,7 @@ class UniqueItem(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    slug = models.SlugField(max_length=255)
     email = models.EmailField(max_length=150)
     twitch_url = models.URLField(blank=True, null=True)
     youtube_url = models.URLField(blank=True, null=True)
@@ -29,6 +31,7 @@ class UserProfile(models.Model):
 
 class BuildGuide(models.Model):
     build_id = models.BigAutoField(primary_key=True)
+    slug = models.SlugField(max_length=255)
     author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     creation_datetime = models.DateTimeField(blank=True, null=True)
     modification_datetime = models.DateTimeField(blank=True, null=True)
@@ -46,3 +49,14 @@ def update_profile_signal(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
     instance.userprofile.save()
+
+
+@receiver(pre_save, sender=BuildGuide)
+def build_guide_pre_save_receiver(sender, instance, *args, **kwargs):
+    instance.slug = slugify(instance.title)
+
+
+@receiver(pre_save, sender=UserProfile)
+def user_profile_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = slugify(instance.user.username)

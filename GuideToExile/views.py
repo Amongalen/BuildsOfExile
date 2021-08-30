@@ -29,13 +29,10 @@ class IndexView(generic.ListView):
     template_name = 'index.html'
     context_object_name = 'build_guide_list'
     paginate_by = 50
-
-    def get_queryset(self):
-        results = BuildGuide.objects.defer('pob_details').all()
-        return results
+    queryset = BuildGuide.objects.defer('pob_details').all()
 
 
-def show_guide_view(request, pk):
+def show_guide_view(request, pk, slug):
     logger.info('Show guide pk=%s', pk)
     guide = get_object_or_404(BuildGuide, build_id=pk)
     tree_specs = guide.pob_details.tree_specs
@@ -94,10 +91,9 @@ def edit_guide_view(request, pk):
             guide.text = form.cleaned_data['text']
             guide.pob_details.main_active_skills = form.cleaned_data['primary_skills']
             guide.save()
-            return redirect('show_guide', pk=guide.build_id)
+            return redirect('show_guide', pk=guide.build_id, slug=guide.slug)
 
     else:
-
         form = EditGuideForm(active_skills, {'title': guide.title,
                                              'text': guide.text,
                                              'primary_skills': guide.pob_details.main_active_skills}, )
