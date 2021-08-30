@@ -1,9 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
   <div class="row">
-    <div class="col mb-2">
+    <div class="col-9 mb-2">
       <h3 class="mb-0"><strong>{{ build_guide.title }}</strong></h3>
-      Posted by: {{ build_guide.author }}<br/>
       <div style="font-size: small">
         Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}.
         {% if build_guide.creation_datetime != build_guide.modification_datetime %}
@@ -11,13 +11,33 @@
         {% endif %}
       </div>
     </div>
-    <div class="col">
-      <button class="float-end my-1 btn btn-outline-light btn-secondary"
-              onclick="location.href='{% url 'edit_guide' pk %}'">
-        Edit
-      </button>
+    <div class="col row text-end">
+      {% with build_guide.author as user_profile %}
+        <div class="col"><h4 class="mb-0">{{ user_profile.user.username }}</h4>
+          {% if user_profile.youtube_url %}
+            <a href="{{ user_profile.youtube_url }}">YouTube.com</a><br/>
+          {% endif %}
+
+          {% if user_profile.twitch_url %}
+            <a href="{{ user_profile.twitch_url }}">Twitch.tv</a>
+          {% endif %}
+        </div>
+        <div class="col-auto "><img id="avatar_preview" alt="Avatar" width="80" height="80"
+                                    src="{% if user_profile.avatar %}
+                                          {{ user_profile.avatar.url }}
+                                        {% else %}
+                                          {% static 'icons/avatar_placeholder.svg' %}
+                                        {% endif %}"
+                                    class="user-avatar"/></div>
+      {% endwith %}
     </div>
   </div>
+  {% if user == build_guide.author.user %}
+    <button class="mb-2 btn btn-outline-light btn-secondary"
+            onclick="location.href='{% url 'edit_guide' pk %}'">
+      Edit
+    </button>
+  {% endif %}
   <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
       <button class="nav-link active" id="nav-guide-tab" data-bs-toggle="tab" data-bs-target="#nav-guide"
