@@ -4,6 +4,7 @@ import pytz
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 # Create your views here.
 from django.template.loader import render_to_string
@@ -12,7 +13,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import generic
 
-from GuideToExile.models import BuildGuide
+from GuideToExile.models import BuildGuide, UserProfile
 from . import skill_tree, build_guide, items_service
 from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm
 from .tokens import account_activation_token
@@ -30,6 +31,28 @@ class IndexView(generic.ListView):
     context_object_name = 'build_guide_list'
     paginate_by = 50
     queryset = BuildGuide.objects.defer('pob_details').all()
+
+
+class UserProfileView(generic.DetailView):
+    template_name = 'user_profile.html'
+    context_object_name = 'user_profile'
+    model = UserProfile
+    slug_field = 'user_id'
+    slug_url_kwarg = 'user_id'
+    paginate_by = 50
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileView, self).get_context_data(**kwargs)
+        guides = self.get_related_guides()
+        context['guides'] = guides
+        context['page_obj'] = guides
+        return context
+
+    def get_related_guides(self):
+        queryset = self.object.buildguide_set.all()
+        paginator = Paginator(queryset, self.paginate_by)
+        page = self.request.GET.get('page')
+        return paginator.get_page(page)
 
 
 def show_guide_view(request, pk, slug):

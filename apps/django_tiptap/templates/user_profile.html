@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="m-2 p-2 border border-1 border-light rounded w-auto bg-secondary row">
+    <div class="col-auto">
+      <img id="avatar_preview" alt="Avatar" width="200" height="200"
+           src="{% if user_profile.avatar %}
+                  {{ user_profile.avatar.url }}
+                {% else %}
+                  {% static 'icons/avatar_placeholder.svg' %}
+                {% endif %}"
+           class="user-avatar"/>
+    </div>
+    <div class="col"><h2 class="mb-0">{{ user_profile.user.username }}</h2>
+      {% if user_profile.youtube_url %}
+        <a href="{{ user_profile.youtube_url }}">YouTube.com</a><br/>
+      {% endif %}
+
+      {% if user_profile.twitch_url %}
+        <a href="{{ user_profile.twitch_url }}">Twitch.tv</a>
+      {% endif %}
+    </div>
+  </div>
+  {% if page_obj %}
+    <h4>Guides:</h4>
+    <div class="list-group">
+      {% for build in page_obj %}
+        <a href="{% url 'show_guide' build.build_id build.slug %}"
+           class="p-1 my-1 text-light bg-secondary d-flex justify-content-between align-items-start nav-link">
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">{{ build.title }}</div>
+
+          </div>
+          <span class="badge bg-primary rounded-pill">XX</span>
+        </a>
+      {% endfor %}
+    </div>
+    {% if page_obj.has_other_pages %}
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class='page-link' href="?page=1">&laquo; First</a></li>
+        {% endif %}
+        {% if page_obj.number > 2 %}
+          <li class="page-item"><a class='page-link'
+                                   href="?page={{ page_obj.number|add:"-2" }}">{{ page_obj.number|add:"-2" }}</a></li>
+        {% endif %}
+        {% if page_obj.number > 1 %}
+          <li class="page-item"><a class='page-link'
+                                   href="?page={{ page_obj.number|add:"-1" }}">{{ page_obj.number|add:"-1" }}</a></li>
+        {% endif %}
+        <li class="page-item active" aria-current="page">
+          <span class="page-link">{{ page_obj.number }}</span>
+        </li>
+        {% if page_obj.number < page_obj.paginator.num_pages %}
+          <li class="page-item"><a class='page-link'
+                                   href="?page={{ page_obj.number|add:"1" }}">{{ page_obj.number|add:"1" }}</a></li>
+        {% endif %}
+        {% if page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
+          <li class="page-item"><a class='page-link'
+                                   href="?page={{ page_obj.number|add:"2" }}">{{ page_obj.number|add:"2" }}</a></li>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class='page-link' href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+          </li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <h4>Haven't found any guides by this user.</h4>
+  {% endif %}
+{% endblock %}
