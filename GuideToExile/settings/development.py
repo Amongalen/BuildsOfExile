@@ -11,6 +11,8 @@ from .common import *
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = True
 
+CURRENT_TREE_VERSION = '3_15'
+
 # allow all hosts during development
 ALLOWED_HOSTS = ['*']
 

@@ -5,7 +5,7 @@ from collections import defaultdict
 
 from GuideToExile.data_classes import NodeGroup, TreeNode, SkillTree
 from GuideToExile.exceptions import SkillTreeLoadingException
-from GuideToExile.settings import ASC_TREE_X, ASC_TREE_Y, DEBUG
+from GuideToExile.settings import ASC_TREE_X, ASC_TREE_Y, DEBUG, CURRENT_TREE_VERSION
 from GuideToExile.tree_graph import TreeGraph
 
 logger = logging.getLogger('guidetoexile')
@@ -19,7 +19,7 @@ class SkillTreeService:
         for f in os.scandir(trees_dir):
             if f.is_dir():
                 version = f.path.split('\\')[-1]
-                if DEBUG and version != '3_15':
+                if DEBUG and version != CURRENT_TREE_VERSION:
                     continue
                 skill_tree = _read_tree_data_file(f.path + '/data.json')
                 self.skill_trees[version] = skill_tree
