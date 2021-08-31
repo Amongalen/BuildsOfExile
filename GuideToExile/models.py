@@ -15,6 +15,11 @@ class UniqueItem(models.Model):
     name = models.CharField(max_length=255)
 
 
+class UserProfileManager(models.Manager):
+    def get_by_natural_key(self, username):
+        return self.get(user__username=username)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField(max_length=150)
@@ -24,12 +29,17 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
     timezone = models.TextField(blank=True, null=True)
 
+    objects = UserProfileManager()
+
+    def natural_key(self):
+        return self.user.username
+
     def __str__(self):
         return self.user.username
 
 
 class BuildGuide(models.Model):
-    build_id = models.BigAutoField(primary_key=True)
+    guide_id = models.BigAutoField(primary_key=True)
     slug = models.SlugField(max_length=255)
     author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     creation_datetime = models.DateTimeField(blank=True, null=True)
@@ -41,6 +51,14 @@ class BuildGuide(models.Model):
     text = models.CharField(max_length=40000)
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
+
+
+class GuideComment(models.Model):
+    author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
+    guide = models.ForeignKey(BuildGuide, on_delete=models.CASCADE)
+    text = models.CharField(max_length=1000)
+    creation_datetime = models.DateTimeField()
+    modification_datetime = models.DateTimeField()
 
 
 @receiver(post_save, sender=User)

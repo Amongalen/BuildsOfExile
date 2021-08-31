@@ -4,7 +4,9 @@ import pytz
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
+from django.core import serializers
 from django.core.paginator import Paginator
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 # Create your views here.
 from django.template.loader import render_to_string
@@ -13,7 +15,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import generic
 
-from GuideToExile.models import BuildGuide, UserProfile
+from GuideToExile.models import BuildGuide, UserProfile, GuideComment
 from . import skill_tree, build_guide, items_service
 from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm
 from .tokens import account_activation_token
@@ -57,7 +59,7 @@ class UserProfileView(generic.DetailView):
 
 def show_guide_view(request, pk, slug):
     logger.info('Show guide pk=%s', pk)
-    guide = get_object_or_404(BuildGuide, build_id=pk)
+    guide = get_object_or_404(BuildGuide, guide_id=pk)
     tree_specs = guide.pob_details.tree_specs
     trees = {}
     for tree_spec in tree_specs:
@@ -82,7 +84,7 @@ def new_guide_view(request):
             author = request.user.userprofile
             new_build_guide = build_guide.create_build_guide(author, build_details, pob_string, skill_tree_service)
             new_build_guide.save()
-            return redirect('edit_guide', pk=new_build_guide.build_id)
+            return redirect('edit_guide', pk=new_build_guide.guide_id)
 
     else:
         form = NewGuideForm()
@@ -91,7 +93,7 @@ def new_guide_view(request):
 
 
 def edit_guide_view(request, pk):
-    guide = BuildGuide.objects.get(build_id=pk)
+    guide = BuildGuide.objects.get(guide_id=pk)
     # Form field requires (value, label) tuples for options, list of those is created here
     active_skills = set((gem.name, gem.name) for skill_group in guide.pob_details.skill_groups
                         for gem in skill_group.gems
@@ -114,7 +116,7 @@ def edit_guide_view(request, pk):
             guide.text = form.cleaned_data['text']
             guide.pob_details.main_active_skills = form.cleaned_data['primary_skills']
             guide.save()
-            return redirect('show_guide', pk=guide.build_id, slug=guide.slug)
+            return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
 
     else:
         form = EditGuideForm(active_skills, {'title': guide.title,
@@ -144,6 +146,50 @@ def user_settings_view(request):
                                     'twitch_url': user_profile.twitch_url})
     return render(request, 'user_settings.html',
                   {'avatar': user_profile.avatar, 'form': form, 'timezones': pytz.common_timezones})
+
+
+def show_comments(request, guide_id):
+    comments = serializers.serialize('json', GuideComment.objects.filter(guide__guide_id=guide_id).all(),
+                                     use_natural_foreign_keys=True)
+    return HttpResponse(comments, content_type="text/json-comment-filtered")
+
+
+def add_comment(request, guide_id):
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
+    if request.method == 'POST':
+        comment_text = request.POST['comment']
+        comment = GuideComment()
+        comment.author = request.user.userprofile
+        comment.guide = get_object_or_404(BuildGuide, guide_id=guide_id)
+        comment.creation_datetime = timezone.now()
+        comment.text = comment_text
+        comment.modification_datetime = timezone.now()
+        comment.save()
+
+        return HttpResponse(status=201)
+
+
+def edit_comment(request):
+    if request.method == 'POST':
+        comment_id = request.POST['comment_id']
+        comment = get_object_or_404(GuideComment, pk=comment_id)
+        if comment.author != request.user.userprofile:
+            return HttpResponseForbidden()
+        comment.text = request.POST['comment']
+        comment.modification_datetime = timezone.now()
+        comment.save()
+        return HttpResponse(status=204)
+
+
+def delete_comment(request):
+    if request.method == 'POST':
+        comment_id = request.POST['comment_id']
+        comment = get_object_or_404(GuideComment, pk=comment_id)
+        if comment.author != request.user.userprofile:
+            return HttpResponseForbidden()
+        comment.delete()
+        return HttpResponse(status=200)
 
 
 def signup_view(request):

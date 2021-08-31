@@ -513,3 +513,25 @@ hr {
     border: 0;
     border-radius: 0.25rem;
 }
+
+.comment-info {
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+.outer-comment li {
+    list-style: none;
+    background-color: hsl(18, 10%, 20%);
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+}
+
+.outer-comment {
+    padding-left: 0;
+}
+
+.comment-text {
+    padding: 0.5rem;
+}

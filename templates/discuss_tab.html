@@ -1,0 +1,146 @@
+<div id="output"></div>
+
+{% if user.is_authenticated %}
+  <div class="comment-form-container w-50">
+    <form id="frm-comment">
+      {% csrf_token %}
+      <div class="input-row">
+        <input type="hidden" name="comment_id" id="commentId"/>
+        <textarea maxlength="1000" rows=5 class="form-control" type="text" name="comment"
+                  id="comment-input-textarea"
+                  placeholder="Add a comment"></textarea>
+      </div>
+      <div>
+        <input type="button" class="my-1 btn btn-outline-light btn-secondary" id="submitButton" value="Send"/>
+        <span id="emptyCommentErrorMessage" class="text-danger">Comment cannot be empty!</span>
+      </div>
+    </form>
+  </div>
+{% endif %}
+
+<script>
+  $("#submitButton").click(function () {
+    if (!$('#comment-input-textarea').val()) {
+      $('#emptyCommentErrorMessage').css('display', 'inline-block')
+    } else {
+      var str = $("#frm-comment").serialize();
+
+      $.ajax({
+        url: "{% url 'add_comment' pk %}",
+        data: str,
+        type: 'post',
+        success: function () {
+          $("#comment-input-textarea").val("");
+          listComments();
+        }
+      });
+    }
+  });
+
+  $(document).ready(function () {
+    listComments();
+  });
+
+  function deleteComment(commentId) {
+    if (confirm('Are you sure you want to delete this comment?')) {
+      let csrfToken = $('input[name=csrfmiddlewaretoken]').val();
+      $.ajax({
+        url: "{% url 'delete_comment' %}",
+        headers: {'X-CSRFToken': csrfToken},
+        data: {comment_id: commentId},
+        type: 'post',
+        success: function () {
+          listComments()
+        }
+      });
+    }
+  }
+
+  function editCommentShow(commentId) {
+    if (!$('#frm-comment-' + commentId).length) {
+      var currentComment = $('#comment-text-' + commentId).text()
+      var divId = '#comment-' + commentId
+      var parentDiv = $(divId)
+      var editForm = '<div class="comment-form-container mt-2">'
+        + '<form id="frm-comment-' + commentId + '">'
+        + '{% csrf_token %}'
+        + '<div class="input-row">'
+        + '<input type="hidden" name="comment_id" id="commentId-' + commentId + '" value="' + commentId + '"/>'
+        + '<textarea maxlength="1000" rows=5 class="form-control w-50 bg-dark" type="text" name="comment" id="comment-input-textarea-' + commentId + '" placeholder="Add a Comment">' + currentComment + '</textarea>'
+        + '</div>'
+        + '<div>'
+        + '<input type="button" class="my-1 btn btn-outline-light btn-dark" id="editButton-' + commentId + '" value="Send" onclick="editCommentSend(' + commentId + ')"/>'
+        + '<span id="emptyCommentErrorMessage-' + commentId + '" style="display: none" class="text-danger">Comment cannot be empty!</span>'
+        + '</div>'
+        + '</form>'
+        + '</div>';
+      parentDiv.append(editForm);
+    } else {
+      $('#frm-comment-' + commentId).remove()
+    }
+  }
+
+  function editCommentSend(commentId) {
+    if (!$('#comment-input-textarea-' + commentId).val()) {
+      $('#emptyCommentErrorMessage-' + commentId).css('display', 'inline-block')
+    } else {
+      var str = $("#frm-comment-" + commentId).serialize();
+
+      $.ajax({
+        url: "{% url 'edit_comment' %}",
+        data: str,
+        type: 'post',
+        success: function () {
+          $("#comment-input-textarea-" + commentId).val("");
+          listComments();
+        }
+      })
+    }
+  }
+
+  function listComments() {
+    $('#emptyCommentErrorMessage').css('display', 'none')
+    $.get(
+      "{% url 'show_comments' pk %}",
+      function (data) {
+        if (data.length > 0) {
+          var list = $("<ul class='outer-comment'>");
+          for (var i = 0; (i < data.length); i++) {
+            var comment = data[i];
+            var commentId = comment['pk'];
+            var commendFields = comment['fields']
+            var author = commendFields['author']
+            let creationDatetime = new Date(commendFields['creation_datetime']);
+            var creationDatetimeString = moment(creationDatetime).format('YYYY-MM-DD HH:mm')
+            let modificationDatetime = new Date(commendFields['modification_datetime']);
+            var modificationDatetimeString = moment(creationDatetime).format('YYYY-MM-DD HH:mm')
+            var comments = "<div class='comment-row' id='comment-" + commentId + "'>"
+              + "<div class='comment-info'>From <strong>" + commendFields['author'] + "</strong> at "
+              + creationDatetimeString + ".";
+            if (creationDatetime.getTime() !== modificationDatetime.getTime()) {
+              comments += " Edited at " + modificationDatetimeString + "."
+            }
+            comments += "</div>"
+              + "<div id='comment-text-" + commentId + "' class='comment-text'>"
+              + commendFields['text'].replace("\n", "<br/>")
+              + "</div>";
+            if (author === '{{ user.username }}') {
+              comments += "<button class='mt-1 btn btn-sm btn-outline-light btn-dark' onclick='deleteComment(" + commentId + ")'>Delete</button>"
+                + "<button class='mt-1 mx-1 btn btn-sm btn-outline-light btn-dark' onclick='editCommentShow(" + commentId + ")'>Edit</button>";
+            }
+            comments += "</div>";
+
+            var item = $("<li>").html(comments);
+            list.append(item);
+            var reply_list = $('<ul>');
+            item.append(reply_list);
+          }
+          $("#output").html(list);
+        } else {
+          var nothingFoundString = "<h4>There aren't any comments yet.</h4>"
+          $("#output").html(nothingFoundString);
+        }
+      });
+  }
+</script>
+

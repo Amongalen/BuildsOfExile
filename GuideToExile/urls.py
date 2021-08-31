@@ -20,9 +20,13 @@ from GuideToExile import views, settings
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
-    path('guide/<int:pk>/<slug:slug>', views.show_guide_view, name='show_guide'),
+    path('guide/show/<int:pk>/<slug:slug>', views.show_guide_view, name='show_guide'),
     path('guide/new/', views.new_guide_view, name='new_guide'),
     path('guide/edit/<int:pk>/', views.edit_guide_view, name='edit_guide'),
+    path('guide/addcomment/<int:guide_id>/', views.add_comment, name='add_comment'),
+    path('guide/showcomments/<int:guide_id>/', views.show_comments, name='show_comments'),
+    path('guide/deletecomment/', views.delete_comment, name='delete_comment'),
+    path('guide/editcomment/', views.edit_comment, name='edit_comment'),
     path('profile/<slug:user_id>/<slug:username>', views.UserProfileView.as_view(), name='user_profile'),
     path('user/settings', views.user_settings_view, name='user_settings'),
     path('signup/', views.signup_view, name="signup"),
