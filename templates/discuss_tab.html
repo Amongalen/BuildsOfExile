@@ -1,4 +1,4 @@
-<div id="output"></div>
+<div id="comments-output"></div>
 
 {% if user.is_authenticated %}
   <div class="comment-form-container w-50">
@@ -19,6 +19,8 @@
 {% endif %}
 
 <script>
+  let page = 1;
+
   $("#submitButton").click(function () {
     if (!$('#comment-input-textarea').val()) {
       $('#emptyCommentErrorMessage').css('display', 'inline-block')
@@ -31,14 +33,14 @@
         type: 'post',
         success: function () {
           $("#comment-input-textarea").val("");
-          listComments();
+          listComments(1);
         }
       });
     }
   });
 
   $(document).ready(function () {
-    listComments();
+    listComments(page);
   });
 
   function deleteComment(commentId) {
@@ -50,96 +52,62 @@
         data: {comment_id: commentId},
         type: 'post',
         success: function () {
-          listComments()
+          listComments(page)
         }
       });
     }
   }
 
   function editCommentShow(commentId) {
-    if (!$('#frm-comment-' + commentId).length) {
-      var currentComment = $('#comment-text-' + commentId).text()
+    if (!$(`#frm-comment-${commentId}`).length) {
+      var currentComment = $(`#comment-text-${commentId}`).html().replaceAll('<br>', '\n').trim();
       var divId = '#comment-' + commentId
       var parentDiv = $(divId)
-      var editForm = '<div class="comment-form-container mt-2">'
-        + '<form id="frm-comment-' + commentId + '">'
-        + '{% csrf_token %}'
-        + '<div class="input-row">'
-        + '<input type="hidden" name="comment_id" id="commentId-' + commentId + '" value="' + commentId + '"/>'
-        + '<textarea maxlength="1000" rows=5 class="form-control w-50 bg-dark" type="text" name="comment" id="comment-input-textarea-' + commentId + '" placeholder="Add a Comment">' + currentComment + '</textarea>'
-        + '</div>'
-        + '<div>'
-        + '<input type="button" class="my-1 btn btn-outline-light btn-dark" id="editButton-' + commentId + '" value="Send" onclick="editCommentSend(' + commentId + ')"/>'
-        + '<span id="emptyCommentErrorMessage-' + commentId + '" style="display: none" class="text-danger">Comment cannot be empty!</span>'
-        + '</div>'
-        + '</form>'
-        + '</div>';
+      var editForm = `<div class="comment-form-container mt-2">
+                        <form id="frm-comment-${commentId}">
+                          {% csrf_token %}
+                          <div class="input-row">
+                            <input type="hidden" name="comment_id" id="commentId-${commentId}" value="${commentId}"/>
+                            <textarea maxlength="1000" rows=5 class="form-control w-50 bg-dark" type="text" name="comment"
+                                id="comment-input-textarea-${commentId}" placeholder="Add a Comment">${currentComment}</textarea>
+                          </div>
+                          <div>
+                            <input type="button" class="my-1 btn btn-outline-light btn-dark" id="editButton-${commentId}" value="Send" onclick="editCommentSend(${commentId})"/>
+                            <span id="emptyCommentErrorMessage-${commentId}" style="display: none" class="text-danger">Comment cannot be empty!</span>
+                          </div>
+                        </form>
+                      </div>`;
       parentDiv.append(editForm);
     } else {
-      $('#frm-comment-' + commentId).remove()
+      $(`#frm-comment-${commentId}`).remove()
     }
   }
 
   function editCommentSend(commentId) {
-    if (!$('#comment-input-textarea-' + commentId).val()) {
-      $('#emptyCommentErrorMessage-' + commentId).css('display', 'inline-block')
+    if (!$(`#comment-input-textarea-${commentId}`).val()) {
+      $(`#emptyCommentErrorMessage-${commentId}`).css('display', 'inline-block')
     } else {
-      var str = $("#frm-comment-" + commentId).serialize();
+      var str = $(`#frm-comment-${commentId}`).serialize();
 
       $.ajax({
         url: "{% url 'edit_comment' %}",
         data: str,
         type: 'post',
         success: function () {
-          $("#comment-input-textarea-" + commentId).val("");
-          listComments();
+          $(`#comment-input-textarea-${commentId}`).val("");
+          listComments(page);
         }
       })
     }
   }
 
-  function listComments() {
+  function listComments(page) {
     $('#emptyCommentErrorMessage').css('display', 'none')
     $.get(
       "{% url 'show_comments' pk %}",
+      {page: page},
       function (data) {
-        if (data.length > 0) {
-          var list = $("<ul class='outer-comment'>");
-          for (var i = 0; (i < data.length); i++) {
-            var comment = data[i];
-            var commentId = comment['pk'];
-            var commendFields = comment['fields']
-            var author = commendFields['author']
-            let creationDatetime = new Date(commendFields['creation_datetime']);
-            var creationDatetimeString = moment(creationDatetime).format('YYYY-MM-DD HH:mm')
-            let modificationDatetime = new Date(commendFields['modification_datetime']);
-            var modificationDatetimeString = moment(creationDatetime).format('YYYY-MM-DD HH:mm')
-            var comments = "<div class='comment-row' id='comment-" + commentId + "'>"
-              + "<div class='comment-info'>From <strong>" + commendFields['author'] + "</strong> at "
-              + creationDatetimeString + ".";
-            if (creationDatetime.getTime() !== modificationDatetime.getTime()) {
-              comments += " Edited at " + modificationDatetimeString + "."
-            }
-            comments += "</div>"
-              + "<div id='comment-text-" + commentId + "' class='comment-text'>"
-              + commendFields['text'].replace("\n", "<br/>")
-              + "</div>";
-            if (author === '{{ user.username }}') {
-              comments += "<button class='mt-1 btn btn-sm btn-outline-light btn-dark' onclick='deleteComment(" + commentId + ")'>Delete</button>"
-                + "<button class='mt-1 mx-1 btn btn-sm btn-outline-light btn-dark' onclick='editCommentShow(" + commentId + ")'>Edit</button>";
-            }
-            comments += "</div>";
-
-            var item = $("<li>").html(comments);
-            list.append(item);
-            var reply_list = $('<ul>');
-            item.append(reply_list);
-          }
-          $("#output").html(list);
-        } else {
-          var nothingFoundString = "<h4>There aren't any comments yet.</h4>"
-          $("#output").html(nothingFoundString);
-        }
+        $("#comments-output").html(data);
       });
   }
 </script>

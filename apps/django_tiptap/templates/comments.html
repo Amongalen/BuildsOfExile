@@ -1,0 +1,74 @@
+{% if page_obj %}
+  <ul class="outer-comment">
+    {% for comment in page_obj %}
+      <li>
+        <div class='comment-row' id='comment-{{ comment.id }}'>
+          <div class='comment-info'>From <strong>{{ comment.author }}</strong>
+            at {{ comment.creation_datetime|date:'Y-m-d H:i' }}.
+            {% if comment.creation_datetime != comment.modification_datetime %}
+              Edited at {{ comment.modification_datetime|date:'Y-m-d H:i' }}.
+            {% endif %}
+          </div>
+          <div id='comment-text-{{ comment.id }}' class='comment-text'>
+            {{ comment.text|linebreaksbr }}
+          </div>
+          {% if user == comment.author.user %}
+            <button class='mt-1 btn btn-sm btn-outline-light btn-dark'
+                    onclick='deleteComment({{ comment.id }})'>Delete
+            </button>
+            <button class='mt-1 mx-1 btn btn-sm btn-outline-light btn-dark'
+                    onclick='editCommentShow({{ comment.id }})'>Edit
+            </button>
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+  {% if page_obj.has_other_pages %}
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <button class='page-link' onclick="listComments(1)">&laquo; First</button>
+        </li>
+      {% endif %}
+      {% if page_obj.number > 2 %}
+        <li class="page-item">
+          <button class='page-link'
+                  onclick="listComments({{ page_obj.number|add:"-2" }})">{{ page_obj.number|add:"-2" }}</button>
+        </li>
+      {% endif %}
+      {% if page_obj.number > 1 %}
+        <li class="page-item">
+          <button class='page-link'
+                  onclick="listComments({{ page_obj.number|add:"-1" }})">{{ page_obj.number|add:"-1" }}</button>
+        </li>
+      {% endif %}
+      <li class="page-item active" aria-current="page">
+        <span class="page-link">{{ page_obj.number }}</span>
+      </li>
+      {% if page_obj.number < page_obj.paginator.num_pages %}
+        <li class="page-item">
+          <button class='page-link'
+                  onclick="listComments({{ page_obj.number|add:"1" }})">{{ page_obj.number|add:"1" }}</button>
+        </li>
+      {% endif %}
+      {% if page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
+        <li class="page-item">
+          <button class='page-link'
+                  onclick="listComments({{ page_obj.number|add:"2" }})">{{ page_obj.number|add:"2" }}</button>
+        </li>
+      {% endif %}
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <button class='page-link' onclick="listComments({{ page_obj.paginator.num_pages }})">Last &raquo;</button>
+        </li>
+      {% endif %}
+    </ul>
+  {% endif %}
+{% else %}
+  <h4>There aren't any comments yet.</h4>
+{% endif %}
+<script>
+  page =
+  {{ page_obj.number }}
+</script>

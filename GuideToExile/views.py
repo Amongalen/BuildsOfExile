@@ -4,7 +4,6 @@ import pytz
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
-from django.core import serializers
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
@@ -149,9 +148,13 @@ def user_settings_view(request):
 
 
 def show_comments(request, guide_id):
-    comments = serializers.serialize('json', GuideComment.objects.filter(guide__guide_id=guide_id).all(),
-                                     use_natural_foreign_keys=True)
-    return HttpResponse(comments, content_type="text/json-comment-filtered")
+    paginate_by = 50
+    comments_query = GuideComment.objects.filter(guide__guide_id=guide_id).order_by(
+        'creation_datetime').reverse().all()
+    paginator = Paginator(comments_query, paginate_by)
+    page = request.GET.get('page')
+    page_obj = paginator.get_page(page)
+    return render(request, 'comments.html', {'page_obj': page_obj})
 
 
 def add_comment(request, guide_id):
