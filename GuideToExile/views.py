@@ -127,7 +127,10 @@ def edit_guide_view(request, pk):
             guide.modification_datetime = timezone.now()
             guide.title = form.cleaned_data['title']
             guide.text = form.cleaned_data['text']
-            guide.pob_details.main_active_skills = form.cleaned_data['primary_skills']
+            primary_skills = form.cleaned_data['primary_skills']
+            if imported_primary_skill not in primary_skills:
+                primary_skills.insert(0, imported_primary_skill)
+            guide.pob_details.main_active_skills = primary_skills
             guide.save()
             return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
 
