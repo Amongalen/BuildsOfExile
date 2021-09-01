@@ -81,6 +81,7 @@
   <script>
     $(document).ready(function () {
       loadGuideTab();
+
     });
 
     function loadGuideTab() {
@@ -90,6 +91,7 @@
           $("#nav-guide").html(data);
           loadGearGemsTab();
           loadSkillTreeTab();
+          attachTooltips();
         });
     }
 
@@ -106,7 +108,20 @@
         "{% url 'gear_gems_tab' pk %}",
         function (data) {
           $("#nav-gear-and-gems").html(data);
+          attachTooltips();
         });
+    }
+
+    function attachTooltips() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
+
+      var myDefaultAllowList = bootstrap.Tooltip.Default.allowList
+      myDefaultAllowList.span = ['style']
+      myDefaultAllowList.img = ['style', 'srcset', 'alt']
+      myDefaultAllowList.div = ['style', 'class']
     }
   </script>
 

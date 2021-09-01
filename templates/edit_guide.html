@@ -92,5 +92,15 @@
       tr.setStoredMarks([])
       editor.view.dispatch(tr)
     }
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+
+    var myDefaultAllowList = bootstrap.Tooltip.Default.allowList
+    myDefaultAllowList.span = ['style']
+    myDefaultAllowList.img = ['style', 'srcset', 'alt']
+    myDefaultAllowList.div = ['style', 'class']
   </script>
 {% endblock %}
