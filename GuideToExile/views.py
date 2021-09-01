@@ -59,19 +59,33 @@ class UserProfileView(generic.DetailView):
 def show_guide_view(request, pk, slug):
     logger.info('Show guide pk=%s', pk)
     guide = get_object_or_404(BuildGuide, guide_id=pk)
+
+    return render(request, 'show_guide.html',
+                  {'pk': pk, 'build_guide': guide})
+
+
+def guide_tab_view(request, pk):
+    guide = get_object_or_404(BuildGuide, guide_id=pk)
+    return render(request, 'guide_tab.html', {'pk': pk, 'build_guide': guide})
+
+
+def gear_gems_tab_view(request, pk):
+    guide = get_object_or_404(BuildGuide, guide_id=pk)
+    item_sets_with_skills = items_service.assign_skills_to_items(guide.pob_details.item_sets,
+                                                                 guide.pob_details.skill_groups)
+    return render(request, 'gear_gems_tab.html', {'pk': pk, 'build_guide': guide, 'item_sets': item_sets_with_skills,
+                                                  'gear_slots': GEAR_SLOTS})
+
+
+def skill_tree_tab_view(request, pk):
+    guide = get_object_or_404(BuildGuide, guide_id=pk)
     tree_specs = guide.pob_details.tree_specs
     trees = {}
     for tree_spec in tree_specs:
         tree_html = skill_tree_service.get_html_with_taken_nodes(tree_spec.nodes, tree_spec.tree_version)
         keystones = skill_tree_service.get_keystones(tree_spec.nodes, tree_spec.tree_version)
         trees[tree_spec.title] = (tree_html, keystones, tree_spec.url)
-
-    item_sets_with_skills = items_service.assign_skills_to_items(guide.pob_details.item_sets,
-                                                                 guide.pob_details.skill_groups)
-
-    return render(request, 'show_guide.html',
-                  {'pk': pk, 'build_guide': guide, 'trees': trees, 'item_sets': item_sets_with_skills,
-                   'gear_slots': GEAR_SLOTS})
+    return render(request, 'skill_tree_tab.html', {'pk': pk, 'build_guide': guide, 'trees': trees})
 
 
 def new_guide_view(request):

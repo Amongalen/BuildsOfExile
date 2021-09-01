@@ -58,17 +58,47 @@
   </nav>
   <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-guide" role="tabpanel"
-         aria-labelledby="nav-guide-tab">{% include 'guide_tab.html' %}</div>
+         aria-labelledby="nav-guide-tab"></div>
     <div class="tab-pane fade" id="nav-skill-tree" role="tabpanel"
-         aria-labelledby="nav-skill-tree-tab">{% include 'skill_tree_tab.html' %}</div>
+         aria-labelledby="nav-skill-tree-tab"></div>
     <div class="tab-pane fade" id="nav-gear-and-gems" role="tabpanel"
-         aria-labelledby="nav-gear-and-gems-tab">{% include 'gear_gems_tab.html' %}
+         aria-labelledby="nav-gear-and-gems-tab">
     </div>
     <div class="tab-pane fade" id="nav-discuss" role="tabpanel"
          aria-labelledby="nav-discuss-tab">{% include 'discuss_tab.html' %}
     </div>
   </div>
 
+  <script>
+    $(document).ready(function () {
+      loadGuideTab();
+    });
 
+    function loadGuideTab() {
+      $.get(
+        "{% url 'guide_tab' pk %}",
+        function (data) {
+          $("#nav-guide").html(data);
+          loadGearGemsTab();
+          loadSkillTreeTab();
+        });
+    }
+
+    function loadSkillTreeTab() {
+      $.get(
+        "{% url 'skill_tree_tab' pk %}",
+        function (data) {
+          $("#nav-skill-tree").html(data);
+        });
+    }
+
+    function loadGearGemsTab() {
+      $.get(
+        "{% url 'gear_gems_tab' pk %}",
+        function (data) {
+          $("#nav-gear-and-gems").html(data);
+        });
+    }
+  </script>
 
 {% endblock %}
