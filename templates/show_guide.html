@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-  <div class="row">
-    <div class="col-9 mb-2">
-      <h3 class="mb-0"><strong>{{ build_guide.title }}</strong></h3>
-      <div style="font-size: small">
-        Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}.
-        {% if build_guide.creation_datetime != build_guide.modification_datetime %}
-          Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}
+  <div class="row bg-secondary rounded-3 mb-2 mx-0 p-2">
+    <div class="col-9">
+      <h3><strong>{{ build_guide.title }}</strong></h3>
+      <h3>
+        {% if build_guide.pob_details.ascendancy_name %}
+          {{ build_guide.pob_details.ascendancy_name }}
+        {% else %}
+          {{ build_guide.pob_details.class_name }}
         {% endif %}
-      </div>
+      </h3>
+      Primary active skills: {{ build_guide.pob_details.main_active_skills|join:', ' }}
+
     </div>
     <div class="col row text-end">
       {% with build_guide.author as user_profile %}
@@ -32,6 +35,12 @@
                                         {% endif %}"
                                     class="user-avatar"/></div>
       {% endwith %}
+      <div style="font-size: small">
+        Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}
+        {% if build_guide.creation_datetime != build_guide.modification_datetime %}
+          </br>Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}
+        {% endif %}
+      </div>
     </div>
   </div>
   {% if user == build_guide.author.user %}
@@ -41,7 +50,7 @@
     </button>
   {% endif %}
   <nav>
-    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <div class="nav nav-tabs " id="nav-tab" role="tablist">
       <button class="nav-link active" id="nav-guide-tab" data-bs-toggle="tab" data-bs-target="#nav-guide"
               type="button" role="tab" aria-controls="nav-guide" aria-selected="true">Guide
       </button>
