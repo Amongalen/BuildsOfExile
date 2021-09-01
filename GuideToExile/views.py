@@ -146,7 +146,8 @@ def user_settings_view(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
-            user_profile.avatar = form.cleaned_data['avatar']
+            if form.cleaned_data['avatar']:
+                user_profile.avatar = form.cleaned_data['avatar']
             user_profile.twitch_url = form.cleaned_data['twitch_url']
             user_profile.youtube_url = form.cleaned_data['youtube_url']
 

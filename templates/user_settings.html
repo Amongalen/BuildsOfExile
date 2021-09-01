@@ -56,6 +56,9 @@
     </button>
   </form>
   <script>
+    $(document).ready(function () {
+      $('#id_avatar').val('')
+    });
     $(".chosen-select").chosen()
   </script>
   <script src="{% static 'js/custom-file-input.js' %}"></script>
