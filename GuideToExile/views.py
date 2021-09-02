@@ -5,7 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 # Create your views here.
 from django.template.loader import render_to_string
@@ -14,7 +14,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import generic
 
-from GuideToExile.models import BuildGuide, UserProfile, GuideComment
+from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike
 from . import skill_tree, build_guide, items_service
 from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm
 from .tokens import account_activation_token
@@ -163,6 +163,41 @@ def user_settings_view(request):
                                     'twitch_url': user_profile.twitch_url})
     return render(request, 'user_settings.html',
                   {'avatar': user_profile.avatar, 'form': form, 'timezones': pytz.common_timezones})
+
+
+def guide_likes(request, pk):
+    if request.user.is_authenticated:
+        do_user_like = GuideLike.objects.filter(user__user=request.user, guide__guide_id=pk, is_active=True).exists()
+    else:
+        do_user_like = False
+    return JsonResponse({'likes_amount': GuideLike.objects.filter(guide__guide_id=pk,
+                                                                  is_active=True).count(),
+                         'do_user_like': do_user_like})
+
+
+def add_guide_like(request, pk):
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden
+    if request.method == 'POST':
+        guide_like = GuideLike.objects.filter(user__user=request.user, guide__guide_id=pk).first()
+        if not guide_like:
+            guide_like = GuideLike(user=request.user.userprofile, guide_id=pk)
+            guide_like.save()
+        elif not guide_like.is_active:
+            guide_like.is_active = True
+            guide_like.save()
+        return HttpResponse(status=200)
+
+
+def remove_guide_like(request, pk):
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden
+    if request.method == 'POST':
+        guide_like = GuideLike.objects.filter(user__user=request.user, guide__guide_id=pk).first()
+        if guide_like and guide_like.is_active:
+            guide_like.is_active = False
+            guide_like.save()
+        return HttpResponse(status=200)
 
 
 def show_comments(request, guide_id):

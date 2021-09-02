@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.text import slugify
 
 from GuideToExile import json_encoder
@@ -28,6 +29,7 @@ class UserProfile(models.Model):
     signup_confirmation = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
     timezone = models.TextField(blank=True, null=True)
+    liked_guides = models.ManyToManyField('BuildGuide', through='GuideLike')
 
     objects = UserProfileManager()
 
@@ -51,6 +53,18 @@ class BuildGuide(models.Model):
     text = models.CharField(max_length=40000)
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
+
+
+class GuideLike(models.Model):
+    guide = models.ForeignKey(BuildGuide, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    creation_datetime = models.DateTimeField(default=timezone.now)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(name='unique_relation', fields=['guide', 'user'])
+        ]
 
 
 class GuideComment(models.Model):
