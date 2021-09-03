@@ -1,15 +1,17 @@
-from GuideToExile.models import BuildGuide, UniqueItem, Keystone
+from GuideToExile.models import BuildGuide, UniqueItem, Keystone, AscendancyClass
 
 
 def create_build_guide(author, build_details, pob_string, skill_tree_service, text='Content',
                        title='Title') -> BuildGuide:
     keystones = get_or_create_keystones(build_details, skill_tree_service)
     unique_items = get_or_create_unique_items(build_details)
+    asc_class = get_asc_class(build_details)
 
     new_guide = BuildGuide(title=title,
                            pob_details=build_details,
                            pob_string=pob_string,
                            text=text,
+                           ascendancy_class=asc_class,
                            )
     new_guide.save()
     new_guide.author = author
@@ -17,6 +19,16 @@ def create_build_guide(author, build_details, pob_string, skill_tree_service, te
     new_guide.unique_items.set(unique_items)
 
     return new_guide
+
+
+def get_asc_class(build_details):
+    asc_name = build_details.ascendancy_name
+    if asc_name == 'None':
+        base_class_name = build_details.class_name
+        asc_class = AscendancyClass.objects.get(name='None', base_class_name=base_class_name)
+    else:
+        asc_class = AscendancyClass.objects.get(name=asc_name)
+    return asc_class
 
 
 def get_or_create_unique_items(build_details):

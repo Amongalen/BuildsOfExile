@@ -40,6 +40,11 @@ class UserProfile(models.Model):
         return self.user.username
 
 
+class AscendancyClass(models.Model):
+    name = models.CharField(max_length=60)
+    base_class_name = models.CharField(max_length=60)
+
+
 class BuildGuide(models.Model):
     guide_id = models.BigAutoField(primary_key=True)
     slug = models.SlugField(max_length=255)
@@ -53,6 +58,7 @@ class BuildGuide(models.Model):
     text = models.CharField(max_length=40000)
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
+    ascendancy_class = models.ForeignKey(AscendancyClass, on_delete=models.SET_NULL, null=True)
 
 
 class GuideLike(models.Model):
