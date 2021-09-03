@@ -29,9 +29,17 @@ GEAR_SLOTS = ['weapon-1', 'weapon-2', 'helmet', 'body-armour', 'belt', 'ring-1',
 
 class IndexView(generic.ListView):
     template_name = 'index.html'
-    context_object_name = 'build_guide_list'
     paginate_by = 50
     queryset = BuildGuide.objects.defer('pob_details').all()
+
+
+class LikedGuidesView(generic.ListView):
+    template_name = 'liked_guides.html'
+    paginate_by = 50
+
+    def get_queryset(self):
+        return BuildGuide.objects.defer('pob_details').filter(guidelike__is_active=True,
+                                                              guidelike__user=self.request.user.userprofile).all()
 
 
 class UserProfileView(generic.DetailView):
@@ -50,7 +58,7 @@ class UserProfileView(generic.DetailView):
         return context
 
     def get_related_guides(self):
-        queryset = self.object.buildguide_set.all()
+        queryset = self.object.buildguide_set.defer('pob_details').all()
         paginator = Paginator(queryset, self.paginate_by)
         page = self.request.GET.get('page')
         return paginator.get_page(page)

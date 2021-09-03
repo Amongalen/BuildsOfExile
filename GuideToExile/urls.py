@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls.static import static
+from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 
 from GuideToExile import views, settings
@@ -23,6 +24,7 @@ urlpatterns = [
     path('guide/new/', views.new_guide_view, name='new_guide'),
     path('guide/show/<int:pk>/<slug:slug>', views.show_guide_view, name='show_guide'),
     path('guide/edit/<int:pk>/', views.edit_guide_view, name='edit_guide'),
+    path('guide/liked/', login_required(views.LikedGuidesView.as_view()), name='liked_guides'),
     path('guide/get_likes/<int:pk>', views.guide_likes, name='guide_likes'),
     path('guide/add_like/<int:pk>', views.add_guide_like, name='add_like'),
     path('guide/remove_like/<int:pk>', views.remove_guide_like, name='remove_like'),
