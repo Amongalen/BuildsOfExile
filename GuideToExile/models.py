@@ -41,8 +41,39 @@ class UserProfile(models.Model):
 
 
 class AscendancyClass(models.Model):
-    name = models.CharField(max_length=60)
-    base_class_name = models.CharField(max_length=60)
+    class BaseClassName(models.IntegerChoices):
+        MARAUDER = 1, 'Marauder'
+        RANGER = 2, 'Ranger'
+        WITCH = 3, 'Witch'
+        DUELIST = 4, 'Duelist'
+        TEMPLAR = 5, 'Templar'
+        SHADOW = 6, 'Shadow'
+        SCION = 7, 'Scion'
+
+    class AscClassName(models.IntegerChoices):
+        JUGGERNAUT = 1, 'Juggernaut'
+        BERSERKER = 2, 'Berserker'
+        CHIEFTAIN = 3, 'Chieftain'
+        DEADEYE = 4, 'Deadeye'
+        RAIDER = 5, 'Raider'
+        PATHFINDER = 6, 'Pathfinder'
+        NECROMANCER = 7, 'Necromancer'
+        ELEMENTALIST = 8, 'Elementalist'
+        OCCULTIST = 9, 'Occultist'
+        SLAYER = 10, 'Slayer'
+        GLADIATOR = 11, 'Gladiator'
+        CHAMPION = 12, 'Champion'
+        INQUISITOR = 13, 'Inquisitor'
+        HIEROPHANT = 14, 'Hierophant'
+        GUARDIAN = 15, 'Guardian'
+        ASSASSIN = 16, 'Assassin'
+        SABOTEUR = 17, 'Saboteur'
+        TRICKSTER = 18, 'Trickster'
+        ASCENDANT = 19, 'Ascendant'
+        NONE = 20, 'None'
+
+    name = models.PositiveSmallIntegerField(choices=AscClassName.choices)
+    base_class_name = models.PositiveSmallIntegerField(choices=BaseClassName.choices)
 
 
 class BuildGuide(models.Model):
