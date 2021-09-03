@@ -1,17 +1,5 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="list-group">
-    {% for build in page_obj %}
-      <a href="{% url 'show_guide' build.guide_id build.slug %}"
-         class="p-1 my-1 text-light bg-secondary d-flex justify-content-between align-items-start nav-link">
-        <div class="ms-2 me-auto">
-          <div class="fw-bold">{{ build.title }}</div>
-
-        </div>
-        <span class="badge bg-primary rounded-pill">XX</span>
-      </a>
-    {% endfor %}
-  </div>
-  {% include 'pagination_page_selector.html' %}
+  {% include 'guide_list.html' %}
 {% endblock %}
