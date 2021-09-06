@@ -23,11 +23,11 @@ def create_build_guide(author, build_details, pob_string, skill_tree_service, te
 
 def get_asc_class(build_details):
     asc_name = build_details.ascendancy_name
-    if asc_name == 'None':
-        base_class_name = build_details.class_name
-        asc_class = AscendancyClass.objects.get(name='None', base_class_name=base_class_name)
-    else:
-        asc_class = AscendancyClass.objects.get(name=asc_name)
+    asc_name_id = AscendancyClass.AscClassName[asc_name.upper()]
+    base_class_name = build_details.class_name
+    base_class_name_id = AscendancyClass.BaseClassName[base_class_name.upper()]
+    asc_class = AscendancyClass.objects.get(name=asc_name_id, base_class_name=base_class_name_id)
+
     return asc_class
 
 
