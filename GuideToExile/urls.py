@@ -20,7 +20,8 @@ from django.urls import path, include
 from GuideToExile import views, settings
 
 urlpatterns = [
-    path('', views.IndexView.as_view(), name='index'),
+    path('', views.index_view, name='index'),
+    path('guide/list/', views.guide_list_view, name='guide_list'),
     path('guide/new/', views.new_guide_view, name='new_guide'),
     path('guide/show/<int:pk>/<slug:slug>', views.show_guide_view, name='show_guide'),
     path('guide/edit/<int:pk>/', views.edit_guide_view, name='edit_guide'),

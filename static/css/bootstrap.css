@@ -5,9 +5,9 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 :root {
-  --bs-blue: #0d6efd;
-  --bs-indigo: #6610f2;
-  --bs-purple: #6f42c1;
+    --bs-blue: #0d6efd;
+    --bs-indigo: #6610f2;
+    --bs-purple: #6f42c1;
     --bs-pink: #d63384;
     --bs-red: #dc3545;
     --bs-orange: #fd7e14;
@@ -3879,20 +3879,20 @@ fieldset:disabled .btn {
 }
 
 .dropdown-menu {
-  position: absolute;
-  z-index: 1000;
-  display: none;
-  min-width: 10rem;
-  padding: 0.5rem 0;
-  margin: 0;
-  font-size: 1rem;
-  color: #212529;
-  text-align: left;
-  list-style: none;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    min-width: 10rem;
+    padding: 0.5rem 0.5rem;
+    margin: 0;
+    font-size: 1rem;
+    color: #b0b8bf;
+    text-align: left;
+    list-style: none;
+    background-color: #38312e;
+    background-clip: padding-box;
+    border: 1px solid #b0b8bf;
+    border-radius: 0.25rem;
 }
 
 .dropdown-menu[data-bs-popper] {
@@ -4091,10 +4091,10 @@ fieldset:disabled .btn {
 }
 
 .dropdown-divider {
-  height: 0;
-  margin: 0.5rem 0;
-  overflow: hidden;
-  border-top: 1px solid rgba(0, 0, 0, 0.15);
+    height: 0;
+    margin: 0.5rem 0;
+    overflow: hidden;
+    border-top: 1px solid #b0b8bf;
 }
 
 .dropdown-item {
@@ -4150,7 +4150,7 @@ fieldset:disabled .btn {
 .dropdown-menu-dark {
     color: #b0b8bf;
     background-color: #343a40;
-    border-color: rgba(0, 0, 0, 0.15);
+    border-color: #b0b8bf;
 }
 
 .dropdown-menu-dark .dropdown-item {
@@ -4172,7 +4172,7 @@ fieldset:disabled .btn {
 }
 
 .dropdown-menu-dark .dropdown-divider {
-  border-color: rgba(0, 0, 0, 0.15);
+    border-color: #b0b8bf;
 }
 
 .dropdown-menu-dark .dropdown-item-text {
@@ -5054,11 +5054,11 @@ fieldset:disabled .btn {
     -ms-flex-align: center;
     align-items: center;
     width: 100%;
-    padding: 1rem 1.25rem;
+    padding: 0.3rem 0.5rem;
     font-size: 1rem;
-    color: #212529;
+    color: #b0b8bf;
     text-align: left;
-    background-color: #fff;
+    background-color: #3b302b;
     border: 0;
     border-radius: 0;
     overflow-anchor: none;
@@ -5076,14 +5076,14 @@ fieldset:disabled .btn {
 }
 
 .accordion-button:not(.collapsed) {
-    color: #322c29;
-    background-color: #ebeaea;
-    -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
-    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+    color: #e3e6e8;
+    background-color: #503930;
+    -webkit-box-shadow: inset 0 -1px 0 #b0b8bf;
+    box-shadow: inset 0 -1px 0 #b0b8bf;
 }
 
 .accordion-button:not(.collapsed)::after {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23322c29'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23e3e6e8'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
     -webkit-transform: rotate(-180deg);
     transform: rotate(-180deg);
 }
@@ -5095,7 +5095,7 @@ fieldset:disabled .btn {
     height: 1.25rem;
     margin-left: auto;
     content: "";
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23b0b8bf'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-size: 1.25rem;
     -webkit-transition: -webkit-transform 0.2s ease-in-out;
@@ -5128,8 +5128,8 @@ fieldset:disabled .btn {
 }
 
 .accordion-item {
-  background-color: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+    background-color: #2a2522;
+    border: 1px solid #b0b8bf;
 }
 
 .accordion-item:first-of-type {
@@ -5162,7 +5162,7 @@ fieldset:disabled .btn {
 }
 
 .accordion-body {
-  padding: 1rem 1.25rem;
+    padding: 0.3rem 0.5rem;
 }
 
 .accordion-flush .accordion-collapse {
@@ -5264,7 +5264,7 @@ fieldset:disabled .btn {
 .page-item.active .page-link {
     z-index: 3;
     color: #e3e6e8;
-    background-color: #8f563d;
+    background-color: #503930;
     border-color: #b0b8bf;
 }
 
@@ -11495,13 +11495,22 @@ fieldset:disabled .btn {
     display: -ms-flexbox !important;
     display: flex !important;
   }
-  .d-print-inline-flex {
-    display: -webkit-inline-box !important;
-    display: -ms-inline-flexbox !important;
-    display: inline-flex !important;
-  }
-  .d-print-none {
-    display: none !important;
-  }
+
+    .d-print-inline-flex {
+        display: -webkit-inline-box !important;
+        display: -ms-inline-flexbox !important;
+        display: inline-flex !important;
+    }
+
+    .d-print-none {
+        display: none !important;
+    }
 }
+
+.btn-outline-light:hover {
+    color: #e3e6e8;
+    background-color: #67544c;
+    border-color: #e3e6e8;
+}
+
 /*# sourceMappingURL=bootstrap.css.map */

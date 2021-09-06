@@ -1,15 +1,17 @@
 import io
 import logging
+from datetime import datetime, timedelta
 
 from PIL import Image
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.forms import Form, ModelForm
+from django.db.models import Q
+from django.forms import Form, ModelForm, Select
 
 from GuideToExile import pob_import
-from GuideToExile.models import UserProfile
+from GuideToExile.models import UserProfile, AscendancyClass
 from apps.django_tiptap.widgets import TipTapWidget
 
 logger = logging.getLogger('guidetoexile')
@@ -52,6 +54,55 @@ class EditGuideForm(Form):
                                                widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
                                                help_text=None)
     text = forms.CharField(max_length=40000, widget=TipTapWidget(), help_text=None)
+
+
+class GuideListFilterForm(Form):
+    base_class_name_choices = [(i.value, i.label) for i in AscendancyClass.BaseClassName]
+    asc_class_name_choices = [(i.value, i.label) for i in AscendancyClass.AscClassName if i.label != 'None']
+    base_class_name_choices.append((0, 'All'))
+    base_class_name_choices.sort()
+    asc_class_name_choices.append((0, 'All'))
+    asc_class_name_choices.sort()
+
+    title = forms.CharField(max_length=255, required=False)
+    base_class_name = forms.ChoiceField(required=True, choices=base_class_name_choices)
+    asc_class_name = forms.ChoiceField(required=True, choices=asc_class_name_choices)
+    author_username = forms.CharField(max_length=255, required=False, label='Author')
+    today = datetime.today()
+    updated_after_offset = 90
+    updated_after_initial = today - timedelta(days=updated_after_offset)
+    updated_after = forms.DateField(
+        initial=updated_after_initial.strftime("%Y-%m-%d"),
+        localize=False,
+        widget=forms.DateInput()
+    )
+    liked_by_me = forms.NullBooleanField(widget=Select(
+        choices=[
+            ('', 'Either'),
+            (True, 'Yes'),
+            (False, 'No'),
+        ]
+    ))
+
+    def get_filter(self, user_id):
+        data = self.cleaned_data
+        filters = [
+            Q(title__icontains=data['title']),
+            Q(author__user__username__icontains=data['author_username']),
+            Q(modification_datetime__gte=data['updated_after']),
+        ]
+        if data['base_class_name'] != '0':
+            filters.append(Q(ascendancy_class__base_class_name=data['base_class_name']))
+        if data['asc_class_name'] != '0':
+            filters.append(Q(ascendancy_class__name=data['asc_class_name']))
+
+        if user_id != 0:
+            liked = data['liked_by_me']
+            if liked is True:
+                filters.append(Q(guidelike__user__user_id=user_id) & Q(guidelike__is_active=True))
+            if liked is False:
+                filters.append(~Q(guidelike__user__user_id=user_id) | Q(guidelike__is_active=False))
+        return filters
 
 
 class ProfileForm(ModelForm):

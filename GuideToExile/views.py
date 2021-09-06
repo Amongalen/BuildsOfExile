@@ -16,7 +16,7 @@ from django.views import generic
 
 from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike
 from . import skill_tree, build_guide, items_service
-from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm
+from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm, GuideListFilterForm
 from .tokens import account_activation_token
 
 logger = logging.getLogger('guidetoexile')
@@ -25,12 +25,6 @@ skill_tree_service = skill_tree.SkillTreeService()
 
 GEAR_SLOTS = ['weapon-1', 'weapon-2', 'helmet', 'body-armour', 'belt', 'ring-1', 'ring-2', 'amulet', 'boots', 'gloves',
               'flask-1', 'flask-2', 'flask-3', 'flask-4', 'flask-5']
-
-
-class IndexView(generic.ListView):
-    template_name = 'index.html'
-    paginate_by = 50
-    queryset = BuildGuide.objects.defer('pob_details').all()
 
 
 class LikedGuidesView(generic.ListView):
@@ -62,6 +56,36 @@ class UserProfileView(generic.DetailView):
         paginator = Paginator(queryset, self.paginate_by)
         page = self.request.GET.get('page')
         return paginator.get_page(page)
+
+
+def index_view(request):
+    return render(request, 'index.html', {
+        'titles': BuildGuide.objects.values('title').distinct(),
+        'authors': BuildGuide.objects.values('author__user__username').distinct(),
+        'filter_form': GuideListFilterForm(),
+    })
+
+
+def guide_list_view(request):
+    paginate_by = 15
+    if request.method == 'POST':
+        form = GuideListFilterForm(request.POST)
+        if form.is_valid():
+            user_id = request.user.userprofile.user_id
+            queryset = BuildGuide.objects.defer('pob_details')
+            queryset = queryset.filter(*form.get_filter(user_id))
+            queryset = queryset.order_by('creation_datetime').reverse().all()
+            print(queryset.query)
+            paginator = Paginator(queryset, paginate_by)
+            page = request.POST.get('page')
+            page_obj = paginator.get_page(page)
+            return render(request, 'guide_list.html', {'page_obj': page_obj})
+
+    queryset = BuildGuide.objects.defer('pob_details').all()
+    paginator = Paginator(queryset, paginate_by)
+    page = request.POST.get('page')
+    page_obj = paginator.get_page(page)
+    return render(request, 'guide_list.html', {'page_obj': page_obj})
 
 
 def show_guide_view(request, pk, slug):

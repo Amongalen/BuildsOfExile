@@ -535,3 +535,126 @@ hr {
 .comment-text {
     padding: 0.5rem;
 }
+
+.form-select {
+    -webkit-appearance: revert;
+    -moz-appearance: revert;
+    appearance: revert;
+}
+
+select.form-select:not([size]):not([multiple]) {
+    height: calc(2rem + 2px);
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.ui-autocomplete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: default;
+}
+
+.ui-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: block;
+    outline: 0;
+}
+
+.ui-menu .ui-menu {
+    position: absolute;
+}
+
+.ui-menu .ui-menu-item {
+    margin: 0;
+    cursor: pointer;
+    /* support: IE10, see #8844 */
+    list-style-image: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+}
+
+.ui-menu .ui-menu-item-wrapper {
+    position: relative;
+    padding: 3px 1em 3px .4em;
+}
+
+.ui-menu .ui-menu-divider {
+    margin: 5px 0;
+    height: 0;
+    font-size: 0;
+    line-height: 0;
+    border-width: 1px 0 0 0;
+}
+
+.ui-menu .ui-state-focus,
+.ui-menu .ui-state-active {
+    margin: -1px;
+}
+
+.ui-widget-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.datepicker table tr td.day:hover {
+    background-color: hsl(18, 15%, 35%);
+    color: hsl(210, 10%, 90%);
+}
+
+.datepicker table tr td.active, .datepicker table tr td.active.disabled, .datepicker table tr td.active.disabled:hover, .datepicker table tr td.active:hover {
+    background-color: hsl(220, 80%, 25%);
+    background-image: -moz-linear-gradient(to bottom, hsl(220, 80%, 45%), hsl(220, 80%, 15%));
+    background-image: -ms-linear-gradient(to bottom, hsl(220, 80%, 45%), hsl(220, 80%, 15%));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(hsl(220, 80%, 45%)), to(hsl(220, 80%, 15%)));
+    background-image: -webkit-linear-gradient(to bottom, hsl(220, 80%, 45%), hsl(220, 80%, 15%));
+    background-image: -o-linear-gradient(to bottom, hsl(220, 80%, 45%), hsl(220, 80%, 15%));
+    background-image: linear-gradient(to bottom, hsl(220, 80%, 45%), hsl(220, 80%, 15%));
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='hsl(220, 80%, 45%)', endColorstr='hsl(220, 80%, 15%)', GradientType=0);
+    border-color: hsl(220, 80%, 45%) hsl(220, 80%, 45%) hsl(220, 80%, 15%);
+}
+
+.datepicker table tr td.today, .datepicker table tr td.today.disabled, .datepicker table tr td.today.disabled:hover, .datepicker table tr td.today:hover {
+    background-color: hsl(40, 50%, 50%);
+    background-image: -moz-linear-gradient(to bottom, hsl(40, 50%, 40%), hsl(40, 50%, 60%));
+    background-image: -ms-linear-gradient(to bottom, hsl(40, 50%, 40%), hsl(40, 50%, 60%));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(hsl(40, 50%, 40%)), to(hsl(40, 50%, 60%)));
+    background-image: -webkit-linear-gradient(to bottom, hsl(40, 50%, 40%), hsl(40, 50%, 60%));
+    background-image: -o-linear-gradient(to bottom, hsl(40, 50%, 40%), hsl(40, 50%, 60%));
+    background-image: linear-gradient(to bottom, hsl(40, 50%, 40%), hsl(40, 50%, 60%));
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='hsl(40, 50%, 40%)', endColorstr='hsl(40, 50%, 60%)', GradientType=0);
+    border-color: hsl(40, 50%, 60%) hsl(40, 50%, 60%) hsl(40, 50%, 40%);
+    border-color: rgba(0, 0, 0, .1) rgba(0, 0, 0, .1) rgba(0, 0, 0, .25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+    color: #000;
+}
+
+.datepicker .datepicker-switch:hover, .datepicker .next:hover, .datepicker .prev:hover, .datepicker tfoot tr th:hover {
+    background: hsl(18, 15%, 35%);
+}
+
+.datepicker td, .datepicker th {
+    text-align: center;
+    width: 2rem;
+    height: 1.5rem;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    border: none;
+}
