@@ -64,10 +64,11 @@ class GuideListFilterForm(Form):
     asc_class_name_choices.append((0, 'All'))
     asc_class_name_choices.sort()
 
-    title = forms.CharField(max_length=255, required=False)
+    title = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'placeholder': 'Title...'}))
     base_class_name = forms.ChoiceField(required=True, choices=base_class_name_choices)
     asc_class_name = forms.ChoiceField(required=True, choices=asc_class_name_choices)
-    author_username = forms.CharField(max_length=255, required=False, label='Author')
+    author_username = forms.CharField(max_length=255, required=False, label='Author',
+                                      widget=forms.TextInput(attrs={'placeholder': 'Author...'}))
     today = datetime.today()
     updated_after_offset = 90
     updated_after_initial = today - timedelta(days=updated_after_offset)

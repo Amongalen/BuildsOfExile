@@ -13,31 +13,33 @@
       <div id="filterFormContainer" class="accordion-collapse collapse" aria-labelledby="filterFormHeading"
            data-bs-parent="#filterAccordion">
         <div class="accordion-body pb-2">
-          <form class="row" id="filterForm">
+          <form id="filterForm" autocomplete="off">
             {% csrf_token %}
-            <div class="col-6 mb-2">
-              {{ filter_form.title.label_tag }}
-              {{ filter_form.title|addclass:'form-control p-1' }}
-            </div>
-            <div class="col-auto mb-2">
-              {{ filter_form.base_class_name.label_tag }}
-              {{ filter_form.base_class_name|addclass:'form-select p-1' }}
-            </div>
-            <div class="col-auto mb-2">
-              {{ filter_form.asc_class_name.label_tag }}
-              {{ filter_form.asc_class_name|addclass:'form-select p-1' }}
-            </div>
-            <div class="col-auto mb-2">
-              {{ filter_form.author_username.label_tag }}
-              {{ filter_form.author_username|addclass:'form-control p-1' }}
-            </div>
-            <div class="col-auto mb-2" id="datepickerContainer">
-              {{ filter_form.updated_after.label_tag }}
-              {{ filter_form.updated_after|addclass:'form-control p-1' }}
-            </div>
-            <div class="col-auto mb-2">
-              {{ filter_form.liked_by_me.label_tag }}
-              {{ filter_form.liked_by_me|addclass:'form-select p-1' }}
+            <div class="row">
+              <div class="col-6 mb-2">
+                {{ filter_form.title.label_tag }}
+                {{ filter_form.title|addclass:'form-control p-1' }}
+              </div>
+              <div class="col-auto mb-2">
+                {{ filter_form.base_class_name.label_tag }}
+                {{ filter_form.base_class_name|addclass:'form-select p-1' }}
+              </div>
+              <div class="col-auto mb-2" style="width: 150px;">
+                {{ filter_form.asc_class_name.label_tag }}
+                {{ filter_form.asc_class_name|addclass:'form-select p-1' }}
+              </div>
+              <div class="col-auto mb-2">
+                {{ filter_form.author_username.label_tag }}
+                {{ filter_form.author_username|addclass:'form-control p-1' }}
+              </div>
+              <div class="col-auto mb-2" id="datepickerContainer">
+                {{ filter_form.updated_after.label_tag }}
+                {{ filter_form.updated_after|addclass:'form-control p-1' }}
+              </div>
+              <div class="col-auto mb-2">
+                {{ filter_form.liked_by_me.label_tag }}
+                {{ filter_form.liked_by_me|addclass:'form-select p-1' }}
+              </div>
             </div>
             <input type="button" class="my-1 btn btn-outline-light btn-secondary" id="submitButton" value="Search"/>
           </form>
@@ -47,8 +49,11 @@
   </div>
   <div id="guideList"></div>
   <script>
-    function find_guides() {
+    let page = 1;
+
+    function find_guides(page) {
       var str = $("#filterForm").serialize();
+      str += "&page=" + page;
 
       $.ajax({
         url: "{% url 'guide_list' %}",
@@ -60,23 +65,73 @@
       });
     }
 
-    $("#submitButton").click(find_guides);
+    const asc_class_mapping = {
+      '0': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'],
+      '1': ['0', '1', '2', '3'],
+      '2': ['0', '4', '5', '6'],
+      '3': ['0', '7', '8', '9'],
+      '4': ['0', '10', '11', '12'],
+      '5': ['0', '13', '14', '15'],
+      '6': ['0', '16', '17', '18'],
+      '7': ['0', '15'],
+    }
+
 
     $(document).ready(function () {
-      find_guides()
-    });
+      $("#submitButton").click(find_guides);
 
-    $(function () {
-      var availableTitles = [{% for title in titles %}"{{title.title}}", {% endfor %}];
-      $("#id_title").autocomplete({
-        source: availableTitles
+      let baseClassName = $("#id_base_class_name");
+      baseClassName.change(function () {
+        set_asc_classes(this.value);
       });
 
-      var availableAuthors = [{% for author in authors %}"{{author.author__user__username}}", {% endfor %}];
-      $("#id_author").autocomplete({
-        source: availableAuthors
-      });
+      set_asc_classes(baseClassName.val());
+
+      find_guides(page)
     });
+
+    function set_asc_classes(base_class_value) {
+      $("#id_asc_class_name option").each(function () {
+        if (asc_class_mapping[base_class_value].includes($(this).val())) {
+          $(this).show();
+        } else {
+          $(this).hide();
+        }
+      });
+      let ascClassName = $("#id_asc_class_name");
+      if (!asc_class_mapping[base_class_value].includes(ascClassName.value)) {
+        ascClassName.val('0')
+      }
+    }
+
+
+    var titleAutoComplete = new autoComplete({
+      selector: '#id_title',
+      minChars: 1,
+      source: function (term, suggest) {
+        term = term.toLowerCase();
+        var choices = [{% for title in titles %}"{{title.title}}", {% endfor %}];
+        var matches = [];
+        for (var i = 0; i < choices.length; i++)
+          if (~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
+        suggest(matches);
+      }
+    });
+
+
+    var authorAutoComplete = new autoComplete({
+      selector: '#id_author_username',
+      minChars: 1,
+      source: function (term, suggest) {
+        term = term.toLowerCase();
+        var choices = [{% for author in authors %}"{{author.author__user__username}}", {% endfor %}];
+        var matches = [];
+        for (var i = 0; i < choices.length; i++)
+          if (~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
+        suggest(matches);
+      }
+    });
+
 
     $('#datepickerContainer input').datepicker({
       format: "yyyy-mm-dd",

@@ -2309,7 +2309,7 @@ progress {
 
 .form-control:disabled, .form-control[readonly] {
     background-color: #423f3e;
-    border-color: #b0b8bf;
+    border-color: #798086;
     opacity: 1;
 }
 
@@ -2509,8 +2509,9 @@ textarea.form-control-lg {
 }
 
 .form-select:disabled {
-    background-color: #e9ecef;
-    border-color: #b0b8bf;
+    color: #798086;
+    background-color: #423f3e;
+    border-color: #798086;
 }
 
 .form-select:-moz-focusring {
@@ -11485,16 +11486,18 @@ fieldset:disabled .btn {
     display: table !important;
   }
   .d-print-table-row {
-    display: table-row !important;
+      display: table-row !important;
   }
-  .d-print-table-cell {
-    display: table-cell !important;
-  }
-  .d-print-flex {
-    display: -webkit-box !important;
-    display: -ms-flexbox !important;
-    display: flex !important;
-  }
+
+    .d-print-table-cell {
+        display: table-cell !important;
+    }
+
+    .d-print-flex {
+        display: -webkit-box !important;
+        display: -ms-flexbox !important;
+        display: flex !important;
+    }
 
     .d-print-inline-flex {
         display: -webkit-inline-box !important;
@@ -11511,6 +11514,17 @@ fieldset:disabled .btn {
     color: #e3e6e8;
     background-color: #67544c;
     border-color: #e3e6e8;
+}
+
+.form-select {
+    -webkit-appearance: revert;
+    -moz-appearance: revert;
+    appearance: revert;
+    background-image: none;
+}
+
+.form-control:disabled {
+    color: #798086;
 }
 
 /*# sourceMappingURL=bootstrap.css.map */
