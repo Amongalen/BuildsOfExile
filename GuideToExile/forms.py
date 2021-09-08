@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.forms import Form, ModelForm, Select
 
 from GuideToExile import pob_import
-from GuideToExile.models import UserProfile, AscendancyClass, ActiveSkill, Keystone
+from GuideToExile.models import UserProfile, AscendancyClass, ActiveSkill, Keystone, UniqueItem
 from apps.django_tiptap.widgets import TipTapWidget
 
 logger = logging.getLogger('guidetoexile')
@@ -90,6 +90,11 @@ class GuideListFilterForm(Form):
                                           widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
                                           help_text=None)
 
+    unique_items = forms.MultipleChoiceField(required=False,
+                                             choices=(),
+                                             widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
+                                             help_text=None)
+
     def __init__(self, *args, **kwargs):
         super(GuideListFilterForm, self).__init__(*args, **kwargs)
         active_skill_choices = [(i + 1, skill.name) for i, skill in enumerate(
@@ -103,6 +108,11 @@ class GuideListFilterForm(Form):
                             enumerate(Keystone.objects.filter(keystones_related_builds__isnull=False)
                                       .distinct().order_by('name').all())]
         self.fields['keystones'].choices = keystone_choices
+
+        unique_item_choices = [(i + 1, keystone.name) for i, keystone in
+                               enumerate(UniqueItem.objects.filter(unique_items_related_builds__isnull=False)
+                                         .distinct().order_by('name').all())]
+        self.fields['unique_items'].choices = unique_item_choices
 
 
 class ProfileForm(ModelForm):
