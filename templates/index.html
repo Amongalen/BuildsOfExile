@@ -36,7 +36,10 @@
                 {{ filter_form.active_skill.label_tag }}
                 {{ filter_form.active_skill|addclass:'form-select p-1' }}
               </div>
-
+              <div class="col-auto mb-2">
+                {{ filter_form.keystones.label_tag }}
+                {{ filter_form.keystones }}
+              </div>
               <div class="col-auto mb-2" id="datepickerContainer">
                 {{ filter_form.updated_after.label_tag }}
                 {{ filter_form.updated_after|addclass:'form-control p-1' }}
@@ -54,6 +57,8 @@
   </div>
   <div id="guideList"></div>
   <script>
+    $(".chosen-select").chosen({disable_search_threshold: 6, width: '100%'})
+
     let page = 1;
 
     function find_guides(page) {

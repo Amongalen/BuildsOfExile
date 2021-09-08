@@ -15,7 +15,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import generic
 
 from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike, ActiveSkill
-from . import skill_tree, build_guide, items_service
+from . import skill_tree, build_guide, items_service, guide_search
 from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm, GuideListFilterForm
 from .tokens import account_activation_token
 
@@ -75,20 +75,13 @@ def guide_list_view(request):
         form = GuideListFilterForm(request.POST)
         if form.is_valid():
             user_id = request.user.userprofile.user_id if request.user.is_authenticated else 0
-            queryset = BuildGuide.objects.defer('pob_details')
-            queryset = queryset.filter(*form.get_filter(user_id))
-
-            queryset = queryset.order_by('creation_datetime').reverse().all()
-            logger.debug('Search query=%s', queryset.query)
-            paginator = Paginator(queryset, paginate_by)
             page = request.POST.get('page')
-            page_obj = paginator.get_page(page)
+            # BuildGuide.objects.defer('pob_details').filter()
+            page_obj = guide_search.find_with_filter(form, user_id, page, paginate_by)
             return render(request, 'guide_list.html', {'page_obj': page_obj})
 
-    queryset = BuildGuide.objects.defer('pob_details').all()
-    paginator = Paginator(queryset, paginate_by)
     page = request.POST.get('page')
-    page_obj = paginator.get_page(page)
+    page_obj = guide_search.find_all(page, paginate_by)
     return render(request, 'guide_list.html', {'page_obj': page_obj})
 
 

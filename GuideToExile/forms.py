@@ -7,11 +7,10 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.forms import Form, ModelForm, Select
 
 from GuideToExile import pob_import
-from GuideToExile.models import UserProfile, AscendancyClass, ActiveSkill
+from GuideToExile.models import UserProfile, AscendancyClass, ActiveSkill, Keystone
 from apps.django_tiptap.widgets import TipTapWidget
 
 logger = logging.getLogger('guidetoexile')
@@ -84,35 +83,26 @@ class GuideListFilterForm(Form):
             (False, 'No'),
         ]
     ))
-    active_skills = [(i + 1, skill.name) for i, skill in
-                     enumerate(ActiveSkill.objects.filter(buildguide__isnull=False).distinct().order_by('name').all())]
-    active_skills.append((0, 'Any'))
-    active_skills.sort()
-    active_skill = forms.ChoiceField(required=True, choices=active_skills)
 
-    def get_filter(self, user_id):
-        data = self.cleaned_data
-        filters = [
-            Q(title__icontains=data['title']),
-            Q(author__user__username__icontains=data['author_username']),
-            Q(modification_datetime__gte=data['updated_after']),
-        ]
-        if data['base_class_name'] != '0':
-            filters.append(Q(ascendancy_class__base_class_name=data['base_class_name']))
-        if data['asc_class_name'] != '0':
-            filters.append(Q(ascendancy_class__name=data['asc_class_name']))
+    active_skill = forms.ChoiceField(required=True, choices=())
+    keystones = forms.MultipleChoiceField(required=False,
+                                          choices=(),
+                                          widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
+                                          help_text=None)
 
-        if user_id != 0:
-            liked = data['liked_by_me']
-            if liked is True:
-                filters.append(Q(guidelike__user__user_id=user_id) & Q(guidelike__is_active=True))
-            if liked is False:
-                filters.append(~Q(guidelike__user__user_id=user_id) | Q(guidelike__is_active=False))
+    def __init__(self, *args, **kwargs):
+        super(GuideListFilterForm, self).__init__(*args, **kwargs)
+        active_skill_choices = [(i + 1, skill.name) for i, skill in enumerate(
+            ActiveSkill.objects.filter(buildguide__isnull=False).distinct().order_by(
+                'name').all())]
+        active_skill_choices.append((0, 'Any'))
+        active_skill_choices.sort()
+        self.fields['active_skill'].choices = active_skill_choices
 
-        if (value := int(data['active_skill'])) != 0:
-            skill_name = dict(self.fields['active_skill'].choices)[value]
-            filters.append(Q(primary_skills__name=skill_name))
-        return filters
+        keystone_choices = [(i + 1, keystone.name) for i, keystone in
+                            enumerate(Keystone.objects.filter(keystones_related_builds__isnull=False)
+                                      .distinct().order_by('name').all())]
+        self.fields['keystones'].choices = keystone_choices
 
 
 class ProfileForm(ModelForm):

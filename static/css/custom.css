@@ -278,8 +278,12 @@ hr {
     clip-path: inset(100% 100%);
 }
 
-.chosen-container-multi .chosen-drop {
+#id_primary_skills_chosen.chosen-container-multi .chosen-drop {
     width: 30%;
+}
+
+.chosen-container-multi .chosen-drop {
+    width: 100%;
 }
 
 .chosen-container .chosen-results {
