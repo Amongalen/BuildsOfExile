@@ -88,13 +88,13 @@ class GuideListFilterForm(Form):
     keystones = forms.MultipleChoiceField(required=False,
                                           choices=(),
                                           widget=forms.SelectMultiple(attrs={'class': 'chosen-select',
-                                                                             'data-placeholder': 'Chooose some Keystones'}),
+                                                                             'data-placeholder': 'Chooose Keystones...'}),
                                           help_text=None)
 
     unique_items = forms.MultipleChoiceField(required=False,
                                              choices=(),
                                              widget=forms.SelectMultiple(attrs={'class': 'chosen-select',
-                                                                                'data-placeholder': 'Chooose some Unique Items'}),
+                                                                                'data-placeholder': 'Chooose Unique Items...'}),
                                              help_text=None)
 
     def __init__(self, *args, **kwargs):
