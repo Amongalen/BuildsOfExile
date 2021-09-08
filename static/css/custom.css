@@ -253,7 +253,6 @@ hr {
     position: relative;
     display: inherit;
     vertical-align: middle;
-    font-size: 13px;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -268,14 +267,12 @@ hr {
     position: absolute;
     top: 100%;
     z-index: 1010;
-    border: 1px solid #aaa;
+    cursor: default;
+    border: 1px solid hsl(210, 10%, 72%);
     border-top: 0;
-    background: #343a40;
-    -webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
-    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.15);
-    clip: rect(0, 0, 0, 0);
-    -webkit-clip-path: inset(100% 100%);
-    clip-path: inset(100% 100%);
+    border-radius: 0.25rem;
+    box-shadow: 5px 11px 30px 5px rgba(0, 0, 0, 0.66);
+    background-color: hsl(18, 10%, 20%);
 }
 
 #id_primary_skills_chosen.chosen-container-multi .chosen-drop {
@@ -292,8 +289,8 @@ hr {
     overflow-x: hidden;
     overflow-y: auto;
     margin: 0 4px 4px 0;
-    padding: 0 0 0 4px;
-    max-height: 240px;
+    padding: 4px 0 0 4px;
+    max-height: 400px;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -302,15 +299,15 @@ hr {
 }
 
 .chosen-container .chosen-results li.highlighted {
-    background-color: #b0b7be;
     background-image: inherit;
-    color: #fff;
+    background-color: hsl(18, 15%, 35%);
+    color: hsl(210, 10%, 90%);
 }
 
 .chosen-container .chosen-results li.no-results {
     color: #777;
     display: list-item;
-    background: #352e2b;
+    background: hsl(18, 10%, 20%);
 }
 
 .chosen-container-multi .chosen-choices {
@@ -319,9 +316,10 @@ hr {
     margin: 0;
     padding: 0 5px;
     width: 100%;
-    height: auto;
+    min-height: 35px;
+    line-height: 2rem;
     border: 1px solid #b0b7be;
-    background-color: #352e2b;
+    background-color: hsl(18, 10%, 20%);
     background-image: inherit;
     cursor: text;
     border-radius: 0.25rem;
@@ -333,7 +331,7 @@ hr {
     padding: 3px 20px 3px 5px;
     border: 1px solid #b0b7be;
     max-width: 100%;
-    border-radius: 3px;
+    border-radius: 0.25rem;
     background-color: #282222;
     background-image: inherit;
     background-size: 100% 19px;
@@ -342,8 +340,12 @@ hr {
     -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
     box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
     color: #b0b7be;
-    line-height: 13px;
+    line-height: 1.1rem;
     cursor: default;
+}
+
+.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
+    top: 7px;
 }
 
 .chosen-container-multi .chosen-choices li.search-choice-disabled {
@@ -361,13 +363,13 @@ hr {
 }
 
 .chosen-container-active .chosen-single {
-    border: 1px solid #9a9795;
+    border: 0.5px solid #b0b7be;
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .chosen-container-active .chosen-choices {
-    border: 1px solid #9a9795;
+    border: 0.5px solid #b0b7be;
     -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
@@ -378,13 +380,12 @@ hr {
     overflow: hidden;
     padding: 0 0 0 8px;
     height: 35px;
-    border: 1px solid #aaa;
-    border-radius: 5px;
+    border: 0.5px solid #b0b7be;
+    border-radius: 0.25rem;
     background-color: #352e2b;
-    background-image: inherit;
-    background-clip: padding-box;
-    -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
-    box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
+    background-image: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
     color: #b0b7be;
     text-decoration: none;
     white-space: nowrap;
@@ -396,7 +397,7 @@ hr {
 }
 
 .chosen-container-active.chosen-with-drop .chosen-single {
-    border: 1px solid #aaa;
+    border: 0.5px solid #b0b7be;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
     background-color: #352e2b;
@@ -611,14 +612,17 @@ input[type=number] {
     cursor: default;
     border: 1px solid hsl(210, 10%, 72%);
     border-top: 0;
+    border-radius: 0.25rem;
     box-shadow: 5px 11px 30px 5px rgba(0, 0, 0, 0.66);
     background-color: hsl(18, 10%, 20%);
+    margin: 0 4px 4px 0;
+    padding: 4px;
 
     /* core styles should not be changed */
     position: absolute;
     display: none;
     z-index: 9999;
-    max-height: 254px;
+    max-height: 400px;
     overflow: hidden;
     overflow-y: auto;
     box-sizing: border-box;

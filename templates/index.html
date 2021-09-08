@@ -24,33 +24,33 @@
                 {{ filter_form.author_username.label_tag }}
                 {{ filter_form.author_username|addclass:'form-control p-1' }}
               </div>
-              <div class="col-auto mb-2">
+              <div class="col-auto mb-2" style="width: 150px;">
                 {{ filter_form.base_class_name.label_tag }}
-                {{ filter_form.base_class_name|addclass:'form-select p-1' }}
+                {{ filter_form.base_class_name|addclass:'chosen-select p-1' }}
               </div>
               <div class="col-auto mb-2" style="width: 150px;">
                 {{ filter_form.asc_class_name.label_tag }}
-                {{ filter_form.asc_class_name|addclass:'form-select p-1' }}
+                {{ filter_form.asc_class_name|addclass:'chosen-select p-1' }}
               </div>
-              <div class="col-auto mb-2">
+              <div class="col-auto mb-2" style="width: 200px;">
                 {{ filter_form.active_skill.label_tag }}
-                {{ filter_form.active_skill|addclass:'form-select p-1' }}
+                {{ filter_form.active_skill|addclass:'chosen-select p-1' }}
               </div>
-              <div class="col-auto mb-2">
+              <div class="col-auto mb-2" style="width: 450px;">
                 {{ filter_form.keystones.label_tag }}
                 {{ filter_form.keystones }}
               </div>
-              <div class="col-auto mb-2">
+              <div class="col-auto mb-2" style="width: 450px;">
                 {{ filter_form.unique_items.label_tag }}
                 {{ filter_form.unique_items }}
               </div>
-              <div class="col-auto mb-2" id="datepickerContainer">
+              <div class="col-auto mb-2" id="datepickerContainer" style="width: 150px;">
                 {{ filter_form.updated_after.label_tag }}
                 {{ filter_form.updated_after|addclass:'form-control p-1' }}
               </div>
               <div class="col-auto mb-2">
                 {{ filter_form.liked_by_me.label_tag }}
-                {{ filter_form.liked_by_me|addclass:'form-select p-1' }}
+                {{ filter_form.liked_by_me|addclass:'chosen-select p-1' }}
               </div>
             </div>
             <input type="button" class="my-1 btn btn-outline-light btn-secondary" id="submitButton" value="Search"/>
@@ -61,7 +61,7 @@
   </div>
   <div id="guideList"></div>
   <script>
-    $(".chosen-select").chosen({disable_search_threshold: 6, width: '100%'})
+    $(".chosen-select").chosen({disable_search_threshold: 10, width: '100%'})
 
     let page = 1;
 
