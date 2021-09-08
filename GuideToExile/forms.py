@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.forms import Form, ModelForm, Select
 
 from GuideToExile import pob_import
-from GuideToExile.models import UserProfile, AscendancyClass
+from GuideToExile.models import UserProfile, AscendancyClass, ActiveSkill
 from apps.django_tiptap.widgets import TipTapWidget
 
 logger = logging.getLogger('guidetoexile')
@@ -59,9 +59,9 @@ class EditGuideForm(Form):
 class GuideListFilterForm(Form):
     base_class_name_choices = [(i.value, i.label) for i in AscendancyClass.BaseClassName]
     asc_class_name_choices = [(i.value, i.label) for i in AscendancyClass.AscClassName if i.label != 'None']
-    base_class_name_choices.append((0, 'All'))
+    base_class_name_choices.append((0, 'Any'))
     base_class_name_choices.sort()
-    asc_class_name_choices.append((0, 'All'))
+    asc_class_name_choices.append((0, 'Any'))
     asc_class_name_choices.sort()
 
     title = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'placeholder': 'Title...'}))
@@ -84,6 +84,11 @@ class GuideListFilterForm(Form):
             (False, 'No'),
         ]
     ))
+    active_skills = [(i + 1, skill.name) for i, skill in
+                     enumerate(ActiveSkill.objects.filter(buildguide__isnull=False).distinct().order_by('name').all())]
+    active_skills.append((0, 'Any'))
+    active_skills.sort()
+    active_skill = forms.ChoiceField(required=True, choices=active_skills)
 
     def get_filter(self, user_id):
         data = self.cleaned_data
@@ -103,6 +108,10 @@ class GuideListFilterForm(Form):
                 filters.append(Q(guidelike__user__user_id=user_id) & Q(guidelike__is_active=True))
             if liked is False:
                 filters.append(~Q(guidelike__user__user_id=user_id) | Q(guidelike__is_active=False))
+
+        if (value := int(data['active_skill'])) != 0:
+            skill_name = dict(self.fields['active_skill'].choices)[value]
+            filters.append(Q(primary_skills__name=skill_name))
         return filters
 
 

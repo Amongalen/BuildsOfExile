@@ -21,6 +21,10 @@
                 {{ filter_form.title|addclass:'form-control p-1' }}
               </div>
               <div class="col-auto mb-2">
+                {{ filter_form.author_username.label_tag }}
+                {{ filter_form.author_username|addclass:'form-control p-1' }}
+              </div>
+              <div class="col-auto mb-2">
                 {{ filter_form.base_class_name.label_tag }}
                 {{ filter_form.base_class_name|addclass:'form-select p-1' }}
               </div>
@@ -29,9 +33,10 @@
                 {{ filter_form.asc_class_name|addclass:'form-select p-1' }}
               </div>
               <div class="col-auto mb-2">
-                {{ filter_form.author_username.label_tag }}
-                {{ filter_form.author_username|addclass:'form-control p-1' }}
+                {{ filter_form.active_skill.label_tag }}
+                {{ filter_form.active_skill|addclass:'form-select p-1' }}
               </div>
+
               <div class="col-auto mb-2" id="datepickerContainer">
                 {{ filter_form.updated_after.label_tag }}
                 {{ filter_form.updated_after|addclass:'form-control p-1' }}

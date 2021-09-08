@@ -77,6 +77,7 @@ def guide_list_view(request):
             user_id = request.user.userprofile.user_id if request.user.is_authenticated else 0
             queryset = BuildGuide.objects.defer('pob_details')
             queryset = queryset.filter(*form.get_filter(user_id))
+
             queryset = queryset.order_by('creation_datetime').reverse().all()
             logger.debug('Search query=%s', queryset.query)
             paginator = Paginator(queryset, paginate_by)

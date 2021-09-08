@@ -536,12 +536,6 @@ hr {
     padding: 0.5rem;
 }
 
-.form-select {
-    -webkit-appearance: revert;
-    -moz-appearance: revert;
-    appearance: revert;
-}
-
 select.form-select:not([size]):not([multiple]) {
     height: calc(2rem + 2px);
 }
