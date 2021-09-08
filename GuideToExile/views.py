@@ -14,7 +14,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import generic
 
-from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike
+from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike, ActiveSkill
 from . import skill_tree, build_guide, items_service
 from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm, GuideListFilterForm
 from .tokens import account_activation_token
@@ -162,11 +162,16 @@ def edit_guide_view(request, pk):
             guide.modification_datetime = timezone.now()
             guide.title = form.cleaned_data['title']
             guide.text = form.cleaned_data['text']
-            primary_skills = form.cleaned_data['primary_skills']
-            if imported_primary_skill not in primary_skills:
-                primary_skills.insert(0, imported_primary_skill)
-            guide.pob_details.main_active_skills = primary_skills
+
+            primary_skills_names = form.cleaned_data['primary_skills']
+            if imported_primary_skill not in primary_skills_names:
+                primary_skills_names.insert(0, imported_primary_skill)
+            guide.pob_details.main_active_skills = primary_skills_names
+            guide.primary_skills.clear()
+            guide.primary_skills.add(*ActiveSkill.objects.filter(name__in=primary_skills_names).all())
+
             guide.save()
+
             return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
 
     else:

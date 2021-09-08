@@ -16,6 +16,10 @@ class UniqueItem(models.Model):
     name = models.CharField(max_length=255)
 
 
+class ActiveSkill(models.Model):
+    name = models.CharField(max_length=255)
+
+
 class UserProfileManager(models.Manager):
     def get_by_natural_key(self, username):
         return self.get(user__username=username)
@@ -89,6 +93,7 @@ class BuildGuide(models.Model):
     text = models.CharField(max_length=40000)
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
+    primary_skills = models.ManyToManyField(ActiveSkill)
     ascendancy_class = models.ForeignKey(AscendancyClass, on_delete=models.SET_NULL, null=True)
 
 

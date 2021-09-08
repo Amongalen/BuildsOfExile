@@ -1,4 +1,4 @@
-from GuideToExile.models import BuildGuide, UniqueItem, Keystone, AscendancyClass
+from GuideToExile.models import BuildGuide, UniqueItem, Keystone, AscendancyClass, ActiveSkill
 
 
 def create_build_guide(author, build_details, pob_string, skill_tree_service, text='Content',
@@ -14,6 +14,9 @@ def create_build_guide(author, build_details, pob_string, skill_tree_service, te
                            ascendancy_class=asc_class,
                            )
     new_guide.save()
+
+    primary_active_skill = ActiveSkill.objects.get(name=build_details.imported_primary_skill)
+    new_guide.primary_skills.add(primary_active_skill)
     new_guide.author = author
     new_guide.keystones.set(keystones)
     new_guide.unique_items.set(unique_items)
