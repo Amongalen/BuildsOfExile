@@ -93,11 +93,31 @@
   </nav>
   <div class="tab-content" id="nav-tabContent">
     <div class="tab-pane fade show active" id="nav-guide" role="tabpanel"
-         aria-labelledby="nav-guide-tab"></div>
+         aria-labelledby="nav-guide-tab">
+      <div id='guide-spinner' class="lds-ring-big lds-ring">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
     <div class="tab-pane fade" id="nav-skill-tree" role="tabpanel"
-         aria-labelledby="nav-skill-tree-tab"></div>
+         aria-labelledby="nav-skill-tree-tab">
+      <div id='skill-tree-spinner' class="lds-ring-big lds-ring">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
     <div class="tab-pane fade" id="nav-gear-and-gems" role="tabpanel"
          aria-labelledby="nav-gear-and-gems-tab">
+      <div id='gear-gems-spinner' class="lds-ring-big lds-ring">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
     <div class="tab-pane fade" id="nav-discuss" role="tabpanel"
          aria-labelledby="nav-discuss-tab">{% include 'discuss_tab.html' %}
@@ -176,10 +196,14 @@
       $.get(
         "{% url 'guide_tab' pk %}",
         function (data) {
-          $("#nav-guide").html(data);
+          $("#guide-spinner").fadeOut(150, function () {
+            $(this).remove();
+            $("#nav-guide").append(data);
+            $("#guide-tab").fadeIn(250);
+            attachTooltips();
+          });
           loadGearGemsTab();
           loadSkillTreeTab();
-          attachTooltips();
         });
     }
 
@@ -187,7 +211,13 @@
       $.get(
         "{% url 'skill_tree_tab' pk %}",
         function (data) {
-          $("#nav-skill-tree").html(data);
+          $("#nav-skill-tree").append(data);
+          $("#skill-tree-tab").ready(function () {
+            $("#skill-tree-spinner").fadeOut(150, function () {
+              $(this).remove();
+              $("#skill-tree-tab").fadeIn(150);
+            });
+          });
         });
     }
 
@@ -195,8 +225,14 @@
       $.get(
         "{% url 'gear_gems_tab' pk %}",
         function (data) {
-          $("#nav-gear-and-gems").html(data);
-          attachTooltips();
+          $("#nav-gear-and-gems").append(data);
+          $("#gear-gems-tab").ready(function () {
+            $("#gear-gems-spinner").fadeOut(150, function () {
+              $(this).remove();
+              $("#gear-gems-tab").fadeIn(150);
+              attachTooltips();
+            });
+          });
         });
     }
 
