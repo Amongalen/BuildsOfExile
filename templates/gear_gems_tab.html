@@ -22,7 +22,7 @@
         <div class="align-content-center justify-content-center">
           <div class="gear-container">
             {% for slot_name, item in item_set.slots.items %}
-              {% if 'flask' not in slot_name and 'abyssal' not in slot_name %}
+              {% if 'flask' not in slot_name and 'abyssal' not in slot_name and 'swap' not in slot_name %}
                 <div class="gear-{{ slot_name }} gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
                      data-bs-html="true" data-bs-placement="top" title="{{ item.display_html }}
                      {% if item.skill_groups %}
