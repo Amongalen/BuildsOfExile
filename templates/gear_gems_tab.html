@@ -1,26 +1,18 @@
 {% load static %}
 <div class="dropdown my-2">
   Item set:
-  <button class="mx-1 btn btn-secondary text-light dropdown-toggle dropdown-toggle-item-set" type="button"
-          id="dropdownMenuButton2"
-          data-bs-toggle="dropdown" aria-expanded="false">
-    {% for item_set in item_sets %}
-      {% if item_set.set_id == build_guide.pob_details.active_item_set_id %}
-        {{ item_set.title }}
-      {% endif %}
-    {% endfor %}
-  </button>
-  <ul class="dropdown-menu dropdown-menu-item-set dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-    {% for item_set in item_sets %}
-      <li>
-        <button
-          class="link dropdown-item {% if item_set.set_id == build_guide.pob_details.active_item_set_id %}active{% endif %}">
+  <div style="width: 180px" class="d-inline-block">
+    <select id="item_set_select" class="chosen-select" name='item_sets'>
+      {% for item_set in item_sets %}
+        <option value="{{ item_set.title }}"
+                {% if item_set.set_id == build_guide.pob_details.active_item_set_id %}selected{% endif %}>
           {{ item_set.title }}
-        </button>
-      </li>
-    {% endfor %}
-  </ul>
+        </option>
+      {% endfor %}
+    </select>
+  </div>
 </div>
+
 {% for item_set in item_sets %}
   <div class="item-set" data-title="{{ item_set.title }}"
        style="display: {% if item_set.set_id == build_guide.pob_details.active_item_set_id %}block{% else %}none{% endif %}">
@@ -170,21 +162,20 @@
   </div>
 {% endfor %}
 
-<script>$(function () {
-  $(".dropdown-menu-item-set li button").click(function () {
-    $(".dropdown-toggle-item-set").text($(this).text());
-    $(".dropdown-toggle-item-set").val($(this).text());
-    $(".dropdown-menu-item-set li button.active").removeClass('active')
-    $(this).addClass('active')
+<script>
+  $("#item_set_select").chosen({disable_search_threshold: 10, width: '100%'})
 
-    $("div.item-set").each(function (i, element) {
-      let title1 = $(".dropdown-toggle-item-set").text().trim()
-      let title2 = $(element).data("title").trim()
-      if (title1 === title2) {
-        $(element).show()
-      } else {
-        $(element).hide()
-      }
-    })
+  $(function () {
+    $("#item_set_select").on('change', function (evt, params) {
+      $("div.item-set").each(function (i, element) {
+        let title1 = params.selected
+        let title2 = $(element).data("title").toString().trim()
+        if (title1 === title2) {
+          $(element).show()
+        } else {
+          $(element).hide()
+        }
+      })
+    });
   });
-});</script>
+</script>

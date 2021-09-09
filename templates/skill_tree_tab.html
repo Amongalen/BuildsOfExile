@@ -1,27 +1,18 @@
 <div class="dropdown my-2">
   Skill tree:
-  <button class="mx-1 btn btn-secondary text-light dropdown-toggle dropdown-toggle-tree" type="button"
-          id="dropdownMenuButton2"
-          data-bs-toggle="dropdown" aria-expanded="false">
-    {% for tree_graph_title in trees.keys %}
-      {% if forloop.counter == build_guide.pob_details.active_tree_spec_index %}
-        {{ tree_graph_title }}
-      {% endif %}
-    {% endfor %}
-  </button>
-  <ul class="dropdown-menu dropdown-menu-tree dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-    {% for tree_graph_title in trees.keys %}
-      <li>
-        <button
-          class="link dropdown-item {% if forloop.counter == build_guide.pob_details.active_tree_spec_index %}active{% endif %}">
+  <div style="width: 180px" class="d-inline-block">
+    <select id="tree_select" class="chosen-select" name='skilltrees'>
+      {% for tree_graph_title in trees.keys %}
+        <option value="{{ tree_graph_title }}"
+                {% if forloop.counter == build_guide.pob_details.active_tree_spec_index %}selected{% endif %}>
           {{ tree_graph_title }}
-        </button>
-      </li>
-    {% endfor %}
-  </ul>
+        </option>
+      {% endfor %}
+    </select>
+  </div>
 </div>
-{% for title, tree in trees.items %}
 
+{% for title, tree in trees.items %}
   <div class='tree' data-title="{{ title }}"
        style="display: {% if forloop.counter == build_guide.pob_details.active_tree_spec_index %}block{% else %}none{% endif %}">
     <div class="my-2">
@@ -53,41 +44,39 @@
   </div>
 {% endfor %}
 
-<script>$(function () {
-  $(".dropdown-menu-tree li button").click(function () {
-    $(".dropdown-toggle-tree").text($(this).text());
-    $(".dropdown-toggle-tree").val($(this).text());
-    $(".dropdown-menu-tree li button.active").removeClass('active')
-    $(this).addClass('active')
+<script>
+  $("#tree_select").chosen({disable_search_threshold: 10, width: '100%'})
 
-    $("div.tree").each(function (i, element) {
-      let title1 = $(".dropdown-toggle-tree").text().trim()
-      let title2 = $(element).data("title").toString().trim()
-      if (title1 === title2) {
-        $(element).show()
-      } else {
-        $(element).hide()
-      }
-    })
+  $(function () {
+    $("#tree_select").on('change', function (evt, params) {
+      $("div.tree").each(function (i, element) {
+        let title1 = params.selected
+        let title2 = $(element).data("title").toString().trim()
+        if (title1 === title2) {
+          $(element).show()
+        } else {
+          $(element).hide()
+        }
+      })
+    });
   });
-});
 
-function copyTreeUrl(button) {
-  /* Get the text field */
-  var copyText = document.getElementById("treeUrl");
+  function copyTreeUrl(button) {
+    /* Get the text field */
+    var copyText = document.getElementById("treeUrl");
 
-  /* Select the text field */
-  copyText.select();
-  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+    /* Select the text field */
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); /* For mobile devices */
 
-  /* Copy the text inside the text field */
-  navigator.clipboard.writeText(copyText.value);
+    /* Copy the text inside the text field */
+    navigator.clipboard.writeText(copyText.value);
 
-  button.innerHTML = 'Copied!';
+    button.innerHTML = 'Copied!';
 
-  setTimeout(function () {
-    var copybtns = document.getElementsByClassName('treeUrlCopyBtn');
-    [].forEach.call(copybtns, element => element.innerText = 'Copy');
-  }, 3000);
-}
+    setTimeout(function () {
+      var copybtns = document.getElementsByClassName('treeUrlCopyBtn');
+      [].forEach.call(copybtns, element => element.innerText = 'Copy');
+    }, 3000);
+  }
 </script>
