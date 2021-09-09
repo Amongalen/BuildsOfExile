@@ -39,7 +39,13 @@
                 <button class="link" ondblclick="addText(this)">
                                 <span class="poeitem-{{ item.rarity|lower }}" data-bs-placement="bottom"
                                       data-bs-toggle="tooltip" data-bs-html="true"
-                                      title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">{{ item.name }}, {{ item.base_name }}</span>
+                                      title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">
+                                  {% if item.rarity == 'RARE' or item.rarity == 'UNIQUE' %}
+                                    {{ item.name }}, {{ item.base_name }}
+                                  {% else %}
+                                    {{ item.name }}
+                                  {% endif %}
+                                </span>
                 </button>
               </div>
 
@@ -48,7 +54,7 @@
           </div>
         </div>
         <div class="col">
-          Gems: <sup style="font-size:small"><abbr title="Double-click to add to the editor">?</abbr></sup>
+          Gems: <sup style="font-size:small"><abbr title="Double-click to add to the editor.">?</abbr></sup>
           <div class="poe-container">
             {% for skill_group in guide.pob_details.skill_groups %}
               {% for gem in skill_group.gems %}
