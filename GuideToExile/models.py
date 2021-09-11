@@ -94,14 +94,14 @@ class AscendancyClass(models.Model):
 
 class BuildGuide(models.Model):
     guide_id = models.BigAutoField(primary_key=True)
-    slug = models.SlugField(max_length=255)
+    slug = models.SlugField(max_length=180)
     author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     creation_datetime = models.DateTimeField(blank=True, null=True)
     modification_datetime = models.DateTimeField(blank=True, null=True)
     pob_string = models.CharField(max_length=40000)
     pob_details = models.JSONField(encoder=json_encoder.BuildDetailsJsonEncoder,
                                    decoder=json_encoder.BuildDetailsJsonDecoder)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=180)
     text = models.CharField(max_length=40000)
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')

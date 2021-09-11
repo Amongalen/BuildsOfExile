@@ -47,7 +47,7 @@ class EditGuideForm(Form):
         super(EditGuideForm, self).__init__(*args, **kwargs)
         self.fields['primary_skills'].choices = skill_choices
 
-    title = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}),
+    title = forms.CharField(max_length=180, widget=forms.TextInput(attrs={'class': 'form-control'}),
                             help_text=None)
     primary_skills = forms.MultipleChoiceField(choices=(),
                                                widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
@@ -63,7 +63,7 @@ class GuideListFilterForm(Form):
     asc_class_name_choices.append((0, 'Any'))
     asc_class_name_choices.sort()
 
-    title = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'placeholder': 'Title...'}))
+    title = forms.CharField(max_length=180, required=False, widget=forms.TextInput(attrs={'placeholder': 'Title...'}))
     base_class_name = forms.ChoiceField(required=True, choices=base_class_name_choices)
     asc_class_name = forms.ChoiceField(required=True, choices=asc_class_name_choices)
     author_username = forms.CharField(max_length=255, required=False, label='Author',
