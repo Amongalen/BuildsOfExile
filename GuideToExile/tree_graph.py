@@ -128,7 +128,7 @@ class TreeGraph:
         asc_tree_y = ASC_TREE_Y
         asc_name = self._find_asc_name(taken_node_ids)
         if asc_name:
-            html += f'<circle cx="{asc_tree_x}" cy="{asc_tree_y}" r="700" fill="#352e2b"/>\n'
+            html += f'<circle cx="{asc_tree_x}" cy="{asc_tree_y}" r="700" fill="#35383B"/>\n'
         graph_elements = self._get_all_graph_elements_including_taken_nodes(taken_node_ids)
         graph_elements.sort(key=lambda v: v.is_taken)
         html += ''.join(el.svg_string for el in graph_elements)

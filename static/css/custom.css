@@ -34,7 +34,7 @@
     width: 255px;
     border: 1px solid #b0b7be;
     overflow: auto;
-    background: #352e2b;
+    background: hsl(210, 5%, 17%);
 }
 
 button.link {
@@ -292,7 +292,7 @@ hr {
     border-top: 0;
     border-radius: 0.25rem;
     box-shadow: 5px 11px 30px 5px rgba(0, 0, 0, 0.66);
-    background-color: hsl(18, 10%, 20%);
+    background-color: hsl(210, 5%, 17%);
 }
 
 #id_primary_skills_chosen.chosen-container-multi .chosen-drop {
@@ -320,14 +320,14 @@ hr {
 
 .chosen-container .chosen-results li.highlighted {
     background-image: inherit;
-    background-color: hsl(18, 15%, 35%);
+    background-color: hsl(210, 15%, 35%);
     color: hsl(210, 10%, 90%);
 }
 
 .chosen-container .chosen-results li.no-results {
     color: #777;
     display: list-item;
-    background: hsl(18, 10%, 20%);
+    background: hsl(210, 5%, 17%);
 }
 
 .chosen-container-multi .chosen-choices {
@@ -339,7 +339,7 @@ hr {
     min-height: 35px;
     line-height: 2rem;
     border: 1px solid #b0b7be;
-    background-color: hsl(18, 10%, 20%);
+    background-color: hsl(210, 5%, 17%);
     background-image: inherit;
     cursor: text;
     border-radius: 0.25rem;
@@ -352,7 +352,7 @@ hr {
     border: 1px solid #b0b7be;
     max-width: 100%;
     border-radius: 0.25rem;
-    background-color: #282222;
+    background-color: hsl(210, 5%, 15%);
     background-image: inherit;
     background-size: 100% 19px;
     background-repeat: repeat-x;
@@ -371,7 +371,7 @@ hr {
 .chosen-container-multi .chosen-choices li.search-choice-disabled {
     padding-right: 5px;
     border: 0.5px solid #b0b7be;
-    background-color: #282222;
+    background-color: hsl(210, 5%, 15%);
     background-image: inherit;
     color: #b0b7be;
 }
@@ -402,7 +402,7 @@ hr {
     height: 35px;
     border: 0.5px solid #b0b7be;
     border-radius: 0.25rem;
-    background-color: #352e2b;
+    background-color: hsl(210, 5%, 17%);
     background-image: none;
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -420,7 +420,7 @@ hr {
     border: 0.5px solid #b0b7be;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
-    background-color: #352e2b;
+    background-color: hsl(210, 5%, 17%);
     background-image: inherit;
     -webkit-box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
     box-shadow: 0 0 2px #fff inset, 0 1px 0 rgba(0, 0, 0, 0.05);
@@ -445,7 +445,7 @@ hr {
 .inputfile + label {
     border: 1px solid hsl(210, 10%, 72%);
     border-radius: 0.25rem;
-    background-color: hsl(18, 10%, 20%);
+    background-color: hsl(210, 5%, 17%);
     padding: 0;
 }
 
@@ -474,7 +474,7 @@ hr {
 .inputfile + label strong {
     height: 100%;
     color: hsl(210, 10%, 72%);
-    background-color: hsl(18, 10%, 20%);
+    background-color: hsl(210, 5%, 17%);
     display: inline-block;
     border: 1px solid hsl(210, 10%, 72%);
     border-radius: 0.25rem;
@@ -533,7 +533,7 @@ hr {
 }
 
 .user-avatar {
-    background-color: hsl(18, 10%, 20%);
+    background-color: hsl(210, 5%, 17%);
     border: 0;
     border-radius: 0.25rem;
 }
@@ -545,7 +545,7 @@ hr {
 
 .outer-comment li {
     list-style: none;
-    background-color: hsl(18, 10%, 20%);
+    background-color: hsl(210, 5%, 17%);
     border-radius: 0.25rem;
     margin-bottom: 0.5rem;
     margin-top: 0.5rem;
@@ -578,7 +578,7 @@ input[type=number] {
 }
 
 .datepicker table tr td.day:hover {
-    background-color: hsl(18, 15%, 35%);
+    background-color: hsl(210, 15%, 35%);
     color: hsl(210, 10%, 90%);
 }
 
@@ -611,7 +611,7 @@ input[type=number] {
 }
 
 .datepicker .datepicker-switch:hover, .datepicker .next:hover, .datepicker .prev:hover, .datepicker tfoot tr th:hover {
-    background: hsl(18, 15%, 35%);
+    background: hsl(210, 15%, 35%);
 }
 
 .datepicker td, .datepicker th {
@@ -633,7 +633,7 @@ input[type=number] {
     border-top: 0;
     border-radius: 0.25rem;
     box-shadow: 5px 11px 30px 5px rgba(0, 0, 0, 0.66);
-    background-color: hsl(18, 10%, 20%);
+    background-color: hsl(210, 5%, 17%);
     margin: 0 4px 4px 0;
     padding: 4px;
 
@@ -663,6 +663,6 @@ input[type=number] {
 }
 
 .autocomplete-suggestion.selected {
-    background-color: hsl(18, 15%, 35%);
+    background-color: hsl(210, 15%, 35%);
 }
 
