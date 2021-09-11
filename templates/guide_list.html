@@ -1,17 +1,68 @@
+{% load static %}
 {% if page_obj %}
   <div class="list-group">
-    {% for build in page_obj %}
-      <a href="{% url 'show_guide' build.guide_id build.slug %}"
-         class="p-1 my-1 text-light bg-secondary d-flex justify-content-between align-items-start nav-link">
-        <div class="ms-2 me-auto">
-          <div class="fw-bold">{{ build.title }}</div>
+    {% for guide in page_obj %}
+      <a href="{% url 'show_guide' guide.guide_id guide.slug %}"
+         class="mx-0 my-1 row bg-secondary d-flex text-decoration-none border border-1 border-primary-lighter rounded-2">
+        <img src="{% static guide.ascendancy_class.portrait_icon %}" height="80" width="110" class="w-auto p-0">
+        <div class="col-10 py-1 d-flex h-auto flex-column">
+          <div class="row">
+            <h5 class="mb-0"><strong>{{ guide.title }}</strong></h5>
+          </div>
+          <div class="row flex-fill justify-content-start">
+            <div class="col-auto mt-auto">
+              By <strong>{{ guide.author.user.username }}</strong>
+              <span style="font-size: 0.7rem">
+                Created: {{ guide.creation_datetime|date:'Y-m-d H:i' }}.
+                {% if guide.creation_datetime != guide.modification_datetime %}
+                  Last modified: {{ guide.modification_datetime|date:'Y-m-d H:i' }}.
+                {% endif %}
+              </span>
+            </div>
+            <div class="col-auto ms-auto mt-auto">
+              <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
+                    data-bs-placement="bottom"
+                    data-bs-toggle="tooltip" data-bs-html="true"
+                    title="<small><ul class='list-unstyled mb-0'>{% for keystone in guide.keystones.all %}
+                           <li>{{ keystone.name }}</li>
+                       {% empty %}
+                           <li>None</li>
+                       {% endfor %}</ul></small>">Keystones</span>
+              <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
+                    data-bs-placement="bottom"
+                    data-bs-toggle="tooltip" data-bs-html="true"
+                    title="<small><ul class='list-unstyled mb-0 '>{% for skill in guide.primary_skills.all %}
+                           <li>{{ skill.name }}</li>
+                       {% empty %}
+                           <li>None</li>
+                       {% endfor %}</ul></small>">Skills</span>
+              <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
+                    data-bs-placement="bottom"
+                    data-bs-toggle="tooltip" data-bs-html="true"
+                    title="<small><ul class='list-unstyled mb-0'>{% for unique_item in guide.unique_items.all %}
+                           <li>{{ unique_item.name }}</li>
+                       {% empty %}
+                           <li>None</li>
+                       {% endfor %}</ul></small>">Unique items</span>
+            </div>
+          </div>
         </div>
-        <span class="badge bg-primary rounded-pill">XX</span>
+        <span
+          class="fs-6 col-auto m-auto text-light bg-dark border border-1 border-primary-lighter rounded-pill badge">{{ guide.likes }}
+        <svg height="20px" width="20px"
+             viewBox="0 0 512 512" style="margin-top: -2px">
+            <path d="M376,30c-27.783,0-53.255,8.804-75.707,26.168c-21.525,16.647-35.856,37.85-44.293,53.268
+              c-8.437-15.419-22.768-36.621-44.293-53.268C189.255,38.804,163.783,30,136,30C58.468,30,0,93.417,0,177.514
+              c0,90.854,72.943,153.015,183.369,247.118c18.752,15.981,40.007,34.095,62.099,53.414C248.38,480.596,252.12,482,256,482
+              s7.62-1.404,10.532-3.953c22.094-19.322,43.348-37.435,62.111-53.425C439.057,330.529,512,268.368,512,177.514
+              C512,93.417,453.532,30,376,30z" fill="currentcolor"></path>
+          </svg>
+        </span>
       </a>
     {% endfor %}
   </div>
   {% if page_obj.has_other_pages %}
-    <ul class="pagination justify-content-center">
+    <ul class="my-1 pagination justify-content-center">
       {% if page_obj.has_previous %}
         <li class="page-item"><a class='page-link' onclick="find_guides(1)">&laquo; First</a></li>
       {% endif %}
@@ -52,4 +103,8 @@
 <script>
   page =
   {{ page_obj.number }}
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  })
 </script>

@@ -1,19 +1,23 @@
 import logging
+from datetime import datetime, timedelta
 
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
 
 from GuideToExile.models import BuildGuide
+from GuideToExile.settings import LIKES_RECENTLY_OFFSET
 
 logger = logging.getLogger('guidetoexile')
 
 
 def find_with_filter(filter_form, user_id, page, paginate_by):
     queryset = BuildGuide.objects.defer('pob_details')
+    queryset = _annotate_like_counts(queryset)
     base_filters = _get_base_filters(filter_form, user_id)
     queryset = queryset.filter(*base_filters)
     queryset = _filter_keystones(queryset, filter_form)
     queryset = _filter_unique_items(queryset, filter_form)
+
     queryset = queryset.order_by('creation_datetime').reverse().all()
     logger.debug('Search query=%s', queryset.query)
     page_obj = _get_page(page, paginate_by, queryset)
@@ -21,8 +25,18 @@ def find_with_filter(filter_form, user_id, page, paginate_by):
 
 
 def find_all(page, paginate_by):
-    queryset = BuildGuide.objects.defer('pob_details').all()
+    queryset = BuildGuide.objects.defer('pob_details')
+    queryset = _annotate_like_counts(queryset)
+    queryset = queryset.all()
     return _get_page(page, paginate_by, queryset)
+
+
+def _annotate_like_counts(queryset):
+    recently_threshold = datetime.today() - timedelta(days=LIKES_RECENTLY_OFFSET)
+    return queryset.annotate(
+        likes=Count('guidelike', filter=Q(guidelike__is_active=True))).annotate(
+        likes_recently=Count('guidelike', filter=Q(guidelike__is_active=True) & Q(
+            guidelike__creation_datetime__gte=recently_threshold)))
 
 
 def _get_page(page, paginate_by, queryset):

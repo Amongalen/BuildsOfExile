@@ -32,7 +32,7 @@
 .poe-container {
     height: 615px;
     width: 255px;
-    border: 1px solid #adb5bd;
+    border: 1px solid #b0b7be;
     overflow: auto;
     background: #352e2b;
 }
@@ -272,6 +272,11 @@ hr {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    font-size: revert !important;
+}
+
+.chosen-container-multi .chosen-choices li.search-field input[type="text"] {
+    color: #6c757d;
 }
 
 .chosen-container-single .chosen-search input[type="text"] {
@@ -514,7 +519,6 @@ hr {
 .inputfile:focus + label,
 .inputfile.has-focus + label {
     outline: 1px dotted #000;
-    outline: -webkit-focus-ring-color auto 5px;
 }
 
 .inputfile + label svg {
@@ -603,7 +607,6 @@ input[type=number] {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='hsl(40, 50%, 40%)', endColorstr='hsl(40, 50%, 60%)', GradientType=0);
     border-color: hsl(40, 50%, 60%) hsl(40, 50%, 60%) hsl(40, 50%, 40%);
     border-color: rgba(0, 0, 0, .1) rgba(0, 0, 0, .1) rgba(0, 0, 0, .25);
-    filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
     color: #000;
 }
 
@@ -621,9 +624,6 @@ input[type=number] {
     border: none;
 }
 
-.chosen-container-multi .chosen-choices li.search-field input[type="text"] {
-    color: #6c757d;
-}
 
 
 .autocomplete-suggestions {
@@ -665,3 +665,4 @@ input[type=number] {
 .autocomplete-suggestion.selected {
     background-color: hsl(18, 15%, 35%);
 }
+

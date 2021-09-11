@@ -78,6 +78,18 @@ class AscendancyClass(models.Model):
 
     name = models.PositiveSmallIntegerField(choices=AscClassName.choices)
     base_class_name = models.PositiveSmallIntegerField(choices=BaseClassName.choices)
+    asc_name_v2l_mapping = {i.value: i.label for i in AscClassName}
+    base_name_v2l_mapping = {i.value: i.label for i in BaseClassName}
+    asc_name_l2v_mapping = {i.label: i.value for i in AscClassName}
+    base_name_l2v_mapping = {i.label: i.value for i in BaseClassName}
+
+    @property
+    def portrait_icon(self):
+        if self.name == AscendancyClass.AscClassName.NONE:
+            icon_name = self.base_name_v2l_mapping[self.base_class_name]
+        else:
+            icon_name = self.asc_name_v2l_mapping[self.name]
+        return f'/icons/{icon_name.lower()}.png'
 
 
 class BuildGuide(models.Model):

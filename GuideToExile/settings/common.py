@@ -209,6 +209,8 @@ DJANGO_TIPTAP_CONFIG = {
 ASC_TREE_X = 7000
 ASC_TREE_Y = -5500
 
+LIKES_RECENTLY_OFFSET = 1
+
 # finally grab the SECRET KEY
 try:
     SECRET_KEY = open(SECRET_FILE).read().strip()

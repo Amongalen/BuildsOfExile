@@ -70,13 +70,12 @@ def index_view(request):
 
 
 def guide_list_view(request):
-    paginate_by = 5
+    paginate_by = 50
     if request.method == 'POST':
         form = GuideListFilterForm(request.POST)
         if form.is_valid():
             user_id = request.user.userprofile.user_id if request.user.is_authenticated else 0
             page = request.POST.get('page')
-            # BuildGuide.objects.defer('pob_details').filter()
             page_obj = guide_search.find_with_filter(form, user_id, page, paginate_by)
             return render(request, 'guide_list.html', {'page_obj': page_obj})
 

@@ -11478,16 +11478,19 @@ fieldset:disabled .btn {
   .d-print-block {
     display: block !important;
   }
-  .d-print-grid {
-    display: -ms-grid !important;
-    display: grid !important;
-  }
-  .d-print-table {
-    display: table !important;
-  }
-  .d-print-table-row {
-      display: table-row !important;
-  }
+
+    .d-print-grid {
+        display: -ms-grid !important;
+        display: grid !important;
+    }
+
+    .d-print-table {
+        display: table !important;
+    }
+
+    .d-print-table-row {
+        display: table-row !important;
+    }
 
     .d-print-table-cell {
         display: table-cell !important;
@@ -11527,4 +11530,7 @@ fieldset:disabled .btn {
     color: #798086;
 }
 
+.border-primary-lighter {
+    border-color: #6b5247 !important;
+}
 /*# sourceMappingURL=bootstrap.css.map */

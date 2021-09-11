@@ -130,7 +130,7 @@
           {% if item_set.unassigned_skill_groups.values %}
             <h5>Additional skill gems:</h5>
             {% for skill_slot in item_set.unassigned_skill_groups.values %}
-              <div class="bg-secondary rounded-3 my-2 p-2">
+              <div class="bg-secondary border border-primary-lighter rounded-3 my-2 p-2">
                 {{ skill_slot.0.slot }}
                 {% for skill_group in skill_slot %}
                   {% for gem in skill_group.gems %}

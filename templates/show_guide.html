@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-  <div class="row bg-secondary rounded-3 mb-2 mx-0 p-2">
+  <div class="row bg-secondary border border-primary-lighter rounded-3 mb-2 mx-0 p-2">
     <div class="col-9">
       <h3><strong>{{ build_guide.title }}</strong></h3>
       <h3>
@@ -38,7 +38,7 @@
       <div style="font-size: small">
         Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}
         {% if build_guide.creation_datetime != build_guide.modification_datetime %}
-          </br>Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}
+          <br/>Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}
         {% endif %}
       </div>
     </div>

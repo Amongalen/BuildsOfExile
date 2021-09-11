@@ -1,7 +1,7 @@
 {% if page_obj %}
   <ul class="outer-comment">
     {% for comment in page_obj %}
-      <li>
+      <li class="border border-primary-lighter">
         <div class='comment-row' id='comment-{{ comment.id }}'>
           <div class='comment-info'>From <strong>{{ comment.author }}</strong>
             at {{ comment.creation_datetime|date:'Y-m-d H:i' }}.
