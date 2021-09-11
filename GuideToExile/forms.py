@@ -97,6 +97,14 @@ class GuideListFilterForm(Form):
                                                                                 'data-placeholder': 'Chooose Unique Items...'}),
                                              help_text=None)
 
+    order_by = forms.ChoiceField(required=True,
+                                 choices=[('Trending', 'Trending'),
+                                          ('Popular', 'Popular'),
+                                          ('Modification date', 'Modification date'),
+                                          ('Creation date', 'Creation date'),
+                                          ('Title', 'Title')],
+                                 initial='Trending')
+
     def __init__(self, *args, **kwargs):
         super(GuideListFilterForm, self).__init__(*args, **kwargs)
         active_skill_choices = [(i + 1, skill.name) for i, skill in enumerate(

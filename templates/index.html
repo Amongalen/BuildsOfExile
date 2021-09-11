@@ -53,7 +53,12 @@
                 {{ filter_form.liked_by_me|addclass:'chosen-select p-1' }}
               </div>
             </div>
+            <div class="mb-2" style="width: 180px;">
+              {{ filter_form.order_by.label_tag }}
+              {{ filter_form.order_by|addclass:'chosen-select p-1' }}
+            </div>
             <input type="button" class="my-1 btn btn-outline-light btn-secondary" id="submitButton" value="Search"/>
+
           </form>
         </div>
       </div>

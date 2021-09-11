@@ -17,8 +17,8 @@ def find_with_filter(filter_form, user_id, page, paginate_by):
     queryset = queryset.filter(*base_filters)
     queryset = _filter_keystones(queryset, filter_form)
     queryset = _filter_unique_items(queryset, filter_form)
-
-    queryset = queryset.order_by('creation_datetime').reverse().all()
+    queryset = _apply_order(queryset, filter_form)
+    queryset = queryset.all()
     logger.debug('Search query=%s', queryset.query)
     page_obj = _get_page(page, paginate_by, queryset)
     return page_obj
@@ -27,7 +27,7 @@ def find_with_filter(filter_form, user_id, page, paginate_by):
 def find_all(page, paginate_by):
     queryset = BuildGuide.objects.defer('pob_details')
     queryset = _annotate_like_counts(queryset)
-    queryset = queryset.all()
+    queryset = queryset.order_by('likes').all()
     return _get_page(page, paginate_by, queryset)
 
 
@@ -90,3 +90,15 @@ def _get_base_filters(filter_form, user_id):
         skill_name = dict(filter_form.fields['active_skill'].choices)[value]
         filters.append(Q(primary_skills__name=skill_name))
     return filters
+
+
+def _apply_order(queryset, filter_form):
+    order_by = filter_form.cleaned_data['order_by']
+    order_field_map = {
+        'Trending': ['-likes_recently', 'title'],
+        'Popular': ['-likes', 'title'],
+        'Modification date': ['-modification_datetime', 'title'],
+        'Creation date': ['-creation_datetime', 'title'],
+        'Title': ['title'],
+    }
+    return queryset.order_by(*order_field_map[order_by])
