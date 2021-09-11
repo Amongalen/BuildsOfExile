@@ -240,7 +240,9 @@ def show_comments(request, guide_id):
     paginator = Paginator(comments_query, paginate_by)
     page = request.GET.get('page')
     page_obj = paginator.get_page(page)
-    return render(request, 'comments.html', {'page_obj': page_obj})
+    guide = BuildGuide.objects.get(pk=guide_id)
+    guide_author_username = guide.author.user.username if guide.author else 'None'
+    return render(request, 'comments.html', {'page_obj': page_obj, 'guide_author_username': guide_author_username})
 
 
 def add_comment(request, guide_id):
