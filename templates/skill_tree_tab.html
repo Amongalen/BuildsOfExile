@@ -13,14 +13,18 @@
     </div>
   </div>
 
-  {% for title, tree in trees.items %}
-    <div class='tree' data-title="{{ title }}"
-         style="display: {% if forloop.counter == build_guide.pob_details.active_tree_spec_index %}block{% else %}none{% endif %}">
+  <div id="tree_container"></div>
+
+  <script>
+    var trees = {
+      {% for title, tree in trees.items %}
+        "{{ title }}": `<div class="tree" data-title="{{ title }}"
+         style="display: block">
       <div class="my-2">
         <small>Link to passive tree:</small>
-        <input id="treeUrl" class='align-middle w-25 d-inline form-control form-control-sm' disabled
+        <input id="treeUrl" class="align-middle w-25 d-inline form-control form-control-sm" disabled
                value="{{ tree.2 }}"/>
-        <button style='width:75px' class="btn btn-sm btn-outline-light btn-secondary treeUrlCopyBtn"
+        <button style="width:75px" class="btn btn-sm btn-outline-light btn-secondary treeUrlCopyBtn"
                 onclick="copyTreeUrl(this)">Copy
         </button>
       </div>
@@ -42,24 +46,24 @@
           {% endif %}
         </div>
       </div>
-    </div>
-  {% endfor %}
+    </div>`,
+      {% endfor %}
+    }
 
-  <script>
     $("#tree_select").chosen({disable_search_threshold: 10, width: '100%'})
 
     $(function () {
       $("#tree_select").on('change', function (evt, params) {
-        $("div.tree").each(function (i, element) {
-          let title1 = params.selected
-          let title2 = $(element).data("title").toString().trim()
-          if (title1 === title2) {
-            $(element).show()
-          } else {
-            $(element).hide()
-          }
-        })
+        let title = params.selected;
+        let tree_html = trees[title];
+        $('#tree_container').html(tree_html);
       });
+    });
+
+    $(document).ready(function () {
+      let title = $('#tree_select').val()
+      let tree_html = trees[title];
+      $('#tree_container').html(tree_html);
     });
 
     function copyTreeUrl(button) {
