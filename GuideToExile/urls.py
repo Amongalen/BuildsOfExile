@@ -22,6 +22,8 @@ from GuideToExile import views, settings
 urlpatterns = [
     path('', views.index_view, name='index'),
     path('guide/list/', views.guide_list_view, name='guide_list'),
+    path('my_guides/', login_required(views.my_guides_view), name='my_guides'),
+    path('my_guides/list/', login_required(views.MyGuidesListView.as_view()), name='my_guides_list'),
     path('guide/new/', login_required(views.new_guide_view), name='new_guide'),
     path('guide/show/<int:pk>/<slug:slug>/', views.show_guide_view, name='show_guide'),
     path('guide/edit/<int:pk>/', login_required(views.edit_guide_view), name='edit_guide'),

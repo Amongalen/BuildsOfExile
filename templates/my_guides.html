@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load myfilters %}
+{% block content %}
+  <div id="guideList"></div>
+  <script>
+    let page = 1;
+
+    function find_guides(page) {
+      var page_str = "&page=" + page;
+
+      $.ajax({
+        url: "{% url 'my_guides_list' %}",
+        data: page_str,
+        type: 'get',
+        success: function (data) {
+          $('#guideList').html(data)
+        }
+      });
+    }
+
+
+    $(document).ready(function () {
+      find_guides(page)
+    });
+
+  </script>
+{% endblock %}

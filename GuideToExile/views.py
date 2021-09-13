@@ -116,6 +116,18 @@ def skill_tree_tab_view(request, pk):
     return render(request, 'skill_tree_tab.html', {'pk': pk, 'build_guide': guide, 'trees': trees})
 
 
+class MyGuidesListView(generic.ListView):
+    template_name = 'guide_list.html'
+    paginate_by = 50
+
+    def get_queryset(self):
+        return guide_search.find_all_by_user(self.request.user)
+
+
+def my_guides_view(request):
+    return render(request, 'my_guides.html')
+
+
 def new_guide_view(request):
     if request.method == 'POST':
         logger.info('Creating new guide')
