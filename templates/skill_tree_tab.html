@@ -1,7 +1,7 @@
 <div id="skill-tree-tab" style="display: none">
   <div class="dropdown my-2">
     Skill tree:
-    <div style="width: 180px" class="d-inline-block">
+    <div style="min-width: 230px" class="d-inline-block">
       <select id="tree_select" class="chosen-select" name='skilltrees'>
         {% for tree_graph_title in trees.keys %}
           <option value="{{ tree_graph_title }}"

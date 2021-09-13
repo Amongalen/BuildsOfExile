@@ -30,8 +30,10 @@ class SkillTreeService:
         return self.tree_graphs[tree_version].as_html_with_taken_nodes(taken_node_ids)
 
     def get_keystones(self, taken_node_ids: list[str], tree_version: str) -> list[TreeNode]:
-        return [node for node_id in taken_node_ids if
-                (node := self.skill_trees[tree_version].nodes.get(node_id)) is not None and node.is_keystone]
+        keystones = [node for node_id in taken_node_ids if
+                     (node := self.skill_trees[tree_version].nodes.get(node_id)) is not None and node.is_keystone]
+        keystones.sort(key=lambda keystone: keystone.name)
+        return keystones
 
 
 def _read_tree_data_file(filepath: str) -> SkillTree:
