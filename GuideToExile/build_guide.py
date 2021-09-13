@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from GuideToExile.data_classes import PobDetails
 from GuideToExile.models import BuildGuide, UniqueItem, Keystone, AscendancyClass, ActiveSkill, UserProfile
 from GuideToExile.skill_tree import SkillTreeService
@@ -15,6 +17,7 @@ def create_build_guide(author: UserProfile, build_details: PobDetails, pob_strin
                            pob_string=pob_string,
                            text=text,
                            ascendancy_class=asc_class,
+                           status=BuildGuide.GuideStatus.DRAFT
                            )
     new_guide.save()
 
@@ -56,3 +59,33 @@ def get_or_create_keystones(pob_details: PobDetails, skill_tree_service: SkillTr
     for keystone in keystones:
         keystone.save()
     return keystones
+
+
+def publish_guide(draft: BuildGuide) -> BuildGuide:
+    primary_skills = draft.primary_skills.all()
+    author = draft.author
+    keystones = draft.keystones.all()
+    unique_items = draft.unique_items.all()
+    draft_guide_id = draft.guide_id
+
+    try:
+        public_guide = draft.public_version
+    except BuildGuide.DoesNotExist:
+        public_guide = draft
+        public_guide.guide_id = None
+        public_guide._state.adding = True
+        public_guide.status = BuildGuide.GuideStatus.PUBLIC
+        public_guide.save()
+    public_guide.primary_skills.set(primary_skills)
+    public_guide.author = author
+    public_guide.keystones.set(keystones)
+    public_guide.unique_items.set(unique_items)
+    if not public_guide.creation_datetime:
+        public_guide.creation_datetime = timezone.now()
+    public_guide.modification_datetime = timezone.now()
+    public_guide.save()
+
+    original_draft = BuildGuide.objects.get(guide_id=draft_guide_id)
+    public_guide.draft = original_draft
+    public_guide.save()
+    return public_guide

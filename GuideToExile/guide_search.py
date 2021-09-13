@@ -14,11 +14,12 @@ logger = logging.getLogger('guidetoexile')
 
 def find_with_filter(filter_form: GuideListFilterForm, user_id: int, page: int, paginate_by: int) -> Page:
     queryset = BuildGuide.objects.defer('pob_details')
-    queryset = _annotate_like_counts(queryset)
+    queryset = _filter_public(queryset)
     base_filters = _get_base_filters(filter_form, user_id)
     queryset = queryset.filter(*base_filters)
     queryset = _filter_keystones(queryset, filter_form)
     queryset = _filter_unique_items(queryset, filter_form)
+    queryset = _annotate_like_counts(queryset)
     queryset = _apply_order(queryset, filter_form)
     queryset = queryset.all()
     logger.debug('Search query=%s', queryset.query)
@@ -28,6 +29,7 @@ def find_with_filter(filter_form: GuideListFilterForm, user_id: int, page: int, 
 
 def find_all(page: int, paginate_by: int) -> Page:
     queryset = BuildGuide.objects.defer('pob_details')
+    queryset = _filter_public(queryset)
     queryset = _annotate_like_counts(queryset)
     queryset = queryset.order_by('likes').all()
     return _get_page(page, paginate_by, queryset)
@@ -37,8 +39,14 @@ def find_all_by_user(user: User) -> QuerySet:
     queryset = BuildGuide.objects.defer('pob_details')
     queryset = _annotate_like_counts(queryset)
     queryset = queryset.filter(author__user=user)
+    # hide drafts if published version exists
+    queryset = queryset.exclude(status=BuildGuide.GuideStatus.DRAFT, public_version__isnull=False)
     queryset = queryset.order_by('-modification_datetime').all()
     return queryset
+
+
+def _filter_public(queryset: QuerySet) -> QuerySet:
+    return queryset.filter(status=BuildGuide.GuideStatus.PUBLIC)
 
 
 def _annotate_like_counts(queryset: QuerySet) -> QuerySet:

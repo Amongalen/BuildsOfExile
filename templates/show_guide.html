@@ -17,7 +17,7 @@
     <div class="col row text-end">
       {% with build_guide.author as user_profile %}
         <div class="col"><h4 class="mb-0"><a
-          href="{% url 'user_profile' user_profile.user_id user_profile.user.username %}">
+                href="{% url 'user_profile' user_profile.user_id user_profile.user.username %}">
           {{ user_profile.user.username }}</a></h4>
           {% if user_profile.youtube_url %}
             <a href="{{ user_profile.youtube_url }}">YouTube.com</a><br/>
@@ -43,6 +43,17 @@
       </div>
     </div>
   </div>
+  {% if build_guide.is_draft %}
+    <div class="mb-2 bg-warning text-warning bg-opacity-25 p-2  border border-warning rounded-3">This is just a draft.
+      Others won't be able to see it unless you <strong>Publish</strong> it!
+    </div>
+  {% endif %}
+  {% if build_guide.is_archived %}
+    <div class="mb-2 bg-warning text-warning bg-opacity-25 p-2  border border-warning rounded-3">This is guide is
+      archived.
+      Others won't be able to see it unless you <strong>Unarchive</strong> it!
+    </div>
+  {% endif %}
   <div class="row">
     <div class="col">
       <button class="mb-2 btn btn-outline-light btn-secondary" id="like-btn"
@@ -67,14 +78,47 @@
       </button>
     </div>
     <div class="col">
-      {% if user == build_guide.author.user %}
-        <button class="float-end mb-2 btn btn-outline-light btn-secondary"
-                onclick="location.href='{% url 'edit_guide' pk %}'">
-          Edit
-        </button>
-      {% endif %}
+      <div class="float-end">
+        {% if user == build_guide.author.user %}
+          {% if build_guide.is_draft and build_guide.public_version %}
+            <button class="mb-2 btn btn-outline-light btn-secondary"
+                    onclick="location.href='{% url 'show_guide' build_guide.public_version.guide_id build_guide.public_version.slug %}'">
+              Public version
+            </button>
+          {% endif %}
+          {% if build_guide.is_draft and build_guide.public_version %}
+            <button class="mb-2 btn btn-outline-light btn-secondary"
+                    onclick="location.href='{% url 'show_guide' build_guide.public_version.guide_id build_guide.public_version.slug %}'">
+              Reset draft
+            </button>
+          {% endif %}
+          {% if build_guide.is_draft %}
+            <button class="mb-2 btn btn-outline-light btn-secondary"
+                    onclick="location.href='{% url 'publish_guide' pk %}'">
+              Publish
+            </button>
+          {% endif %}
+          {% if build_guide.is_public %}
+            <button class="mb-2 btn btn-outline-light btn-secondary"
+                    onclick="location.href='{% url 'edit_guide' pk %}'">
+              Archive
+            </button>
+          {% endif %}
+          {% if build_guide.is_archived %}
+            <button class="mb-2 btn btn-outline-light btn-secondary"
+                    onclick="location.href='{% url 'edit_guide' pk %}'">
+              Unarchive
+            </button>
+          {% endif %}
+          <button class="mb-2 btn btn-outline-light btn-secondary"
+                  onclick="location.href='{% url 'edit_guide' pk %}'">
+            Edit
+          </button>
+        {% endif %}
+      </div>
     </div>
   </div>
+
   <nav>
     <div class="nav nav-tabs " id="nav-tab" role="tablist">
       <button class="nav-link active" id="nav-guide-tab" data-bs-toggle="tab" data-bs-target="#nav-guide"
@@ -167,23 +211,23 @@
 
     function getLikes() {
       $.get(
-        "{% url 'guide_likes' pk %}",
-        function (data) {
-          let likesAmount = data['likes_amount'];
-          let doUserLike = data['do_user_like'];
-          is_guide_liked = doUserLike
-          let heart = doUserLike ? fullHeart : emptyHeart;
-          let likeBtn = $('#like-btn');
-          likeBtn.html(`${likesAmount} ${heart}`);
+              "{% url 'guide_likes' pk %}",
+              function (data) {
+                let likesAmount = data['likes_amount'];
+                let doUserLike = data['do_user_like'];
+                is_guide_liked = doUserLike
+                let heart = doUserLike ? fullHeart : emptyHeart;
+                let likeBtn = $('#like-btn');
+                likeBtn.html(`${likesAmount} ${heart}`);
 
-          let tooltip = bootstrap.Tooltip.getInstance(likeBtn);
-          if (tooltip != null) {
-            tooltip.dispose();
-          }
-          likeBtn.attr('title', doUserLike ? 'Unlike' : 'Like');
-          let newTooltip = new bootstrap.Tooltip(likeBtn);
-          likeBtn.blur()
-        }
+                let tooltip = bootstrap.Tooltip.getInstance(likeBtn);
+                if (tooltip != null) {
+                  tooltip.dispose();
+                }
+                likeBtn.attr('title', doUserLike ? 'Unlike' : 'Like');
+                let newTooltip = new bootstrap.Tooltip(likeBtn);
+                likeBtn.blur()
+              }
       );
     }
 
@@ -194,46 +238,46 @@
 
     function loadGuideTab() {
       $.get(
-        "{% url 'guide_tab' pk %}",
-        function (data) {
-          $("#guide-spinner").fadeOut(150, function () {
-            $(this).remove();
-            $("#nav-guide").append(data);
-            $("#guide-tab").fadeIn(250);
-            attachTooltips();
-          });
-          loadGearGemsTab();
-          loadSkillTreeTab();
-        });
+              "{% url 'guide_tab' pk %}",
+              function (data) {
+                $("#guide-spinner").fadeOut(150, function () {
+                  $(this).remove();
+                  $("#nav-guide").append(data);
+                  $("#guide-tab").fadeIn(250);
+                  attachTooltips();
+                });
+                loadGearGemsTab();
+                loadSkillTreeTab();
+              });
     }
 
     function loadSkillTreeTab() {
       $.get(
-        "{% url 'skill_tree_tab' pk %}",
-        function (data) {
-          $("#nav-skill-tree").append(data);
-          $("#skill-tree-tab").ready(function () {
-            $("#skill-tree-spinner").fadeOut(150, function () {
-              $(this).remove();
-              $("#skill-tree-tab").fadeIn(150);
-            });
-          });
-        });
+              "{% url 'skill_tree_tab' pk %}",
+              function (data) {
+                $("#nav-skill-tree").append(data);
+                $("#skill-tree-tab").ready(function () {
+                  $("#skill-tree-spinner").fadeOut(150, function () {
+                    $(this).remove();
+                    $("#skill-tree-tab").fadeIn(150);
+                  });
+                });
+              });
     }
 
     function loadGearGemsTab() {
       $.get(
-        "{% url 'gear_gems_tab' pk %}",
-        function (data) {
-          $("#nav-gear-and-gems").append(data);
-          $("#gear-gems-tab").ready(function () {
-            $("#gear-gems-spinner").fadeOut(150, function () {
-              $(this).remove();
-              $("#gear-gems-tab").fadeIn(150);
-              attachTooltips();
-            });
-          });
-        });
+              "{% url 'gear_gems_tab' pk %}",
+              function (data) {
+                $("#nav-gear-and-gems").append(data);
+                $("#gear-gems-tab").ready(function () {
+                  $("#gear-gems-spinner").fadeOut(150, function () {
+                    $(this).remove();
+                    $("#gear-gems-tab").fadeIn(150);
+                    attachTooltips();
+                  });
+                });
+              });
     }
 
     function attachTooltips() {

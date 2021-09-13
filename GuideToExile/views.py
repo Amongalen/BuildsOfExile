@@ -145,14 +145,28 @@ def new_guide_view(request):
     return render(request, 'new_guide.html', {'form': form})
 
 
+def publish_guide_view(request, pk):
+    draft = BuildGuide.objects.get(guide_id=pk)
+
+    if request.user.userprofile != draft.author:
+        return HttpResponseForbidden
+
+    if draft.status != BuildGuide.GuideStatus.DRAFT:
+        return HttpResponseForbidden
+
+    public_guide = build_guide.publish_guide(draft)
+    return redirect('show_guide', pk=public_guide.guide_id, slug=public_guide.slug)
+
+
 def edit_guide_view(request, pk):
     guide = BuildGuide.objects.get(guide_id=pk)
+    draft_guide = guide if guide.status == BuildGuide.GuideStatus.DRAFT else guide.draft
     # Form field requires (value, label) tuples for options, list of those is created here
-    active_skills = set((gem.name, gem.name) for skill_group in guide.pob_details.skill_groups
+    active_skills = set((gem.name, gem.name) for skill_group in draft_guide.pob_details.skill_groups
                         for gem in skill_group.gems
                         if gem.is_active_skill)
     active_skills = list(active_skills)
-    imported_primary_skill = guide.pob_details.imported_primary_skill
+    imported_primary_skill = draft_guide.pob_details.imported_primary_skill
     active_skills.sort(key=lambda v: v[0] == imported_primary_skill, reverse=True)
 
     if request.method == 'POST':
@@ -162,28 +176,25 @@ def edit_guide_view(request, pk):
             data['primary_skills'] = imported_primary_skill
         form = EditGuideForm(active_skills, data)
         if form.is_valid():
-            if not guide.creation_datetime:
-                guide.creation_datetime = timezone.now()
-            guide.modification_datetime = timezone.now()
-            guide.title = form.cleaned_data['title']
-            guide.text = form.cleaned_data['text']
+            draft_guide.title = form.cleaned_data['title']
+            draft_guide.text = form.cleaned_data['text']
 
             primary_skills_names = form.cleaned_data['primary_skills']
             if imported_primary_skill not in primary_skills_names:
                 primary_skills_names.insert(0, imported_primary_skill)
-            guide.pob_details.main_active_skills = primary_skills_names
-            guide.primary_skills.clear()
-            guide.primary_skills.add(*ActiveSkill.objects.filter(name__in=primary_skills_names).all())
+            draft_guide.pob_details.main_active_skills = primary_skills_names
+            draft_guide.primary_skills.clear()
+            draft_guide.primary_skills.add(*ActiveSkill.objects.filter(name__in=primary_skills_names).all())
 
-            guide.save()
+            draft_guide.save()
 
-            return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
+            return redirect('show_guide', pk=draft_guide.guide_id, slug=draft_guide.slug)
 
     else:
-        form = EditGuideForm(active_skills, {'title': guide.title,
-                                             'text': guide.text,
-                                             'primary_skills': guide.pob_details.main_active_skills}, )
-    return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': guide})
+        form = EditGuideForm(active_skills, {'title': draft_guide.title,
+                                             'text': draft_guide.text,
+                                             'primary_skills': draft_guide.pob_details.main_active_skills}, )
+    return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': draft_guide})
 
 
 def user_settings_view(request):

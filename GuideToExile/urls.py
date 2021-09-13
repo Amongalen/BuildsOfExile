@@ -27,6 +27,7 @@ urlpatterns = [
     path('guide/new/', login_required(views.new_guide_view), name='new_guide'),
     path('guide/show/<int:pk>/<slug:slug>/', views.show_guide_view, name='show_guide'),
     path('guide/edit/<int:pk>/', login_required(views.edit_guide_view), name='edit_guide'),
+    path('guide/publish/<int:pk>/', login_required(views.publish_guide_view), name='publish_guide'),
     path('guide/liked/', login_required(views.LikedGuidesView.as_view()), name='liked_guides'),
     path('guide/get_likes/<int:pk>/', views.guide_likes, name='guide_likes'),
     path('guide/add_like/<int:pk>/', login_required(views.add_guide_like), name='add_like'),

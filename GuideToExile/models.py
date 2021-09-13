@@ -93,6 +93,11 @@ class AscendancyClass(models.Model):
 
 
 class BuildGuide(models.Model):
+    class GuideStatus(models.IntegerChoices):
+        DRAFT = 1, 'draft'
+        PUBLIC = 2, 'public'
+        ARCHIVED = 3, 'archived'
+
     guide_id = models.BigAutoField(primary_key=True)
     slug = models.SlugField(max_length=180)
     author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
@@ -107,6 +112,20 @@ class BuildGuide(models.Model):
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
     primary_skills = models.ManyToManyField(ActiveSkill)
     ascendancy_class = models.ForeignKey(AscendancyClass, on_delete=models.SET_NULL, null=True)
+    draft = models.OneToOneField('BuildGuide', on_delete=models.CASCADE, related_name='public_version', null=True)
+    status = models.PositiveSmallIntegerField(choices=GuideStatus.choices)
+
+    @property
+    def is_draft(self):
+        return self.status == BuildGuide.GuideStatus.DRAFT
+
+    @property
+    def is_public(self):
+        return self.status == BuildGuide.GuideStatus.PUBLIC
+
+    @property
+    def is_archived(self):
+        return self.status == BuildGuide.GuideStatus.ARCHIVED
 
 
 class GuideLike(models.Model):
