@@ -1,16 +1,17 @@
 import logging
 from datetime import datetime, timedelta
 
-from django.core.paginator import Paginator
-from django.db.models import Q, Count
+from django.core.paginator import Paginator, Page
+from django.db.models import Q, Count, QuerySet
 
+from GuideToExile.forms import GuideListFilterForm
 from GuideToExile.models import BuildGuide
 from GuideToExile.settings import LIKES_RECENTLY_OFFSET
 
 logger = logging.getLogger('guidetoexile')
 
 
-def find_with_filter(filter_form, user_id, page, paginate_by):
+def find_with_filter(filter_form: GuideListFilterForm, user_id: int, page: int, paginate_by: int) -> Page:
     queryset = BuildGuide.objects.defer('pob_details')
     queryset = _annotate_like_counts(queryset)
     base_filters = _get_base_filters(filter_form, user_id)
@@ -24,14 +25,14 @@ def find_with_filter(filter_form, user_id, page, paginate_by):
     return page_obj
 
 
-def find_all(page, paginate_by):
+def find_all(page: int, paginate_by: int) -> Page:
     queryset = BuildGuide.objects.defer('pob_details')
     queryset = _annotate_like_counts(queryset)
     queryset = queryset.order_by('likes').all()
     return _get_page(page, paginate_by, queryset)
 
 
-def _annotate_like_counts(queryset):
+def _annotate_like_counts(queryset: QuerySet) -> QuerySet:
     recently_threshold = datetime.today() - timedelta(days=LIKES_RECENTLY_OFFSET)
     return queryset.annotate(
         likes=Count('guidelike', filter=Q(guidelike__is_active=True))).annotate(
@@ -39,13 +40,13 @@ def _annotate_like_counts(queryset):
             guidelike__creation_datetime__gte=recently_threshold)))
 
 
-def _get_page(page, paginate_by, queryset):
+def _get_page(page: int, paginate_by: int, queryset: QuerySet) -> Page:
     paginator = Paginator(queryset, paginate_by)
     page_obj = paginator.get_page(page)
     return page_obj
 
 
-def _filter_keystones(queryset, filter_form):
+def _filter_keystones(queryset: QuerySet, filter_form: GuideListFilterForm) -> QuerySet:
     keystone_keys = filter_form.cleaned_data['keystones']
     if keystone_keys:
         keystone_choices = dict(filter_form.fields['keystones'].choices)
@@ -56,7 +57,7 @@ def _filter_keystones(queryset, filter_form):
     return queryset
 
 
-def _filter_unique_items(queryset, filter_form):
+def _filter_unique_items(queryset: QuerySet, filter_form: GuideListFilterForm) -> QuerySet:
     unique_item_keys = filter_form.cleaned_data['unique_items']
     if unique_item_keys:
         unique_item_choices = dict(filter_form.fields['unique_items'].choices)
@@ -67,7 +68,7 @@ def _filter_unique_items(queryset, filter_form):
     return queryset
 
 
-def _get_base_filters(filter_form, user_id):
+def _get_base_filters(filter_form: GuideListFilterForm, user_id: int) -> list[Q]:
     data = filter_form.cleaned_data
     filters = [
         Q(title__icontains=data['title']),
@@ -92,7 +93,7 @@ def _get_base_filters(filter_form, user_id):
     return filters
 
 
-def _apply_order(queryset, filter_form):
+def _apply_order(queryset: QuerySet, filter_form: GuideListFilterForm) -> QuerySet:
     order_by = filter_form.cleaned_data['order_by']
     order_field_map = {
         'Trending': ['-likes_recently', 'title'],

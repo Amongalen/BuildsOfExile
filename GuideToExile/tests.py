@@ -83,7 +83,7 @@ class TreeGraphTests(TestCase):
         nodes = [35754, 46910, 50862, 39713, 44967, 50422, 15631, 33740, 58833, 55906, 16775, 55373, 26740, 15405,
                  38048, 63976]
         nodes = list(map(str, nodes))
-        _ = tree_graph.to_html_with_taken_nodes(nodes)
+        _ = tree_graph.as_html_with_taken_nodes(nodes)
         print('html')
 
 

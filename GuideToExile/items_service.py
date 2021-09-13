@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 import json
 from collections import defaultdict
@@ -25,23 +27,23 @@ class AssetMapping:
                 for name, art_name in lang.items():
                     self.mapping[name] = f'{ASSET_DIR}/{art_name}.png'
 
-    def get_asset_name_for_gem(self, gem_name):
+    def get_asset_name_for_gem(self, gem_name: str) -> str:
         return self.mapping.get(gem_name, None)
 
-    def get_asset_name_for_gear(self, item):
+    def get_asset_name_for_gear(self, item: Item) -> str:
         if item.rarity == 'UNIQUE':
             return self.mapping.get(item.name, None)
         if item.rarity == 'RARE':
             return self.mapping.get(item.base_name, None)
 
         # hacks for dealing with prefix and suffix
-        name = item.base_name
-        if x := self.mapping.get(name, None):
+        base_name = item.base_name
+        if x := self.mapping.get(base_name, None):
             return x
-        prefixless_name = name.split(' ', maxsplit=1)[1]
+        prefixless_name = base_name.split(' ', maxsplit=1)[1]
         if x := self.mapping.get(prefixless_name, None):
             return x
-        suffixless_name = name.split(' of ')[0]
+        suffixless_name = base_name.split(' of ')[0]
         if x := self.mapping.get(suffixless_name, None):
             return x
         stripped_name = prefixless_name.split(' of ')[0]
@@ -60,7 +62,7 @@ def _dict_skip_duplicates(ordered_pairs):
     return d
 
 
-def assign_skills_to_items(item_sets, skill_groups):
+def assign_skills_to_items(item_sets: list[ItemSet], skill_groups: list[SkillGroup]) -> list[ItemSet]:
     item_sets = copy.deepcopy(item_sets)
     skill_groups_by_slot = defaultdict(list)
     for skill_group in skill_groups:
@@ -93,5 +95,5 @@ class GemMapping:
                 else:
                     self.mapping[key] = 'None'
 
-    def get_name(self, skill_id):
+    def get_name(self, skill_id: int) -> str:
         return self.mapping[skill_id]
