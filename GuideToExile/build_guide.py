@@ -70,16 +70,13 @@ def publish_guide(draft: BuildGuide) -> BuildGuide:
 
     try:
         public_guide_id = draft.public_version.guide_id
-        old_status = draft.public_version.status
         public_guide = draft
         public_guide.guide_id = public_guide_id
-        public_guide.status = old_status
         public_guide.save()
     except BuildGuide.DoesNotExist:
         public_guide = draft
         public_guide.guide_id = None
         public_guide._state.adding = True
-        public_guide.status = BuildGuide.GuideStatus.PUBLIC
         public_guide.save()
 
     original_draft = BuildGuide.objects.get(guide_id=draft_guide_id)
@@ -87,6 +84,7 @@ def publish_guide(draft: BuildGuide) -> BuildGuide:
     public_guide.primary_skills.set(primary_skills)
     public_guide.author = author
     public_guide.keystones.set(keystones)
+    public_guide.status = BuildGuide.GuideStatus.PUBLIC
     public_guide.unique_items.set(unique_items)
     if not public_guide.creation_datetime:
         public_guide.creation_datetime = timezone.now()

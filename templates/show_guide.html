@@ -83,7 +83,11 @@
           {% if build_guide.is_draft and build_guide.public_version %}
             <button class="mb-2 btn btn-outline-light btn-secondary"
                     onclick="location.href='{% url 'show_guide' build_guide.public_version.guide_id build_guide.public_version.slug %}'">
-              Public version
+              {% if build_guide.public_version.is_public %}
+                Public version
+              {% else %}
+                Archived version
+              {% endif %}
             </button>
           {% endif %}
           {% if not build_guide.is_draft and build_guide.modification_datetime < build_guide.draft.modification_datetime %}
