@@ -277,6 +277,10 @@ def guide_likes(request, pk):
 def add_guide_like(request, pk):
     if not request.user.is_authenticated:
         return HttpResponseForbidden
+    guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user == guide.author.user:
+        return HttpResponseForbidden
+
     if request.method == 'POST':
         guide_like = GuideLike.objects.filter(user__user=request.user, guide__guide_id=pk).first()
         if not guide_like:
@@ -291,6 +295,10 @@ def add_guide_like(request, pk):
 def remove_guide_like(request, pk):
     if not request.user.is_authenticated:
         return HttpResponseForbidden
+    guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user == guide.author.user:
+        return HttpResponseForbidden
+
     if request.method == 'POST':
         guide_like = GuideLike.objects.filter(user__user=request.user, guide__guide_id=pk).first()
         if guide_like and guide_like.is_active:

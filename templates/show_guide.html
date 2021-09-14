@@ -57,7 +57,8 @@
   <div class="row">
     <div class="col">
       <button class="mb-2 btn btn-outline-light btn-secondary" id="like-btn"
-              onclick="addRemoveLike()" {% if not user.is_authenticated %} disabled {% endif %}
+              onclick="addRemoveLike()" {% if not user.is_authenticated or user == build_guide.author.user %}
+              disabled {% endif %}
               title="test" data-bs-placement="bottom" data-bs-toggle="tooltip">
         0
         <svg height="20px" width="20px"
