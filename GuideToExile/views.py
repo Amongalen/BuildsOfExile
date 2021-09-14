@@ -92,6 +92,16 @@ def show_guide_view(request, pk, slug):
                   {'pk': pk, 'build_guide': guide})
 
 
+def show_draft_view(request, pk):
+    guide = get_object_or_404(BuildGuide, guide_id=pk)
+    if request.user.userprofile != guide.author:
+        return HttpResponseForbidden
+    draft = guide if guide.status == BuildGuide.GuideStatus.DRAFT else guide.draft
+
+    return render(request, 'show_guide.html',
+                  {'pk': draft.guide_id, 'build_guide': draft})
+
+
 def guide_tab_view(request, pk):
     guide = get_object_or_404(BuildGuide, guide_id=pk)
     return render(request, 'guide_tab.html', {'pk': pk, 'build_guide': guide})
@@ -158,6 +168,30 @@ def publish_guide_view(request, pk):
     return redirect('show_guide', pk=public_guide.guide_id, slug=public_guide.slug)
 
 
+def archive_guide_view(request, pk):
+    guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user.userprofile != guide.author:
+        return HttpResponseForbidden
+
+    if guide.status == BuildGuide.GuideStatus.DRAFT:
+        return HttpResponseForbidden
+    guide.status = BuildGuide.GuideStatus.ARCHIVED
+    guide.save()
+    return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
+
+
+def unarchive_guide_view(request, pk):
+    guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user.userprofile != guide.author:
+        return HttpResponseForbidden
+
+    if guide.status == BuildGuide.GuideStatus.DRAFT:
+        return HttpResponseForbidden
+    guide.status = BuildGuide.GuideStatus.PUBLIC
+    guide.save()
+    return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
+
+
 def edit_guide_view(request, pk):
     guide = BuildGuide.objects.get(guide_id=pk)
     draft_guide = guide if guide.status == BuildGuide.GuideStatus.DRAFT else guide.draft
@@ -185,10 +219,11 @@ def edit_guide_view(request, pk):
             draft_guide.pob_details.main_active_skills = primary_skills_names
             draft_guide.primary_skills.clear()
             draft_guide.primary_skills.add(*ActiveSkill.objects.filter(name__in=primary_skills_names).all())
+            draft_guide.modification_datetime = timezone.now()
 
             draft_guide.save()
 
-            return redirect('show_guide', pk=draft_guide.guide_id, slug=draft_guide.slug)
+            return redirect('show_draft', pk=pk)
 
     else:
         form = EditGuideForm(active_skills, {'title': draft_guide.title,

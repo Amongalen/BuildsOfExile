@@ -42,6 +42,7 @@ def find_all_by_user(user: User) -> QuerySet:
     # hide drafts if published version exists
     queryset = queryset.exclude(status=BuildGuide.GuideStatus.DRAFT, public_version__isnull=False)
     queryset = queryset.order_by('-modification_datetime').all()
+    logger.debug('Search query=%s', queryset.query)
     return queryset
 
 

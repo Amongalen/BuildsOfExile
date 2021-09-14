@@ -44,13 +44,13 @@
     </div>
   </div>
   {% if build_guide.is_draft %}
-    <div class="mb-2 bg-warning text-warning bg-opacity-25 p-2  border border-warning rounded-3">This is just a draft.
+    <div class="mb-2 bg-warning text-warning bg-opacity-25 p-2  border border-warning rounded-3">This is just a <strong>Draft</strong>.
       Others won't be able to see it unless you <strong>Publish</strong> it!
     </div>
   {% endif %}
   {% if build_guide.is_archived %}
     <div class="mb-2 bg-warning text-warning bg-opacity-25 p-2  border border-warning rounded-3">This is guide is
-      archived.
+      <strong>Archived</strong>.
       Others won't be able to see it unless you <strong>Unarchive</strong> it!
     </div>
   {% endif %}
@@ -86,6 +86,12 @@
               Public version
             </button>
           {% endif %}
+          {% if not build_guide.is_draft and build_guide.modification_datetime < build_guide.draft.modification_datetime %}
+            <button class="mb-2 btn btn-outline-light btn-secondary"
+                    onclick="location.href='{% url 'show_draft' pk %}'">
+              Show draft
+            </button>
+          {% endif %}
           {% if build_guide.is_draft and build_guide.public_version %}
             <button class="mb-2 btn btn-outline-light btn-secondary"
                     onclick="location.href='{% url 'show_guide' build_guide.public_version.guide_id build_guide.public_version.slug %}'">
@@ -100,13 +106,13 @@
           {% endif %}
           {% if build_guide.is_public %}
             <button class="mb-2 btn btn-outline-light btn-secondary"
-                    onclick="location.href='{% url 'edit_guide' pk %}'">
+                    onclick="location.href='{% url 'archive_guide' pk %}'">
               Archive
             </button>
           {% endif %}
           {% if build_guide.is_archived %}
             <button class="mb-2 btn btn-outline-light btn-secondary"
-                    onclick="location.href='{% url 'edit_guide' pk %}'">
+                    onclick="location.href='{% url 'unarchive_guide' pk %}'">
               Unarchive
             </button>
           {% endif %}

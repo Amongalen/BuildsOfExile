@@ -20,6 +20,12 @@
               </span>
             </div>
             <div class="col-auto ms-auto mt-auto">
+              {% if guide.is_archived %}
+                <span class="text-warning bg-warning bg-opacity-25 border border-1 border-warning rounded-pill badge">Archived</span>
+              {% endif %}
+              {% if guide.is_draft %}
+                <span class="text-warning bg-warning bg-opacity-25 border border-1 border-warning rounded-pill badge">Draft</span>
+              {% endif %}
               <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
                     data-bs-placement="bottom"
                     data-bs-toggle="tooltip" data-bs-html="true"
@@ -48,7 +54,7 @@
           </div>
         </div>
         <span
-          class="fs-6 col-auto m-auto text-light bg-dark border border-1 border-primary-lighter rounded-pill badge">{{ guide.likes }}
+                class="fs-6 col-auto m-auto text-light bg-dark border border-1 border-primary-lighter rounded-pill badge">{{ guide.likes }}
         <svg height="20px" width="20px"
              viewBox="0 0 512 512" style="margin-top: -2px">
             <path d="M376,30c-27.783,0-53.255,8.804-75.707,26.168c-21.525,16.647-35.856,37.85-44.293,53.268
