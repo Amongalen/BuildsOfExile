@@ -98,8 +98,8 @@
           {% endif %}
           {% if build_guide.is_draft and build_guide.public_version %}
             <button class="mb-2 btn btn-outline-light btn-secondary"
-                    onclick="location.href='{% url 'show_guide' build_guide.public_version.guide_id build_guide.public_version.slug %}'">
-              Reset draft
+                    onclick="location.href='{% url 'clear_draft' build_guide.public_version.guide_id %}'">
+              Clear draft
             </button>
           {% endif %}
           {% if build_guide.is_draft %}

@@ -192,6 +192,14 @@ def unarchive_guide_view(request, pk):
     return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
 
 
+def clear_draft_view(request, pk):
+    guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user.userprofile != guide.author:
+        return HttpResponseForbidden
+    guide = build_guide.clear_draft(guide)
+    return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
+
+
 def edit_guide_view(request, pk):
     guide = BuildGuide.objects.get(guide_id=pk)
     draft_guide = guide if guide.status == BuildGuide.GuideStatus.DRAFT else guide.draft

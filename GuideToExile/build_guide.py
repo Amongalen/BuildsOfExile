@@ -62,10 +62,6 @@ def get_or_create_keystones(pob_details: PobDetails, skill_tree_service: SkillTr
 
 
 def publish_guide(draft: BuildGuide) -> BuildGuide:
-    primary_skills = draft.primary_skills.all()
-    author = draft.author
-    keystones = draft.keystones.all()
-    unique_items = draft.unique_items.all()
     draft_guide_id = draft.guide_id
 
     try:
@@ -81,11 +77,11 @@ def publish_guide(draft: BuildGuide) -> BuildGuide:
 
     original_draft = BuildGuide.objects.get(guide_id=draft_guide_id)
     public_guide.draft = original_draft
-    public_guide.primary_skills.set(primary_skills)
-    public_guide.author = author
-    public_guide.keystones.set(keystones)
+    public_guide.primary_skills.set(original_draft.primary_skills.all())
+    public_guide.keystones.set(original_draft.keystones.all())
+    public_guide.author = original_draft.author
     public_guide.status = BuildGuide.GuideStatus.PUBLIC
-    public_guide.unique_items.set(unique_items)
+    public_guide.unique_items.set(original_draft.unique_items.all())
     if not public_guide.creation_datetime:
         now = timezone.now()
         public_guide.creation_datetime = now
@@ -93,4 +89,26 @@ def publish_guide(draft: BuildGuide) -> BuildGuide:
     public_guide.modification_datetime = timezone.now()
     public_guide.save()
     original_draft.save()
+    return public_guide
+
+
+def clear_draft(guide: BuildGuide) -> BuildGuide:
+    public_guide_id = guide.guide_id
+
+    draft = guide.draft
+    draft_id = draft.guide_id
+    draft = guide
+    draft.guide_id = draft_id
+    draft.draft = None
+    draft.save()
+
+    public_guide = BuildGuide.objects.get(guide_id=public_guide_id)
+    draft.public_version = public_guide
+    draft.primary_skills.set(public_guide.primary_skills.all())
+    draft.keystones.set(public_guide.keystones.all())
+    draft.status = BuildGuide.GuideStatus.DRAFT
+    draft.unique_items.set(public_guide.unique_items.all())
+    draft.author = public_guide.author
+    draft.save()
+
     return public_guide
