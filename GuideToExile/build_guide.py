@@ -87,7 +87,10 @@ def publish_guide(draft: BuildGuide) -> BuildGuide:
     public_guide.status = BuildGuide.GuideStatus.PUBLIC
     public_guide.unique_items.set(unique_items)
     if not public_guide.creation_datetime:
-        public_guide.creation_datetime = timezone.now()
+        now = timezone.now()
+        public_guide.creation_datetime = now
+        original_draft.creation_datetime = now
     public_guide.modification_datetime = timezone.now()
     public_guide.save()
+    original_draft.save()
     return public_guide
