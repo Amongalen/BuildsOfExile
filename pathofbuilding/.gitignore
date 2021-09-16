@@ -1,0 +1,7 @@
+# ignore everything
+*
+
+# except the explaining README
+!README
+# and this .gitignore
+!.gitignore
