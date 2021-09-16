@@ -2,9 +2,8 @@ import json
 import os
 import sys
 from subprocess import PIPE
+from subprocess import Popen
 from typing import *
-
-from .popen_job import Popen
 
 __all__ = [
     'ProcessWrapper',
