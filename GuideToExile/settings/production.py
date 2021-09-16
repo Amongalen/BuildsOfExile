@@ -12,14 +12,18 @@ ALLOWED_HOSTS = []
 
 # ##### SECURITY CONFIGURATION ############################
 
-# TODO: Make sure, that sensitive information uses https
-# TODO: Evaluate the following settings, before uncommenting them
 # redirects all requests to https
 SECURE_SSL_REDIRECT = True
 # session cookies will only be set, if https is used
-# SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 # how long is a session cookie valid?
-# SESSION_COOKIE_AGE = 1209600
+SESSION_COOKIE_AGE = 1209600
+
+CSRF_COOKIE_SECURE = True
+
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 # validates passwords (very low security, but hey...)
 AUTH_PASSWORD_VALIDATORS = [
