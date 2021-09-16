@@ -3,6 +3,6 @@ option_settings:
         DJANGO_SETTINGS_MODULE: "GuideToExile.settings"
         "PYTHONPATH": "/opt/python/current/app/iotd:$PYTHONPATH"
     "aws:elasticbeanstalk:container:python":
-        WSGIPath: GuideToExile/wsgi.py
+        WSGIPath: GuideToExile.wsgi:application
         NumProcesses: 3
         NumThreads: 20
