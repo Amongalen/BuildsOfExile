@@ -1,5 +1,8 @@
 # for now fetch the development settings only
 
+# project imports
+from .common import *
+
 # turn off all debugging
 
 DEBUG = False
@@ -12,7 +15,7 @@ ALLOWED_HOSTS = []
 # TODO: Make sure, that sensitive information uses https
 # TODO: Evaluate the following settings, before uncommenting them
 # redirects all requests to https
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
 # session cookies will only be set, if https is used
 # SESSION_COOKIE_SECURE = True
 # how long is a session cookie valid?
@@ -41,11 +44,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # the email address, these error notifications to admins come from
-# SERVER_EMAIL = 'root@localhost'
+SERVER_EMAIL = 'root@localhost'
 
-# how many days a password reset should work. I'd say even one day is too long
-# PASSWORD_RESET_TIMEOUT_DAYS = 1
-
+# The number of seconds a password reset link is valid for.
+PASSWORD_RESET_TIMEOUT = 60 * 60  # 1 hour
 
 LOGGING = {
     'version': 1,
@@ -93,3 +95,10 @@ LOGGING = {
         }
     }
 }
+
+# limits tree loading in debug mode
+CURRENT_TREE_VERSION = '3_15'
+
+POB_PATH = join(PROJECT_ROOT, 'pathofbuilding')
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # todo change email backend

@@ -37,8 +37,10 @@ sys.path.append(normpath(join(PROJECT_ROOT, 'apps')))
 
 # ##### APPLICATION CONFIGURATION #########################
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 # these are the apps
-DEFAULT_APPS = [
+INSTALLED_APPS = [
     'GuideToExile',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -206,10 +208,18 @@ DJANGO_TIPTAP_CONFIG = {
     ]
 
 }
+
+# ##### OTHER CONFIGURATION ###############################
+
 ASC_TREE_X = 7000
 ASC_TREE_Y = -5500
 
 LIKES_RECENTLY_OFFSET = 30
+
+ASSET_DIR = r'poe_assets'
+BASE_ITEMS_LOOKUP_FILE = r'poe_assets\base_items_lookup.json'
+UNIQUE_ITEMS_LOOKUP_FILE = r'poe_assets\unique_items_lookup.json'
+GEMS_FILE = r'poe_assets\gems.min.json'
 
 # finally grab the SECRET KEY
 try:

@@ -11,14 +11,13 @@ from .common import *
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = True
 
+# limits tree loading in debug mode
 CURRENT_TREE_VERSION = '3_15'
 
 # allow all hosts during development
 ALLOWED_HOSTS = ['*']
 
 # ##### APPLICATION CONFIGURATION #########################
-
-INSTALLED_APPS = DEFAULT_APPS
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -75,8 +74,3 @@ LOGGING = {
         }
     }
 }
-
-ASSET_DIR = r'poe_assets'
-BASE_ITEMS_LOOKUP_FILE = r'poe_assets\base_items_lookup.json'
-UNIQUE_ITEMS_LOOKUP_FILE = r'poe_assets\unique_items_lookup.json'
-GEMS_FILE = r'poe_assets\gems.min.json'
