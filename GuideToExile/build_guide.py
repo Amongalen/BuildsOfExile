@@ -1,3 +1,5 @@
+from typing import List
+
 from django.utils import timezone
 
 from GuideToExile.data_classes import PobDetails
@@ -40,7 +42,7 @@ def get_asc_class(pob_details: PobDetails) -> AscendancyClass:
     return asc_class
 
 
-def get_or_create_unique_items(pob_details: PobDetails) -> list[UniqueItem]:
+def get_or_create_unique_items(pob_details: PobDetails) -> List[UniqueItem]:
     unique_items_names = [item.name for item in pob_details.items if item.rarity == 'UNIQUE']
     unique_items = [UniqueItem.objects.get_or_create(name=name)[0] for name in unique_items_names]
     for item in unique_items:
@@ -48,7 +50,7 @@ def get_or_create_unique_items(pob_details: PobDetails) -> list[UniqueItem]:
     return unique_items
 
 
-def get_or_create_keystones(pob_details: PobDetails, skill_tree_service: SkillTreeService) -> list[Keystone]:
+def get_or_create_keystones(pob_details: PobDetails, skill_tree_service: SkillTreeService) -> List[Keystone]:
     keystone_names = []
     for tree_spec in pob_details.tree_specs:
         all_nodes = skill_tree_service.skill_trees[tree_spec.tree_version].nodes

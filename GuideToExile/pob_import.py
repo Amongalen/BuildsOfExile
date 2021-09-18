@@ -3,7 +3,7 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 import zlib
-from typing import Union, Optional
+from typing import Union, Optional, Dict, List
 
 import requests
 
@@ -77,7 +77,7 @@ def parse_pob_details(xml: str) -> PobDetails:
         used_jewels=(extract_used_jewels(xml_root, items)))
 
 
-def extract_used_jewels(xml_root: ET.Element, items: list[Item]) -> dict[str, list[Item]]:
+def extract_used_jewels(xml_root: ET.Element, items: List[Item]) -> Dict[str, List[Item]]:
     logger.debug('Extracting jewels')
     jewels_in_tree = set(item_id for spec_xml in xml_root.find('Tree')
                          for socket_xml in spec_xml.find('Sockets')
@@ -109,7 +109,7 @@ def extract_active_item_set_id(xml_root: ET.Element) -> str:
         'activeItemSet')) != 'nil' else '1'
 
 
-def extract_stats(xml_root: ET.Element) -> dict[str, Union[int, float]]:
+def extract_stats(xml_root: ET.Element) -> Dict[str, Union[int, float]]:
     stats = {}
     for stat in xml_root.find('Build'):
         value_str = stat.get('value')
@@ -132,7 +132,7 @@ def extract_stats(xml_root: ET.Element) -> dict[str, Union[int, float]]:
     return stats
 
 
-def extract_items(xml_root: ET.Element) -> list[Item]:
+def extract_items(xml_root: ET.Element) -> List[Item]:
     logger.debug('Extracting items')
     items = []
     pob = PathOfBuilding(POB_PATH, POB_PATH)
@@ -158,7 +158,7 @@ def extract_items(xml_root: ET.Element) -> list[Item]:
     return items
 
 
-def extract_support_gems_from_item(item_lines: list[str]) -> list[SkillGem]:
+def extract_support_gems_from_item(item_lines: List[str]) -> List[SkillGem]:
     result = []
     for line in item_lines:
         match = re.match(r'^Socketed Gems are Supported by Level (\d+) (.*)$', line)
@@ -170,7 +170,7 @@ def extract_support_gems_from_item(item_lines: list[str]) -> list[SkillGem]:
     return result
 
 
-def extract_item_sets(xml_root: ET.Element, items: list[Item]) -> list[ItemSet]:
+def extract_item_sets(xml_root: ET.Element, items: List[Item]) -> List[ItemSet]:
     logger.debug('Extracting item sets')
     items_by_id = {item.item_id_in_itemset: item for item in items}
     item_sets = []
@@ -189,7 +189,7 @@ def extract_item_sets(xml_root: ET.Element, items: list[Item]) -> list[ItemSet]:
     return item_sets
 
 
-def extract_tree_specs(xml_root: ET.Element) -> list[TreeSpec]:
+def extract_tree_specs(xml_root: ET.Element) -> List[TreeSpec]:
     logger.debug('Extracting tree specs')
     tree_specs = []
     for spec_xml in xml_root.find('Tree'):
@@ -203,7 +203,7 @@ def extract_tree_specs(xml_root: ET.Element) -> list[TreeSpec]:
     return tree_specs
 
 
-def extract_skills_groups(xml_root: ET.Element) -> list[SkillGroup]:
+def extract_skills_groups(xml_root: ET.Element) -> List[SkillGroup]:
     logger.debug('Extracting skill groups')
 
     skill_groups = []
@@ -225,7 +225,7 @@ def extract_skills_groups(xml_root: ET.Element) -> list[SkillGroup]:
     return skill_groups
 
 
-def extract_gems_in_group(group_xml: ET.Element) -> list[SkillGem]:
+def extract_gems_in_group(group_xml: ET.Element) -> List[SkillGem]:
     gems = []
     for gem_xml in group_xml:
         is_gem_enabled = parse_bool(gem_xml.get('enabled'))
@@ -246,7 +246,7 @@ def extract_gems_in_group(group_xml: ET.Element) -> list[SkillGem]:
     return gems
 
 
-def get_main_active_skill(skill_groups: list[SkillGroup], xml_root: ET.Element) -> Optional[str]:
+def get_main_active_skill(skill_groups: List[SkillGroup], xml_root: ET.Element) -> Optional[str]:
     if not len(skill_groups):
         return None
     main_socket_group_index = int(xml_root.find('Build').get('mainSocketGroup')) - 1

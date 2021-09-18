@@ -1,6 +1,7 @@
 import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from typing import Tuple, List, Dict
 
 from GuideToExile.data_classes import NodeGroup, TreeNode, SkillTree
 from GuideToExile.settings.common import ASC_TREE_X, ASC_TREE_Y
@@ -43,8 +44,8 @@ class TreeGraphNode(GraphElement):
 class TreeGraphPath(GraphElement):
     start_node_id: str
     end_node_id: str
-    start_pos: tuple[float, float]
-    end_pos: tuple[float, float]
+    start_pos: Tuple[float, float]
+    end_pos: Tuple[float, float]
     is_curved: bool
     radius: int
     is_clockwise: bool
@@ -67,8 +68,8 @@ class TreeGraphPath(GraphElement):
 
 
 class TreeGraph:
-    nodes: dict[str, TreeGraphNode]
-    paths: list[TreeGraphPath]
+    nodes: Dict[str, TreeGraphNode]
+    paths: List[TreeGraphPath]
     skill_tree: SkillTree
 
     def __init__(self, skill_tree):
@@ -121,7 +122,7 @@ class TreeGraph:
         size_y = self.skill_tree.max_y - min_y
         return min_x + 2400, min_y + 800, size_x - 2800, size_y - 1100
 
-    def as_html_with_taken_nodes(self, taken_node_ids: list[str]) -> str:
+    def as_html_with_taken_nodes(self, taken_node_ids: List[str]) -> str:
         min_x, min_y, size_x, size_y = self.tree_dimensions
         html = f'<svg style="background-color: transparent;" viewBox="{min_x} {min_y} {size_x} {size_y}">\n'
         asc_tree_x = ASC_TREE_X
@@ -135,14 +136,14 @@ class TreeGraph:
         html += '</svg>\n'
         return html
 
-    def _get_all_graph_elements_including_taken_nodes(self, taken_node_ids: list[str]) -> list[GraphElement]:
+    def _get_all_graph_elements_including_taken_nodes(self, taken_node_ids: List[str]) -> List[GraphElement]:
         asc_name = self._find_asc_name(taken_node_ids)
         nodes = self._get_nodes_including_taken_nodes(taken_node_ids, asc_name)
         paths = self._get_paths_including_taken_nodes(taken_node_ids, asc_name)
 
         return nodes + paths
 
-    def _get_nodes_including_taken_nodes(self, taken_node_ids: list[str], asc_name: str) -> list[GraphElement]:
+    def _get_nodes_including_taken_nodes(self, taken_node_ids: List[str], asc_name: str) -> List[GraphElement]:
         nodes = []
         for node_id, node in self.nodes.items():
             is_hidden = (self.skill_tree.nodes[node_id].ascendancy_name != ''
@@ -156,7 +157,7 @@ class TreeGraph:
             nodes.append(new_node)
         return nodes
 
-    def _get_paths_including_taken_nodes(self, taken_node_ids: list[str], asc_name: str) -> list[GraphElement]:
+    def _get_paths_including_taken_nodes(self, taken_node_ids: List[str], asc_name: str) -> List[GraphElement]:
         paths = []
         for path in self.paths:
             is_taken = path.start_node_id in taken_node_ids and path.end_node_id in taken_node_ids
@@ -175,7 +176,7 @@ class TreeGraph:
                                        is_hidden=is_hidden))
         return paths
 
-    def _calculate_node_position(self, group: NodeGroup, node: TreeNode) -> tuple[float, float]:
+    def _calculate_node_position(self, group: NodeGroup, node: TreeNode) -> Tuple[float, float]:
         nodes_per_orbit = self.skill_tree.skills_per_orbit[node.orbit_radii]
         orbit_radius = self.skill_tree.orbit_radii[node.orbit_radii]
         angle_degrees = (360.0 / nodes_per_orbit) * node.orbit_index - 90.0
@@ -184,14 +185,14 @@ class TreeGraph:
         pos_y = math.sin(angle_radians) * orbit_radius + group.y
         return pos_x, pos_y
 
-    def _find_asc_name(self, taken_node_ids: list[str]) -> str:
+    def _find_asc_name(self, taken_node_ids: List[str]) -> str:
         for name, node_id in self.skill_tree.asc_start_nodes.items():
             if node_id in taken_node_ids:
                 return name
         return ''
 
 
-def _are_nodes_clockwise(start_pos: tuple[float, float], end_position: tuple[float, float], node_group: NodeGroup):
+def _are_nodes_clockwise(start_pos: Tuple[float, float], end_position: Tuple[float, float], node_group: NodeGroup):
     center_x = node_group.x
     center_y = node_group.y
     det = (start_pos[0] - center_x) * (end_position[1] - center_y) - (end_position[0] - center_x) * (

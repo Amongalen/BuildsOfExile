@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 from collections import defaultdict
+from typing import List
 
 from django.contrib.staticfiles import finders
 
@@ -62,7 +63,7 @@ def _dict_skip_duplicates(ordered_pairs):
     return d
 
 
-def assign_skills_to_items(item_sets: list[ItemSet], skill_groups: list[SkillGroup]) -> list[ItemSet]:
+def assign_skills_to_items(item_sets: List[ItemSet], skill_groups: List[SkillGroup]) -> List[ItemSet]:
     item_sets = copy.deepcopy(item_sets)
     skill_groups_by_slot = defaultdict(list)
     for skill_group in skill_groups:

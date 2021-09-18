@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Union, Optional
+from typing import Union, Optional, List, Dict
 
 from GuideToExile import items_service
 
@@ -27,13 +27,13 @@ class SkillGroup:
     source: Optional[str]
     is_enabled: bool
     main_active_skill_index: int
-    gems: list[SkillGem]
+    gems: List[SkillGem]
 
 
 @dataclass
 class TreeSpec:
     title: str
-    nodes: list[str]
+    nodes: List[str]
     url: str
     tree_version: str
 
@@ -45,7 +45,7 @@ class Item:
     base_name: str
     rarity: str
     display_html: str
-    support_gems: list[SkillGem]
+    support_gems: List[SkillGem]
 
     @property
     def asset(self):
@@ -56,23 +56,23 @@ class Item:
 class ItemSet:
     set_id: int
     title: str
-    slots: dict[str, Item]
+    slots: Dict[str, Item]
 
 
 @dataclass
 class PobDetails:
-    build_stats: dict[str, Union[int, float]]
+    build_stats: Dict[str, Union[int, float]]
     class_name: str
     ascendancy_name: str
-    skill_groups: list[SkillGroup]
-    main_active_skills: list[str]
+    skill_groups: List[SkillGroup]
+    main_active_skills: List[str]
     imported_primary_skill: str
-    tree_specs: list[TreeSpec]
+    tree_specs: List[TreeSpec]
     active_tree_spec_index: int
-    items: list[Item]
-    item_sets: list[ItemSet]
+    items: List[Item]
+    item_sets: List[ItemSet]
     active_item_set_id: str
-    used_jewels: dict[str, list[Item]]
+    used_jewels: Dict[str, List[Item]]
 
 
 @dataclass
@@ -80,8 +80,8 @@ class NodeGroup:
     group_id: int
     x: int
     y: int
-    orbitals: list[int] = field(default_factory=list)
-    node_ids: list[str] = field(default_factory=list)
+    orbitals: List[int] = field(default_factory=list)
+    node_ids: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -96,8 +96,8 @@ class TreeNode:
     orbit_index: int
     class_start_index: int
     is_ascendancy_start: bool
-    stats: list[str] = field(default_factory=list)
-    connected_nodes: list[str] = field(default_factory=list)
+    stats: List[str] = field(default_factory=list)
+    connected_nodes: List[str] = field(default_factory=list)
 
     @property
     def is_class_start_node(self):
@@ -122,11 +122,11 @@ class SkillTree:
     max_y: int
     min_x: int
     min_y: int
-    asc_start_nodes: dict[str, str]
-    node_groups: dict[str, NodeGroup]
-    nodes: dict[str, TreeNode]
-    skills_per_orbit: list[int]
-    orbit_radii: list[int]
+    asc_start_nodes: Dict[str, str]
+    node_groups: Dict[str, NodeGroup]
+    nodes: Dict[str, TreeNode]
+    skills_per_orbit: List[int]
+    orbit_radii: List[int]
 
     def find_group_containing_node(self, node_id):
         for group in self.node_groups.values():

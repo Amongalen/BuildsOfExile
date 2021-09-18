@@ -1,0 +1,6 @@
+{
+        "AWS_STORAGE_BUCKET_NAME": "BUCKET_NAME",
+        "AWS_S3_REGION_NAME": "REGION_NAME",
+        "AWS_ACCESS_KEY_ID": "xxxxxxxxxxxxxxxxxxxx",
+        "AWS_SECRET_ACCESS_KEY": "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+}

@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from collections import defaultdict
+from typing import Dict, List, Tuple
 
 from GuideToExile.data_classes import NodeGroup, TreeNode, SkillTree
 from GuideToExile.exceptions import SkillTreeLoadingException
@@ -12,8 +13,8 @@ logger = logging.getLogger('guidetoexile')
 
 
 class SkillTreeService:
-    skill_trees: dict[str, SkillTree] = {}
-    tree_graphs: dict[str, TreeGraph] = {}
+    skill_trees: Dict[str, SkillTree] = {}
+    tree_graphs: Dict[str, TreeGraph] = {}
 
     def __init__(self, trees_dir='GuideToExile/trees'):
         for f in os.scandir(trees_dir):
@@ -26,10 +27,10 @@ class SkillTreeService:
                 self.tree_graphs[version] = TreeGraph(skill_tree)
                 logger.info('Loaded tree version=%s', version)
 
-    def get_html_with_taken_nodes(self, taken_node_ids: list[str], tree_version: str) -> str:
+    def get_html_with_taken_nodes(self, taken_node_ids: List[str], tree_version: str) -> str:
         return self.tree_graphs[tree_version].as_html_with_taken_nodes(taken_node_ids)
 
-    def get_keystones(self, taken_node_ids: list[str], tree_version: str) -> list[TreeNode]:
+    def get_keystones(self, taken_node_ids: List[str], tree_version: str) -> List[TreeNode]:
         keystones = [node for node_id in taken_node_ids if
                      (node := self.skill_trees[tree_version].nodes.get(node_id)) is not None and node.is_keystone]
         keystones.sort(key=lambda keystone: keystone.name)
@@ -62,13 +63,13 @@ def _read_tree_data_file(filepath: str) -> SkillTree:
     return skill_tree
 
 
-def _move_asc_groups_to_pos(groups: dict[str, NodeGroup], nodes: dict[str, TreeNode], x: int, y: int) -> None:
+def _move_asc_groups_to_pos(groups: Dict[str, NodeGroup], nodes: Dict[str, TreeNode], x: int, y: int) -> None:
     asc_groups = _find_asc_groups(groups, nodes)
     for asc in asc_groups.values():
         _move_asc_to_pos(asc, nodes, x, y)
 
 
-def _find_asc_groups(groups: dict[str, NodeGroup], nodes: dict[str, TreeNode]) -> dict[str, list[NodeGroup]]:
+def _find_asc_groups(groups: Dict[str, NodeGroup], nodes: Dict[str, TreeNode]) -> Dict[str, List[NodeGroup]]:
     groups_by_asc = defaultdict(list)
     for group in groups.values():
         if not group.node_ids:
@@ -79,7 +80,7 @@ def _find_asc_groups(groups: dict[str, NodeGroup], nodes: dict[str, TreeNode]) -
     return groups_by_asc
 
 
-def _move_asc_to_pos(asc: list[NodeGroup], nodes: dict[str, TreeNode], x: int, y: int) -> None:
+def _move_asc_to_pos(asc: List[NodeGroup], nodes: Dict[str, TreeNode], x: int, y: int) -> None:
     asc_center_group = _find_asc_center_group(asc, nodes)
     move_x = x - asc_center_group.x
     move_y = y - asc_center_group.y
@@ -88,14 +89,14 @@ def _move_asc_to_pos(asc: list[NodeGroup], nodes: dict[str, TreeNode], x: int, y
         group.y = group.y + move_y
 
 
-def _find_asc_center_group(asc_groups: list[NodeGroup], nodes: dict[str, TreeNode]) -> NodeGroup:
+def _find_asc_center_group(asc_groups: List[NodeGroup], nodes: Dict[str, TreeNode]) -> NodeGroup:
     for group in asc_groups:
         for node_id in group.node_ids:
             if nodes[node_id].is_ascendancy_start:
                 return group
 
 
-def _parse_nodes(skill_tree_json: dict) -> tuple[dict[str, TreeNode], dict[str, str]]:
+def _parse_nodes(skill_tree_json: dict) -> Tuple[Dict[str, TreeNode], Dict[str, str]]:
     nodes = {}
     asc_start_nodes = {}
     for node_id, node_json in skill_tree_json['nodes'].items():
@@ -119,7 +120,7 @@ def _parse_nodes(skill_tree_json: dict) -> tuple[dict[str, TreeNode], dict[str, 
     return nodes, asc_start_nodes
 
 
-def _parse_node_groups(skill_tree_json: dict) -> dict[str, NodeGroup]:
+def _parse_node_groups(skill_tree_json: dict) -> Dict[str, NodeGroup]:
     groups = {}
     for group_id, group_json in skill_tree_json['groups'].items():
         groups[group_id] = NodeGroup(group_id=group_id,

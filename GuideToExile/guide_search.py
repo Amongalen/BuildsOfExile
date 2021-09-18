@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime, timedelta
+from typing import List
 
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, Page
@@ -86,7 +87,7 @@ def _filter_unique_items(queryset: QuerySet, filter_form: GuideListFilterForm) -
     return queryset
 
 
-def _get_base_filters(filter_form: GuideListFilterForm, user_id: int) -> list[Q]:
+def _get_base_filters(filter_form: GuideListFilterForm, user_id: int) -> List[Q]:
     data = filter_form.cleaned_data
     filters = [
         Q(title__icontains=data['title']),

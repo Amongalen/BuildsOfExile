@@ -1,6 +1,8 @@
 # for now fetch the development settings only
 
 # project imports
+import os
+
 from .common import *
 
 # turn off all debugging
@@ -8,7 +10,7 @@ from .common import *
 DEBUG = False
 
 # You will have to determine, which hostnames should be served by Django
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['GuideToExile-prod.eu-central-1.elasticbeanstalk.com']
 
 # ##### SECURITY CONFIGURATION ############################
 
@@ -106,3 +108,28 @@ CURRENT_TREE_VERSION = '3_15'
 POB_PATH = join(PROJECT_ROOT, 'pathofbuilding')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # todo change email backend
+
+if 'RDS_DB_NAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
+    }
+
+AWS_CONFIG_FILE = normpath(join(PROJECT_ROOT, 'run', 'aws.config'))
+with open(AWS_CONFIG_FILE) as conf_file:
+    conf = json.load(conf_file)
+    AWS_STORAGE_BUCKET_NAME = conf['AWS_STORAGE_BUCKET_NAME']
+    AWS_S3_REGION_NAME = conf['AWS_S3_REGION_NAME']
+    AWS_ACCESS_KEY_ID = conf['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = conf['AWS_SECRET_ACCESS_KEY']
+
+# Tell django-storages the domain to use to refer to static files.
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3Boto3Storage'

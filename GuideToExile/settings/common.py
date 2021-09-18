@@ -52,7 +52,13 @@ INSTALLED_APPS = [
     'apps.django_tiptap',
     'mathfilters',
     'django.contrib.humanize',
+    'storages',
 ]
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
+    'CacheControl': 'max-age=94608000',
+}
 
 TIME_ZONE = 'UTC'
 
@@ -216,10 +222,10 @@ ASC_TREE_Y = -5500
 
 LIKES_RECENTLY_OFFSET = 30
 
-ASSET_DIR = r'poe_assets'
-BASE_ITEMS_LOOKUP_FILE = r'poe_assets\base_items_lookup.json'
-UNIQUE_ITEMS_LOOKUP_FILE = r'poe_assets\unique_items_lookup.json'
-GEMS_FILE = r'poe_assets\gems.min.json'
+ASSET_DIR = 'poe_assets'
+BASE_ITEMS_LOOKUP_FILE = join('poe_assets', 'base_items_lookup.json')
+UNIQUE_ITEMS_LOOKUP_FILE = join('poe_assets', 'unique_items_lookup.json')
+GEMS_FILE = join('poe_assets', 'gems.min.json')
 
 # finally grab the SECRET KEY
 try:
