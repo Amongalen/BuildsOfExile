@@ -1,10 +1,12 @@
 import logging
+from datetime import timedelta, datetime
 
 import pytz
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
+from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 # Create your views here.
@@ -17,6 +19,7 @@ from django.views import generic
 from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike, ActiveSkill
 from . import skill_tree, build_guide, items_service, guide_search
 from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm, GuideListFilterForm
+from .settings import LIKES_RECENTLY_OFFSET
 from .tokens import account_activation_token
 
 logger = logging.getLogger('guidetoexile')
@@ -136,6 +139,42 @@ class MyGuidesListView(generic.ListView):
 
 def my_guides_view(request):
     return render(request, 'my_guides.html')
+
+
+def authors_view(request):
+    return render(request, 'authors.html')
+
+
+def authors_list_view(request):
+    recently_threshold = datetime.today() - timedelta(days=LIKES_RECENTLY_OFFSET)
+    is_active_q = Q(buildguide__guidelike__is_active=True)
+    recently_q = Q(
+        buildguide__guidelike__creation_datetime__gte=recently_threshold)
+    authors = (UserProfile.objects.filter(buildguide__isnull=False)
+               .annotate(likes=Count('guidelike', filter=is_active_q))
+               .annotate(likes_recently=Count('guidelike', filter=is_active_q & recently_q))
+               .order_by('-likes', 'user__username'))
+
+    paginate_by = 50
+    page = request.GET.get('page')
+    paginator = Paginator(authors, paginate_by)
+    authors_page = paginator.get_page(page)
+    for author in authors_page:
+        top3_guides = (BuildGuide.objects
+                           .filter(author=author.pk)
+                           .annotate(likes=Count('guidelike', filter=Q(guidelike__is_active=True)))
+                           .order_by('-likes')[:3])
+        top3_guides_recently = (BuildGuide.objects
+                                    .filter(author=author.pk)
+                                    .annotate(likes_recently=
+                                              Count('guidelike',
+                                                    filter=Q(guidelike__is_active=True)
+                                                           & Q(guidelike__creation_datetime__gte=recently_threshold)))
+                                    .order_by('-likes_recently')[:3])
+        author.top3_guides = top3_guides
+        author.top3_guides_recently = top3_guides_recently
+
+    return render(request, 'authors_list.html', {'page_obj': authors_page})
 
 
 def new_guide_view(request):

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load myfilters %}
+{% block content %}
+  <div id="authorList"></div>
+  <script>
+    let page = 1;
+
+    function find_authors(page) {
+      var page_str = "&page=" + page;
+
+      $.ajax({
+        url: "{% url 'authors_list' %}",
+        data: page_str,
+        type: 'get',
+        success: function (data) {
+          $('#authorList').html(data)
+        }
+      });
+    }
+
+
+    $(document).ready(function () {
+      find_authors(page)
+    });
+
+  </script>
+{% endblock %}
