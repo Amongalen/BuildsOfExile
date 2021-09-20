@@ -131,7 +131,7 @@
             <h5>Additional skill gems:</h5>
             {% for skill_slot in item_set.unassigned_skill_groups.values %}
               <div class="bg-secondary border border-primary-lighter rounded-3 my-2 p-2">
-                {{ skill_slot.0.slot }}
+                <h6><strong>{{ skill_slot.0.slot }}</strong></h6>
                 {% for skill_group in skill_slot %}
                   {% for gem in skill_group.gems %}
                     <div class="row">
@@ -139,7 +139,7 @@
                         <img srcset='{% static gem.asset %}' alt="{{ gem.name }}"
                              style='max-width:30px; max-height: 30px'/>
                         <span
-                          class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>
+                                class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>
                       </div>
                       <div class="col">
                         <div class="w-100 float-end row small g-0 justify-content-between text-center"
