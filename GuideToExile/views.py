@@ -2,8 +2,7 @@ import logging
 from datetime import timedelta, datetime
 
 import pytz
-from django.contrib.auth import login
-from django.contrib.auth.models import User
+from django.contrib.auth import login, get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
@@ -134,7 +133,7 @@ class MyGuidesListView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return guide_search.find_all_by_user(self.request.user)
+        return guide_search.find_all_by_user(self.request.user.userprofile)
 
 
 def my_guides_view(request):
@@ -441,8 +440,8 @@ def signup_view(request):
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
         user = None
     # checking if the user exists, if the token is valid.
     if user is not None and account_activation_token.check_token(user, token):

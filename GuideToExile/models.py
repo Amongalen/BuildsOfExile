@@ -1,11 +1,11 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.text import slugify
 
-from GuideToExile import json_encoder
+from GuideToExile import json_encoder, settings
 
 
 class Keystone(models.Model):
@@ -25,8 +25,18 @@ class UserProfileManager(models.Manager):
         return self.get(user__username=username)
 
 
+class CustomUserManager(UserManager):
+    def get_by_natural_key(self, username):
+        case_insensitive_username_field = '{}__iexact'.format(self.model.USERNAME_FIELD)
+        return self.get(**{case_insensitive_username_field: username})
+
+
+class User(AbstractUser):
+    objects = CustomUserManager()
+
+
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     email = models.EmailField(max_length=150)
     twitch_url = models.URLField(blank=True, null=True)
     youtube_url = models.URLField(blank=True, null=True)
@@ -148,7 +158,7 @@ class GuideComment(models.Model):
     modification_datetime = models.DateTimeField()
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def update_profile_signal(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)

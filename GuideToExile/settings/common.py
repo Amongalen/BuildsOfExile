@@ -36,6 +36,7 @@ PROJECT_TEMPLATES = [
 sys.path.append(normpath(join(PROJECT_ROOT, 'apps')))
 
 # ##### APPLICATION CONFIGURATION #########################
+AUTH_USER_MODEL = "GuideToExile.User"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
