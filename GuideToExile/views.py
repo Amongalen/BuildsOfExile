@@ -18,7 +18,7 @@ from django.views import generic
 
 from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike, ActiveSkill
 from . import skill_tree, build_guide, items_service, guide_search
-from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm, GuideListFilterForm
+from .forms import SignUpForm, PobStringForm, EditGuideForm, ProfileForm, GuideListFilterForm
 from .settings import LIKES_RECENTLY_OFFSET
 from .tokens import account_activation_token
 
@@ -177,10 +177,10 @@ def authors_list_view(request):
     return render(request, 'authors_list.html', {'page_obj': authors_page})
 
 
-def new_guide_view(request):
+def new_guide_pob_view(request):
     if request.method == 'POST':
         logger.info('Creating new guide')
-        form = NewGuideForm(request.POST)
+        form = PobStringForm(request.POST)
         if form.is_valid():
             build_details, pob_string = form.cleaned_data['pob_input']
             author = request.user.userprofile
@@ -189,9 +189,23 @@ def new_guide_view(request):
             return redirect('edit_guide', pk=new_build_guide.guide_id)
 
     else:
-        form = NewGuideForm()
+        form = PobStringForm()
 
-    return render(request, 'new_guide.html', {'form': form})
+    return render(request, 'pob_string_form.html', {'form': form})
+
+
+def edit_pob_view(request, pk):
+    if request.method == 'POST':
+        form = PobStringForm(request.POST)
+        if form.is_valid():
+            build_details, pob_string = form.cleaned_data['pob_input']
+            guide = BuildGuide.objects.get(guide_id=pk)
+            build_guide.assign_pob_details_to_guide(guide, build_details, pob_string, skill_tree_service)
+            return redirect('edit_guide', pk=guide.guide_id)
+
+    else:
+        form = PobStringForm()
+    return render(request, 'pob_string_form.html', {'pk': pk, 'form': form})
 
 
 def publish_guide_view(request, pk):
@@ -273,9 +287,9 @@ def edit_guide_view(request, pk):
             return redirect('show_draft', pk=pk)
 
     else:
-        form = EditGuideForm(active_skills, {'title': draft_guide.title,
-                                             'text': draft_guide.text,
-                                             'primary_skills': draft_guide.pob_details.main_active_skills}, )
+        form = EditGuideForm(active_skills, initial={'title': draft_guide.title,
+                                                     'text': draft_guide.text,
+                                                     'primary_skills': draft_guide.pob_details.main_active_skills})
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': draft_guide})
 
 

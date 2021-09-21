@@ -24,7 +24,7 @@ class SignUpForm(UserCreationForm):
         fields = ('username', 'email', 'password1', 'password2',)
 
 
-class NewGuideForm(Form):
+class PobStringForm(Form):
     pob_input = forms.CharField(max_length=40000,
                                 label="Enter Path of Building export code or a Pastebin link containing it",
                                 widget=forms.TextInput(attrs={'class': ' form-control'}))
@@ -47,12 +47,13 @@ class EditGuideForm(Form):
         super(EditGuideForm, self).__init__(*args, **kwargs)
         self.fields['primary_skills'].choices = skill_choices
 
-    title = forms.CharField(max_length=180, widget=forms.TextInput(attrs={'class': 'form-control'}),
+    title = forms.CharField(max_length=180,
+                            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title'}),
                             help_text=None)
     primary_skills = forms.MultipleChoiceField(choices=(),
                                                widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
                                                help_text=None)
-    text = forms.CharField(max_length=40000, widget=TipTapWidget(), help_text=None)
+    text = forms.CharField(max_length=40000, widget=TipTapWidget(attrs={'placeholder': 'Content'}), help_text=None)
 
 
 class GuideListFilterForm(Form):

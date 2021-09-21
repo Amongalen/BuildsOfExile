@@ -157,7 +157,7 @@ DJANGO_TIPTAP_CONFIG = {
         "typography",
         "clearFormat"
     ],
-    "placeholderText": "Begin typing here...",  # set None to skip display
+    "placeholderText": "Guide content ...",  # set None to skip display
     "unsavedChangesWarningText": "You have unsaved changes",  # set None to skip display
     "lang": "EN",  # if you want to use default tooltips and translations, use this. Valid Options => EN/DE(for now)
     "tooltips": {

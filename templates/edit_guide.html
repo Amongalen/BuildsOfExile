@@ -20,11 +20,14 @@
         </div>
         <div class="fieldWrapper">
           {{ form.text.label_tag }}
-          {{ form.text.errors }}
           {{ form.text }}
+          {{ form.text.errors }}
         </div>
         <input type="submit" class="my-2 btn btn-outline-light btn-secondary" value="Save as draft">
         <button type="button" class="my-2 btn btn-outline-light btn-secondary" onclick="window.history.back();">Cancel
+        </button>
+        <button type="button" class="me-1 btn btn-outline-light btn-secondary"
+                onclick="location.href='{% url 'edit_pob' guide.guide_id %}'">Reload PoB
         </button>
       </form>
     </div>
@@ -37,19 +40,17 @@
             {% for item in guide.pob_details.items %}
               <div class="poe-line">
                 <button class="link" ondblclick="addText(this)">
-                                <span class="poeitem-{{ item.rarity|lower }}" data-bs-placement="bottom"
-                                      data-bs-toggle="tooltip" data-bs-html="true"
-                                      title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">
-                                  {% if item.rarity == 'RARE' or item.rarity == 'UNIQUE' %}
-                                    {{ item.name }}, {{ item.base_name }}
-                                  {% else %}
-                                    {{ item.name }}
-                                  {% endif %}
-                                </span>
+                  <span class="poeitem-{{ item.rarity|lower }}" data-bs-placement="bottom"
+                        data-bs-toggle="tooltip" data-bs-html="true"
+                        title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">
+                    {% if item.rarity == 'RARE' or item.rarity == 'UNIQUE' %}
+                      {{ item.name }}, {{ item.base_name }}
+                    {% else %}
+                      {{ item.name }}
+                    {% endif %}
+                  </span>
                 </button>
               </div>
-
-
             {% endfor %}
           </div>
         </div>
@@ -61,7 +62,7 @@
                 <div class="poe-line ">
                   <button class="link" ondblclick="addText(this)">
                     <span
-                      class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.alt_quality_pref }}{{ gem.name }}</span>
+                            class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.alt_quality_pref }}{{ gem.name }}</span>
                   </button>
                 </div>
               {% endfor %}
@@ -86,10 +87,10 @@
     function addText(el) {
       let test = el.firstElementChild.outerHTML
       editor.chain()
-        .focus()
-        .insertContent(test)
-        .insertContent(' ')
-        .run()
+              .focus()
+              .insertContent(test)
+              .insertContent(' ')
+              .run()
 
       {# returns to default formatting #}
       const {tr} = editor.view.state

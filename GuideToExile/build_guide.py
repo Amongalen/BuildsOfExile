@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from django.utils import timezone
 
@@ -7,32 +7,36 @@ from GuideToExile.models import BuildGuide, UniqueItem, Keystone, AscendancyClas
 from GuideToExile.skill_tree import SkillTreeService
 
 
-def create_build_guide(author: UserProfile, build_details: PobDetails, pob_string: str,
-                       skill_tree_service: SkillTreeService, text: str = 'Content',
-                       title: str = 'Title') -> BuildGuide:
-    keystones = get_or_create_keystones(build_details, skill_tree_service)
-    unique_items = get_or_create_unique_items(build_details)
-    asc_class = get_asc_class(build_details)
-
-    new_guide = BuildGuide(title=title,
-                           pob_details=build_details,
-                           pob_string=pob_string,
-                           text=text,
-                           ascendancy_class=asc_class,
-                           status=BuildGuide.GuideStatus.DRAFT
-                           )
+def create_build_guide(author: UserProfile, pob_details: PobDetails, pob_string: str,
+                       skill_tree_service: SkillTreeService, text: Optional[str] = None,
+                       title: Optional[str] = None) -> BuildGuide:
+    new_guide = BuildGuide(status=BuildGuide.GuideStatus.DRAFT)
     new_guide.save()
-
-    primary_active_skill = ActiveSkill.objects.get(name=build_details.imported_primary_skill)
-    new_guide.primary_skills.add(primary_active_skill)
     new_guide.author = author
-    new_guide.keystones.set(keystones)
-    new_guide.unique_items.set(unique_items)
+    new_guide.text = text
+    new_guide.title = title
+    new_guide.save()
+    assign_pob_details_to_guide(new_guide, pob_details, pob_string, skill_tree_service)
 
     return new_guide
 
 
-def get_asc_class(pob_details: PobDetails) -> AscendancyClass:
+def assign_pob_details_to_guide(guide: BuildGuide, pob_details: PobDetails, pob_string: str,
+                                skill_tree_service: SkillTreeService) -> None:
+    asc_class = _get_asc_class(pob_details)
+    keystones = _get_or_create_keystones(pob_details, skill_tree_service)
+    unique_items = _get_or_create_unique_items(pob_details)
+    primary_active_skill = ActiveSkill.objects.get(name=pob_details.imported_primary_skill)
+    guide.primary_skills.add(primary_active_skill)
+    guide.ascendancy_class = asc_class
+    guide.keystones.set(keystones)
+    guide.unique_items.set(unique_items)
+    guide.pob_string = pob_string
+    guide.pob_details = pob_details
+    guide.save()
+
+
+def _get_asc_class(pob_details: PobDetails) -> AscendancyClass:
     asc_name = pob_details.ascendancy_name
     asc_name_id = AscendancyClass.AscClassName[asc_name.upper()]
     base_class_name = pob_details.class_name
@@ -42,7 +46,7 @@ def get_asc_class(pob_details: PobDetails) -> AscendancyClass:
     return asc_class
 
 
-def get_or_create_unique_items(pob_details: PobDetails) -> List[UniqueItem]:
+def _get_or_create_unique_items(pob_details: PobDetails) -> List[UniqueItem]:
     unique_items_names = [item.name for item in pob_details.items if item.rarity == 'UNIQUE']
     unique_items = [UniqueItem.objects.get_or_create(name=name)[0] for name in unique_items_names]
     for item in unique_items:
@@ -50,7 +54,7 @@ def get_or_create_unique_items(pob_details: PobDetails) -> List[UniqueItem]:
     return unique_items
 
 
-def get_or_create_keystones(pob_details: PobDetails, skill_tree_service: SkillTreeService) -> List[Keystone]:
+def _get_or_create_keystones(pob_details: PobDetails, skill_tree_service: SkillTreeService) -> List[Keystone]:
     keystone_names = []
     for tree_spec in pob_details.tree_specs:
         all_nodes = skill_tree_service.skill_trees[tree_spec.tree_version].nodes
