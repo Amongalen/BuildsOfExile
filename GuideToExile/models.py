@@ -94,12 +94,27 @@ class AscendancyClass(models.Model):
     base_name_l2v_mapping = {i.label: i.value for i in BaseClassName}
 
     @property
-    def portrait_icon(self):
+    def icon_name(self):
         if self.name == AscendancyClass.AscClassName.NONE:
             icon_name = self.base_name_v2l_mapping[self.base_class_name]
         else:
             icon_name = self.asc_name_v2l_mapping[self.name]
-        return f'/icons/{icon_name.lower()}.png'
+        return icon_name
+
+    @property
+    def portrait_icon(self):
+        return f'/icons/{self.icon_name.lower()}.png'
+
+    @property
+    def portrait_icon_80x80(self):
+        return f'/icons/{self.icon_name.lower()}_80x80.png'
+
+    def __str__(self):
+        if self.name == AscendancyClass.AscClassName.NONE:
+            name = self.base_name_v2l_mapping[self.base_class_name]
+        else:
+            name = self.asc_name_v2l_mapping[self.name]
+        return name
 
 
 class BuildGuide(models.Model):

@@ -1,49 +1,67 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-  <div class="row bg-secondary border border-primary-lighter rounded-3 mb-2 mx-0 p-2">
-    <div class="col-10">
-      <h4><strong>{{ build_guide.title }}</strong></h4>
-      <h4>
-        {% if build_guide.pob_details.ascendancy_name != 'None' %}
-          {{ build_guide.pob_details.ascendancy_name }}
-        {% else %}
-          {{ build_guide.pob_details.class_name }}
-        {% endif %}
-      </h4>
-      Primary active skills: {{ build_guide.pob_details.main_active_skills|join:', ' }}
+
+  <div class="row mb-2 mx-0 gap-2">
+
+    <div class="col bg-secondary border border-primary-lighter rounded-3 p-2">
+      <div class="row m-0">
+        <img src="{% static build_guide.ascendancy_class.portrait_icon_80x80 %}" height="80" width="80"
+             class="w-auto p-0" title="{{ build_guide.ascendancy_class }}">
+        <div class="col">
+          <h5><strong>{{ build_guide.title }}</strong></h5>
+          <strong>Primary skills:</strong> {{ build_guide.pob_details.main_active_skills|join:', ' }}
+        </div>
+      </div>
+
+      <div class="row mt-1 lh-sm">
+        <small>
+          {% if build_guide.creation_datetime %}
+            Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}
+          {% endif %}
+          {% if build_guide.creation_datetime != build_guide.modification_datetime %}
+            <br/>Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}
+          {% endif %}
+        </small>
+      </div>
 
     </div>
-    <div class="col row text-end">
-      {% with build_guide.author as user_profile %}
-        <div class="col"><h4 class="mb-0">
-          {{ user_profile.user.username }}</h4>
-          <a href="{% url 'index' %}?author_username={{ user_profile.user.username }}">
-            All guides</a>
-          {% if user_profile.youtube_url %}
-            <a href="{{ user_profile.youtube_url }}">YouTube.com</a><br/>
+    <div class="ps-3 p-1 bg-secondary col-auto text-end float-end border border-primary-lighter rounded-3">
+      {% with build_guide.author as author %}
+        <div class="row">
+        <div class="col-auto "><h5>
+          <strong>{{ author.user.username }}</strong></h5>
+          {% if author.youtube_url %}
+            <a class="fs-7 text-light bg-dark border border-1 border-primary-lighter
+            rounded-pill badge text-decoration-none"
+               href="{{ author.youtube_url }}">
+              YouTube.com
+            </a><br/>
           {% endif %}
-
-          {% if user_profile.twitch_url %}
-            <a href="{{ user_profile.twitch_url }}">Twitch.tv</a>
+          {% if author.twitch_url %}
+            <a class="fs-7 text-light bg-dark border border-1 border-primary-lighter rounded-pill badge text-decoration-none"
+               href="{{ author.twitch_url }}">
+              Twitch.tv
+            </a><br/>
           {% endif %}
+          <a class="fs-7 text-light bg-dark border border-1 border-primary-lighter rounded-pill badge text-decoration-none"
+             href="{% url 'index' %}?author_username={{ author.user.username }}">
+            All guides
+          </a>
         </div>
-        <div class="col-auto "><img id="avatar_preview" alt="Avatar" width="80" height="80"
-                                    src="{% if user_profile.avatar %}
+        <div class="col-auto"><img id="avatar_preview" alt="Avatar" width="120" height="120"
+                                   src="{% if user_profile.avatar %}
                                           {{ user_profile.avatar.url }}
                                         {% else %}
                                           {% static 'icons/avatar_placeholder.svg' %}
                                         {% endif %}"
-                                    class="user-avatar"/></div>
+                                   class="user-avatar"/></div>
       {% endwith %}
-      <div style="font-size: small">
-        Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}
-        {% if build_guide.creation_datetime != build_guide.modification_datetime %}
-          <br/>Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}
-        {% endif %}
       </div>
     </div>
   </div>
+
+
   {% if build_guide.is_draft %}
     <div class="mb-2 bg-warning text-warning bg-opacity-25 p-2  border border-warning rounded-3">This is just a <strong>Draft</strong>.
       Others won't be able to see it unless you <strong>Publish</strong> it!
