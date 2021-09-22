@@ -73,17 +73,12 @@ def index_view(request):
 
 def guide_list_view(request):
     paginate_by = 50
-    if request.method == 'POST':
-        form = GuideListFilterForm(request.POST)
-        if form.is_valid():
-            user_id = request.user.userprofile.user_id if request.user.is_authenticated else 0
-            page = request.POST.get('page')
-            page_obj = guide_search.find_with_filter(form, user_id, page, paginate_by)
-            return render(request, 'guide_list.html', {'page_obj': page_obj})
-
-    page = request.POST.get('page')
-    page_obj = guide_search.find_all(page, paginate_by)
-    return render(request, 'guide_list.html', {'page_obj': page_obj})
+    form = GuideListFilterForm(request.GET)
+    if form.is_valid():
+        user_id = request.user.userprofile.user_id if request.user.is_authenticated else 0
+        page = request.GET.get('page')
+        page_obj = guide_search.find_with_filter(form, user_id, page, paginate_by)
+        return render(request, 'guide_list.html', {'page_obj': page_obj})
 
 
 def show_guide_view(request, pk, slug):
