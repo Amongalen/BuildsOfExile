@@ -166,14 +166,20 @@ class ProfileForm(ModelForm):
 
     def clean_avatar(self):
         data = self.cleaned_data['avatar']
-        if data:
-            im = data.read()
-            image_file = io.BytesIO(im)
-            image = Image.open(image_file)
-            image = image.resize((200, 200), Image.ANTIALIAS)
+        if not data:
+            return data
 
-            image_file = io.BytesIO()
-            image.save(image_file, 'PNG', quality=90)
+        if data.size > 1 * 1024 * 1024:
+            raise ValidationError("Image file too large ( >1MB )")
 
-            data.file = image_file
+        im = data.read()
+        image_file = io.BytesIO(im)
+        image = Image.open(image_file)
+        image = image.resize((200, 200), Image.ANTIALIAS)
+
+        image_file = io.BytesIO()
+        image.save(image_file, 'PNG', quality=90)
+
+        data.file = image_file
+
         return data
