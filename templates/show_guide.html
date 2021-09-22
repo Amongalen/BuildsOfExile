@@ -160,9 +160,11 @@
       <button class="nav-link" id="nav-gear-and-gems-tab" data-bs-toggle="tab" data-bs-target="#nav-gear-and-gems"
               type="button" role="tab" aria-controls="nav-gear-and-gems" aria-selected="false">Gear and gems
       </button>
-      <button class="nav-link" id="nav-discuss-tab" data-bs-toggle="tab" data-bs-target="#nav-discuss"
-              type="button" role="tab" aria-controls="nav-discuss" aria-selected="false">Discuss
-      </button>
+      {% if not build_guide.is_draft %}
+        <button class="nav-link" id="nav-discuss-tab" data-bs-toggle="tab" data-bs-target="#nav-discuss"
+                type="button" role="tab" aria-controls="nav-discuss" aria-selected="false">Discuss
+        </button>
+      {% endif %}
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
