@@ -62,7 +62,14 @@
       </div>
     </div>
   </div>
-  <div id="guideList"></div>
+  <div id="guide-list-container">
+    <div id="loading-spinner" class="lds-ring-big lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
   <script>
     $(".chosen-select").chosen({disable_search_threshold: 10, width: '100%'})
 
@@ -72,12 +79,23 @@
       var str = $("#filterForm").serialize();
       str += "&page=" + page;
 
+      $("#guide-list").fadeOut(150, function () {
+        $("#loading-spinner").fadeIn(150);
+        $("#guide-list").remove();
+      });
+
+
       $.ajax({
         url: "{% url 'guide_list' %}",
         data: str,
         type: 'get',
         success: function (data) {
-          $('#guideList').html(data)
+          $('#guide-list-container').append(data)
+          $("#guide-list").ready(function () {
+            $("#loading-spinner").fadeOut(150, function () {
+              $("#guide-list").fadeIn(150);
+            });
+          });
           $("#submitButton").blur()
         }
       });

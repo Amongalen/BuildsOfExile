@@ -1,19 +1,20 @@
 {% load static %}
-{% if page_obj %}
-  <div class="list-group">
-    {% for author in page_obj %}
-      <div class="row mx-0 mb-3 p-1  bg-secondary d-flex text-decoration-none border border-1 border-primary-lighter rounded-2">
-        <img alt="Avatar" width="140" height="140"
-             src="{% if author.avatar %}
+<div id="authors-list" style="display: none">
+  {% if page_obj %}
+    <div class="list-group">
+      {% for author in page_obj %}
+        <div class="row mx-0 mb-3 p-1  bg-secondary d-flex text-decoration-none border border-1 border-primary-lighter rounded-2">
+          <img alt="Avatar" width="140" height="140"
+               src="{% if author.avatar %}
                     {{ author.avatar.url }}
                   {% else %}
                     {% static 'icons/avatar_placeholder.svg' %}
                   {% endif %}"
-             class="user-avatar w-auto p-1 me-1"/>
-        <div class="col py-1 d-flex h-auto flex-column">
-          <div class="row">
-            <h4 class="col mb-0"><strong>{{ author.user.username }}</strong></h4>
-            <div class="col-auto ms-auto">
+               class="user-avatar w-auto p-1 me-1"/>
+          <div class="col py-1 d-flex h-auto flex-column">
+            <div class="row">
+              <h4 class="col mb-0"><strong>{{ author.user.username }}</strong></h4>
+              <div class="col-auto ms-auto">
               <span class="fs-6 m-auto text-light bg-dark border border-1 border-primary-lighter rounded-pill badge">{{ author.likes }}
                 <svg height="20px" width="20px"
                      viewBox="0 0 512 512" style="margin-top: -2px">
@@ -24,33 +25,34 @@
                     C512,93.417,453.532,30,376,30z" fill="currentcolor"></path>
                 </svg>
               </span>
+              </div>
             </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-10">
-              {% if author.youtube_url %}
-                <a class="me-1 fs-7 text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge"
-                   href="{{ author.youtube_url }}">YouTube.com</a>
-              {% endif %}
-              {% if author.twitch_url %}
-                <a class="me-1 fs-7 text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge"
-                   href="{{ author.twitch_url }}">Twitch.tv</a>
-              {% endif %}
-              <a class="fs-7 text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge" href="">All
-                guides</a>
+            <div class="row mb-2">
+              <div class="col-10">
+                {% if author.youtube_url %}
+                  <a class="me-1 fs-7 text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge"
+                     href="{{ author.youtube_url }}">YouTube.com</a>
+                {% endif %}
+                {% if author.twitch_url %}
+                  <a class="me-1 fs-7 text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge"
+                     href="{{ author.twitch_url }}">Twitch.tv</a>
+                {% endif %}
+                <a class="fs-7 text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge"
+                   href="">All
+                  guides</a>
+              </div>
             </div>
-          </div>
 
-          <div class="row">
-            <div class="col">
-              <legend class="w-auto fs-5 lh-1">Most popular guides:</legend>
-              {% for guide in author.top3_guides %}
-                <a class="my-1 px-2 py-1  bg-dark d-flex border border-1 border-primary-lighter rounded-2 text-decoration-none"
-                   href="{% url 'show_guide' guide.guide_id guide.slug %}">
-                  <div class="my-auto h-auto fw-bold">
-                    {{ guide.title }}
-                  </div>
-                  <div class="col-auto ms-auto my-auto">
+            <div class="row">
+              <div class="col">
+                <legend class="w-auto fs-5 lh-1">Most popular guides:</legend>
+                {% for guide in author.top3_guides %}
+                  <a class="my-1 px-2 py-1  bg-dark d-flex border border-1 border-primary-lighter rounded-2 text-decoration-none"
+                     href="{% url 'show_guide' guide.guide_id guide.slug %}">
+                    <div class="my-auto h-auto fw-bold">
+                      {{ guide.title }}
+                    </div>
+                    <div class="col-auto ms-auto my-auto">
                     <span class="fs-6 m-auto text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge">{{ guide.likes }}
                       <svg height="20px" width="20px"
                            viewBox="0 0 512 512" style="margin-top: -2px">
@@ -61,20 +63,20 @@
                             C512,93.417,453.532,30,376,30z" fill="currentcolor"></path>
                         </svg>
                       </span>
-                  </div>
-                </a>
-              {% endfor %}
-            </div>
+                    </div>
+                  </a>
+                {% endfor %}
+              </div>
 
-            <div class="col">
-              <legend class="w-auto fs-5 lh-1">Most popular guides (last 30 days):</legend>
-              {% for guide in author.top3_guides_recently %}
-                <a class="my-1 px-2 py-1 bg-dark d-flex border border-1 border-primary-lighter rounded-2 text-decoration-none"
-                   href="{% url 'show_guide' guide.guide_id guide.slug %}">
-                  <div class="my-auto h-auto fw-bold">
-                    {{ guide.title }}
-                  </div>
-                  <div class="col-auto ms-auto my-auto">
+              <div class="col">
+                <legend class="w-auto fs-5 lh-1">Most popular guides (last 30 days):</legend>
+                {% for guide in author.top3_guides_recently %}
+                  <a class="my-1 px-2 py-1 bg-dark d-flex border border-1 border-primary-lighter rounded-2 text-decoration-none"
+                     href="{% url 'show_guide' guide.guide_id guide.slug %}">
+                    <div class="my-auto h-auto fw-bold">
+                      {{ guide.title }}
+                    </div>
+                    <div class="col-auto ms-auto my-auto">
                     <span class="fs-6 m-auto text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge">
                       +{{ guide.likes_recently }}
                       <svg height="20px" width="20px"
@@ -86,59 +88,60 @@
                             C512,93.417,453.532,30,376,30z" fill="currentcolor"></path>
                         </svg>
                       </span>
-                  </div>
-                </a>
-              {% endfor %}
+                    </div>
+                  </a>
+                {% endfor %}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
-  {% if page_obj.has_other_pages %}
-    <ul class="my-1 pagination justify-content-center">
-      {% if page_obj.has_previous %}
-        <li class="page-item"><a class='page-link' onclick="find_authors(1)">&laquo; First</a></li>
-      {% endif %}
-      {% if page_obj.number > 2 %}
-        <li class="page-item"><a class='page-link'
-                                 onclick="find_authors({{ page_obj.number|add:"-2" }})">{{ page_obj.number|add:"-2" }}</a>
+      {% endfor %}
+    </div>
+    {% if page_obj.has_other_pages %}
+      <ul class="my-1 pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class='page-link' onclick="find_authors(1)">&laquo; First</a></li>
+        {% endif %}
+        {% if page_obj.number > 2 %}
+          <li class="page-item"><a class='page-link'
+                                   onclick="find_authors({{ page_obj.number|add:"-2" }})">{{ page_obj.number|add:"-2" }}</a>
+          </li>
+        {% endif %}
+        {% if page_obj.number > 1 %}
+          <li class="page-item"><a class='page-link'
+                                   onclick="find_authors({{ page_obj.number|add:"-1" }})">{{ page_obj.number|add:"-1" }}</a>
+          </li>
+        {% endif %}
+        <li class="page-item active" aria-current="page">
+          <span class="page-link">{{ page_obj.number }}</span>
         </li>
-      {% endif %}
-      {% if page_obj.number > 1 %}
-        <li class="page-item"><a class='page-link'
-                                 onclick="find_authors({{ page_obj.number|add:"-1" }})">{{ page_obj.number|add:"-1" }}</a>
-        </li>
-      {% endif %}
-      <li class="page-item active" aria-current="page">
-        <span class="page-link">{{ page_obj.number }}</span>
-      </li>
-      {% if page_obj.number < page_obj.paginator.num_pages %}
-        <li class="page-item"><a class='page-link'
-                                 onclick="find_authors({{ page_obj.number|add:"1" }})">{{ page_obj.number|add:"1" }}</a>
-        </li>
-      {% endif %}
-      {% if page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
-        <li class="page-item"><a class='page-link'
-                                 onclick="find_authors({{ page_obj.number|add:"2" }})">{{ page_obj.number|add:"2" }}</a>
-        </li>
-      {% endif %}
-      {% if page_obj.has_next %}
-        <li class="page-item"><a class='page-link' onclick="find_authors({{ page_obj.paginator.num_pages }})">Last
-          &raquo;</a>
-        </li>
-      {% endif %}
-    </ul>
+        {% if page_obj.number < page_obj.paginator.num_pages %}
+          <li class="page-item"><a class='page-link'
+                                   onclick="find_authors({{ page_obj.number|add:"1" }})">{{ page_obj.number|add:"1" }}</a>
+          </li>
+        {% endif %}
+        {% if page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
+          <li class="page-item"><a class='page-link'
+                                   onclick="find_authors({{ page_obj.number|add:"2" }})">{{ page_obj.number|add:"2" }}</a>
+          </li>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class='page-link' onclick="find_authors({{ page_obj.paginator.num_pages }})">Last
+            &raquo;</a>
+          </li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <h4>Haven't found any authors!</h4>
   {% endif %}
-{% else %}
-  <h4>Haven't found any authors!</h4>
-{% endif %}
 
-<script>
-  page =
-  {{ page_obj.number }}
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
-</script>
+  <script>
+    page =
+    {{ page_obj.number }}
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
+</div>

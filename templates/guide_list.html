@@ -1,4 +1,5 @@
 {% load static %}
+<div id="guide-list" style="display: none">
 {% if page_obj %}
   <div class="list-group">
     {% for guide in page_obj %}
@@ -115,3 +116,4 @@
     return new bootstrap.Tooltip(tooltipTriggerEl)
   })
 </script>
+</div>
