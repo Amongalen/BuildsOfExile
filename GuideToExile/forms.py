@@ -1,5 +1,6 @@
 import io
 import logging
+import re
 from datetime import datetime, timedelta
 
 from PIL import Image
@@ -14,6 +15,10 @@ from GuideToExile.models import UserProfile, AscendancyClass, ActiveSkill, Keyst
 from apps.django_tiptap.widgets import TipTapWidget
 
 logger = logging.getLogger('guidetoexile')
+
+URL_REGEX = re.compile(
+    r'''(https?:\/\/)(\s)*(www\.)?(\s)*((\w|\s)+\.)*([\w\-\s]+\/)*([\w\-]+)(\/)?(\.html)?((\?)?[\w\s]*=\s*[\w\%&]*)*''',
+    flags=re.MULTILINE)
 
 
 class SignUpForm(UserCreationForm):
@@ -60,6 +65,16 @@ class EditGuideForm(Form):
                                                widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
                                                help_text=None)
     text = forms.CharField(max_length=40000, widget=TipTapWidget(attrs={'placeholder': 'Content'}), help_text=None)
+
+    def clean_text(self):
+        data = self.cleaned_data['text']
+        data = URL_REGEX.sub('[REDACTED LINK]', data)
+        return data
+
+    def clean_title(self):
+        data = self.cleaned_data['title']
+        data = URL_REGEX.sub('[REDACTED LINK]', data)
+        return data
 
 
 class GuideListFilterForm(Form):

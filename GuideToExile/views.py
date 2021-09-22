@@ -17,7 +17,7 @@ from django.views import generic
 
 from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike, ActiveSkill
 from . import skill_tree, build_guide, items_service, guide_search
-from .forms import SignUpForm, PobStringForm, EditGuideForm, ProfileForm, GuideListFilterForm
+from .forms import SignUpForm, PobStringForm, EditGuideForm, ProfileForm, GuideListFilterForm, URL_REGEX
 from .settings import LIKES_RECENTLY_OFFSET
 from .tokens import account_activation_token
 
@@ -349,6 +349,8 @@ def add_comment(request, guide_id):
         return HttpResponseForbidden()
     if request.method == 'POST':
         comment_text = request.POST['comment']
+        comment_text = URL_REGEX.sub('[REDACTED LINK]', comment_text)
+
         comment = GuideComment()
         comment.author = request.user.userprofile
         comment.guide = get_object_or_404(BuildGuide, guide_id=guide_id)
