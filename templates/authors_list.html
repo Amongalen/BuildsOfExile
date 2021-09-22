@@ -38,7 +38,7 @@
                      href="{{ author.twitch_url }}">Twitch.tv</a>
                 {% endif %}
                 <a class="fs-7 text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge text-decoration-none"
-                   href="">All
+                   href="{% url 'index' %}?author_username={{ author.user.username }}">All
                   guides</a>
               </div>
             </div>
