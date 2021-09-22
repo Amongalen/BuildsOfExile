@@ -48,14 +48,14 @@
           </button>
 
           <button class="me-1 btn btn-outline-light btn-secondary"
-                  onclick="location.href='{% url 'logout' %}?next={{ request.path }}'">Logout
+                  onclick="location.href='{% url 'logout' %}'">Logout
           </button>
         {% else %}
           <button class="me-1 btn btn-outline-light btn-secondary"
-                  onclick="location.href='{% url 'login' %}?next={{ request.path }}'">Login
+                  onclick="location.href='{% url 'login' %}'">Login
           </button>
           <button class="me-1 btn btn-outline-light btn-secondary"
-                  onclick="location.href='{% url 'signup' %}?next={{ request.path }}'">Sign up
+                  onclick="location.href='{% url 'signup' %}'">Sign up
           </button>
         {% endif %}
       </div>

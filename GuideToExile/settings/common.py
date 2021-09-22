@@ -132,6 +132,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = False
