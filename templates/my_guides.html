@@ -1,9 +1,21 @@
 {% extends "base.html" %}
 {% load myfilters %}
 {% block content %}
-  <div id="guideList"></div>
+  <div id="guide-list-container">
+    <div id="loading-spinner" class="lds-ring-big lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
   <script>
     let page = 1;
+
+    $("#guide-list").fadeOut(150, function () {
+      $("#loading-spinner").fadeIn(150);
+      $("#guide-list").remove();
+    });
 
     function find_guides(page) {
       var page_str = "&page=" + page;
@@ -13,7 +25,12 @@
         data: page_str,
         type: 'get',
         success: function (data) {
-          $('#guideList').html(data)
+          $('#guide-list-container').append(data)
+          $("#guide-list").ready(function () {
+            $("#loading-spinner").fadeOut(150, function () {
+              $("#guide-list").fadeIn(150);
+            });
+          });
         }
       });
     }
