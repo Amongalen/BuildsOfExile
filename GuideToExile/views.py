@@ -38,30 +38,8 @@ class LikedGuidesView(generic.ListView):
                                                               guidelike__user=self.request.user.userprofile).all()
 
 
-class UserProfileView(generic.DetailView):
-    template_name = 'user_profile.html'
-    context_object_name = 'user_profile'
-    model = UserProfile
-    slug_field = 'user_id'
-    slug_url_kwarg = 'user_id'
-    paginate_by = 50
-
-    def get_context_data(self, **kwargs):
-        context = super(UserProfileView, self).get_context_data(**kwargs)
-        guides = self.get_related_guides()
-        context['guides'] = guides
-        context['page_obj'] = guides
-        return context
-
-    def get_related_guides(self):
-        queryset = self.object.buildguide_set.defer('pob_details').all()
-        paginator = Paginator(queryset, self.paginate_by)
-        page = self.request.GET.get('page')
-        return paginator.get_page(page)
-
-
 def index_view(request):
-    form = GuideListFilterForm()
+    form = GuideListFilterForm(initial=request.GET)
     if not request.user.is_authenticated:
         form.fields['liked_by_me'].disabled = True
     return render(request, 'index.html', {

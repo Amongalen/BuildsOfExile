@@ -46,7 +46,6 @@ urlpatterns = [
     path('guide/showcomments/<int:guide_id>/', views.show_comments, name='show_comments'),
     path('guide/deletecomment/', login_required(views.delete_comment), name='delete_comment'),
     path('guide/editcomment/', login_required(views.edit_comment), name='edit_comment'),
-    path('profile/<slug:user_id>/<slug:username>/', views.UserProfileView.as_view(), name='user_profile'),
     path('user/settings/', login_required(views.user_settings_view), name='user_settings'),
     path('signup/', views.signup_view, name="signup"),
     path('sent/', views.activation_sent_view, name="activation_sent"),

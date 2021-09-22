@@ -78,6 +78,7 @@
         type: 'get',
         success: function (data) {
           $('#guideList').html(data)
+          $("#submitButton").blur()
         }
       });
     }
