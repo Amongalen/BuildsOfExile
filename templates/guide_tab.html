@@ -102,7 +102,7 @@
             {% if 'critmultiplier' in stats %}
               <div class="row">
                 <div class="col-7">Crit Multiplier</div>
-                <div class="col text-end">{{ stats.critmultiplier|mul:100 }}%</div>
+                <div class="col text-end">{{ stats.critmultiplier|mul:100|floatformat:0|intcomma }}%</div>
               </div>
             {% endif %}
             {% if 'hitchance' in stats %}
