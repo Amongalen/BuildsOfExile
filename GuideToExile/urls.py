@@ -32,6 +32,7 @@ urlpatterns = [
     path('guide/clear_draft/<int:pk>/', login_required(views.clear_draft_view), name='clear_draft'),
     path('guide/edit/<int:pk>/', login_required(views.edit_guide_view), name='edit_guide'),
     path('guide/edit_pob/<int:pk>/', login_required(views.edit_pob_view), name='edit_pob'),
+    path('guide/cancel_edit/<int:pk>/', login_required(views.cancel_edit_view), name='cancel_edit'),
     path('guide/publish/<int:pk>/', login_required(views.publish_guide_view), name='publish_guide'),
     path('guide/archive/<int:pk>/', login_required(views.archive_guide_view), name='archive_guide'),
     path('guide/unarchive/<int:pk>/', login_required(views.unarchive_guide_view), name='unarchive_guide'),

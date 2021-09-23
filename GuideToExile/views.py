@@ -230,6 +230,8 @@ def clear_draft_view(request, pk):
 
 def edit_guide_view(request, pk):
     guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user.userprofile != guide.author:
+        return HttpResponseForbidden
     draft_guide = guide if guide.status == BuildGuide.GuideStatus.DRAFT else guide.draft
     # Form field requires (value, label) tuples for options, list of those is created here
     active_skills = set((gem.name, gem.name) for skill_group in draft_guide.pob_details.skill_groups
@@ -255,7 +257,11 @@ def edit_guide_view(request, pk):
             draft_guide.pob_details.main_active_skills = primary_skills_names
             draft_guide.primary_skills.clear()
             draft_guide.primary_skills.add(*ActiveSkill.objects.filter(name__in=primary_skills_names).all())
-            draft_guide.modification_datetime = timezone.now()
+
+            now = timezone.now()
+            draft_guide.modification_datetime = now
+            if not draft_guide.creation_datetime:
+                draft_guide.creation_datetime = now
 
             draft_guide.save()
 
@@ -266,6 +272,19 @@ def edit_guide_view(request, pk):
                                                      'text': draft_guide.text,
                                                      'primary_skills': draft_guide.pob_details.main_active_skills})
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': draft_guide})
+
+
+def cancel_edit_view(request, pk):
+    guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user.userprofile != guide.author:
+        return HttpResponseForbidden
+    if not guide.creation_datetime:
+        guide.delete()
+        return redirect('/')
+    try:
+        return redirect('show_guide', pk=guide.public_version.pk, slug=guide.public_version.slug)
+    except BuildGuide.DoesNotExist:
+        return redirect('show_guide', pk=guide.pk, slug=guide.slug)
 
 
 def user_settings_view(request):

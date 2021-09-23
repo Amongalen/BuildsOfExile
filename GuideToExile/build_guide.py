@@ -70,6 +70,7 @@ def _get_or_create_keystones(pob_details: PobDetails, skill_tree_service: SkillT
 def publish_guide(draft: BuildGuide) -> BuildGuide:
     draft_guide_id = draft.guide_id
 
+    now = timezone.now()
     try:
         public_guide_id = draft.public_version.guide_id
         public_guide = draft
@@ -77,6 +78,7 @@ def publish_guide(draft: BuildGuide) -> BuildGuide:
         public_guide.save()
     except BuildGuide.DoesNotExist:
         public_guide = draft
+        public_guide.creation_datetime = now
         public_guide.guide_id = None
         public_guide._state.adding = True
         public_guide.save()
@@ -88,11 +90,9 @@ def publish_guide(draft: BuildGuide) -> BuildGuide:
     public_guide.author = original_draft.author
     public_guide.status = BuildGuide.GuideStatus.PUBLIC
     public_guide.unique_items.set(original_draft.unique_items.all())
-    if not public_guide.creation_datetime:
-        now = timezone.now()
-        public_guide.creation_datetime = now
-        original_draft.creation_datetime = now
-    public_guide.modification_datetime = timezone.now()
+    if public_guide.creation_datetime != original_draft.creation_datetime:
+        original_draft.creation_datetime = public_guide.creation_datetime
+    public_guide.modification_datetime = now
     public_guide.save()
     original_draft.save()
     return public_guide

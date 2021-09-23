@@ -24,7 +24,8 @@
           {{ form.text.errors }}
         </div>
         <input type="submit" class="my-2 btn btn-outline-light btn-secondary" value="Save as draft">
-        <button type="button" class="my-2 btn btn-outline-light btn-secondary" onclick="window.history.back();">Cancel
+        <button type="button" class="my-2 btn btn-outline-light btn-secondary"
+                onclick="location.href='{% url 'cancel_edit' guide.guide_id %}'">Cancel
         </button>
         <button type="button" class="me-1 btn btn-outline-light btn-secondary"
                 onclick="location.href='{% url 'edit_pob' guide.guide_id %}'">Reload PoB
