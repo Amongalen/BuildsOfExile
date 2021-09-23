@@ -119,14 +119,15 @@ def authors_view(request):
 
 def authors_list_view(request):
     recently_threshold = datetime.today() - timedelta(days=LIKES_RECENTLY_OFFSET)
+    is_public_q = Q(buildguide__status=BuildGuide.GuideStatus.PUBLIC)
     is_active_q = Q(buildguide__guidelike__is_active=True)
     recently_q = Q(
         buildguide__guidelike__creation_datetime__gte=recently_threshold)
-    authors = (UserProfile.objects.filter(buildguide__isnull=False)
-               .annotate(likes=Count('guidelike', filter=is_active_q))
-               .annotate(likes_recently=Count('guidelike', filter=is_active_q & recently_q))
+    authors = (UserProfile.objects.filter(buildguide__isnull=False, buildguide__status=BuildGuide.GuideStatus.PUBLIC)
+               .annotate(likes=Count('buildguide__guidelike', filter=is_active_q & is_public_q))
+               .annotate(likes_recently=Count('buildguide__guidelike', filter=is_active_q & recently_q & is_public_q))
                .order_by('-likes', 'user__username'))
-
+    logger.info(authors.query)
     paginate_by = 50
     page = request.GET.get('page')
     paginator = Paginator(authors, paginate_by)
@@ -134,10 +135,12 @@ def authors_list_view(request):
     for author in authors_page:
         top3_guides = (BuildGuide.objects
                            .filter(author=author.pk)
+                           .filter(status=BuildGuide.GuideStatus.PUBLIC)
                            .annotate(likes=Count('guidelike', filter=Q(guidelike__is_active=True)))
                            .order_by('-likes')[:3])
         top3_guides_recently = (BuildGuide.objects
                                     .filter(author=author.pk)
+                                    .filter(status=BuildGuide.GuideStatus.PUBLIC)
                                     .annotate(likes_recently=
                                               Count('guidelike',
                                                     filter=Q(guidelike__is_active=True)

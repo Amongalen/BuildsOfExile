@@ -45,16 +45,17 @@
 
             <div class="row">
               <div class="col">
-                <legend class="w-auto fs-5 lh-1">Most popular guides:</legend>
+                <legend class="w-auto fs-6 lh-1">Most popular guides:</legend>
                 {% for guide in author.top3_guides %}
-                  <a class="my-1 px-2 py-1  bg-dark d-flex border border-1 border-primary-lighter rounded-2 text-decoration-none"
-                     href="{% url 'show_guide' guide.guide_id guide.slug %}">
-                    <div class="my-auto h-auto fw-bold">
-                      {{ guide.title }}
-                    </div>
-                    <div class="col-auto ms-auto my-auto">
-                    <span class="fs-6 m-auto text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge">{{ guide.likes }}
-                      <svg height="20px" width="20px"
+                  <small>
+                    <a class="my-1 px-2 py-1  bg-dark d-flex border border-1 border-primary-lighter rounded-2 text-decoration-none"
+                       href="{% url 'show_guide' guide.guide_id guide.slug %}">
+                      <div class="my-auto h-auto fw-bold">
+                        {{ guide.title }}
+                      </div>
+                      <div class="col-auto ms-auto my-auto">
+                    <span class="m-auto text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge">{{ guide.likes }}
+                      <svg height="12px" width="12px"
                            viewBox="0 0 512 512" style="margin-top: -2px">
                           <path d="M376,30c-27.783,0-53.255,8.804-75.707,26.168c-21.525,16.647-35.856,37.85-44.293,53.268
                             c-8.437-15.419-22.768-36.621-44.293-53.268C189.255,38.804,163.783,30,136,30C58.468,30,0,93.417,0,177.514
@@ -63,23 +64,25 @@
                             C512,93.417,453.532,30,376,30z" fill="currentcolor"></path>
                         </svg>
                       </span>
-                    </div>
-                  </a>
+                      </div>
+                    </a>
+                  </small>
                 {% endfor %}
               </div>
 
               <div class="col">
-                <legend class="w-auto fs-5 lh-1">Most popular guides (last 30 days):</legend>
+                <legend class="w-auto fs-6 lh-1">Most popular guides (last 30 days):</legend>
                 {% for guide in author.top3_guides_recently %}
-                  <a class="my-1 px-2 py-1 bg-dark d-flex border border-1 border-primary-lighter rounded-2 text-decoration-none"
-                     href="{% url 'show_guide' guide.guide_id guide.slug %}">
-                    <div class="my-auto h-auto fw-bold">
-                      {{ guide.title }}
-                    </div>
-                    <div class="col-auto ms-auto my-auto">
-                    <span class="fs-6 m-auto text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge">
+                  <small>
+                    <a class="my-1 px-2 py-1 bg-dark d-flex border border-1 border-primary-lighter rounded-2 text-decoration-none"
+                       href="{% url 'show_guide' guide.guide_id guide.slug %}">
+                      <div class="my-auto h-auto fw-bold">
+                        {{ guide.title }}
+                      </div>
+                      <div class="col-auto ms-auto my-auto">
+                    <span class="m-auto text-light bg-secondary border border-1 border-primary-lighter rounded-pill badge">
                       +{{ guide.likes_recently }}
-                      <svg height="20px" width="20px"
+                      <svg height="12px" width="12px"
                            viewBox="0 0 512 512" style="margin-top: -2px">
                           <path d="M376,30c-27.783,0-53.255,8.804-75.707,26.168c-21.525,16.647-35.856,37.85-44.293,53.268
                             c-8.437-15.419-22.768-36.621-44.293-53.268C189.255,38.804,163.783,30,136,30C58.468,30,0,93.417,0,177.514
@@ -88,8 +91,9 @@
                             C512,93.417,453.532,30,376,30z" fill="currentcolor"></path>
                         </svg>
                       </span>
-                    </div>
-                  </a>
+                      </div>
+                    </a>
+                  </small>
                 {% endfor %}
               </div>
             </div>
