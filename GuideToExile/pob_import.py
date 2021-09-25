@@ -1,4 +1,5 @@
 import base64
+import copy
 import logging
 import re
 import xml.etree.ElementTree as ET
@@ -239,11 +240,19 @@ def extract_gems_in_group(group_xml: ET.Element) -> List[SkillGem]:
         gem_id = gem_xml.get('gemId')
         is_item_provided = True if gem_id is None else False
         alt_quality_pref = ALT_QUALITY_PREF_MAPPING.get(gem_xml.get('qualityId'), '')
-        gems.append(
-            SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
-                     level=level, quality=quality, is_item_provided=is_item_provided,
-                     alt_quality_pref=alt_quality_pref))
+        gem = SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill, level=level,
+                       quality=quality, is_item_provided=is_item_provided, alt_quality_pref=alt_quality_pref)
+        gems.append(gem)
+        if 'Vaal' in name:
+            nonvaal_gem = get_nonvaal_gem_version(gem)
+            gems.append(nonvaal_gem)
     return gems
+
+
+def get_nonvaal_gem_version(gem: SkillGem) -> SkillGem:
+    nonvaal_gem = copy.copy(gem)
+    nonvaal_gem.name = gem.name.replace('Vaal ', '')
+    return nonvaal_gem
 
 
 def get_main_active_skill(skill_groups: List[SkillGroup], xml_root: ET.Element) -> Optional[str]:
