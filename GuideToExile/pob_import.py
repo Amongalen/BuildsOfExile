@@ -232,9 +232,7 @@ def extract_gems_in_group(group_xml: ET.Element) -> List[SkillGem]:
     for gem_xml in group_xml:
         is_gem_enabled = parse_bool(gem_xml.get('enabled'))
         skill_id = gem_xml.get('skillId')
-        if 'Enchantment' in skill_id:
-            continue
-        is_active_skill = skill_id is not None and 'Support' not in skill_id
+        is_active_skill = skill_id is not None and 'Support' not in skill_id and 'Enchantment' not in skill_id
         level = gem_xml.get('level')
         quality = gem_xml.get('quality')
         name = GEM_MAPPING.get_name(skill_id)
