@@ -16,7 +16,8 @@ from apps.pob_wrapper import PathOfBuilding
 
 logger = logging.getLogger('guidetoexile')
 
-SLOTS_ORDER = ['Weapon 1', 'Weapon 2', 'Body Armour', 'Gloves', 'Helmet', 'Boots', 'Amulet', 'Ring 1', 'Ring 2',
+SLOTS_ORDER = ['Weapon 1', 'Weapon 1 Swap', 'Weapon 2', 'Weapon 2 Swap', 'Body Armour', 'Gloves', 'Helmet', 'Boots',
+               'Amulet', 'Ring 1', 'Ring 2',
                'Belt', 'Unassigned']
 
 ALT_QUALITY_PREF_MAPPING = {
