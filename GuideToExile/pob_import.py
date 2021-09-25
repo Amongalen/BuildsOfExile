@@ -214,8 +214,6 @@ def extract_skills_groups(xml_root: ET.Element) -> List[SkillGroup]:
         slot = slot if (slot := group_xml.get('slot')) else 'Unassigned'
         gems = extract_gems_in_group(group_xml)
 
-        if not gems:
-            continue
         if source is not None and 'Tree' in source:
             continue
         is_group_enabled = parse_bool(group_xml.get('enabled'))
