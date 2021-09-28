@@ -28,6 +28,7 @@ class SkillGroup:
     is_enabled: bool
     main_active_skill_index: int
     gems: List[SkillGem]
+    is_ignored: bool = field(default=False)
 
 
 @dataclass
