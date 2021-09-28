@@ -234,8 +234,8 @@ def extract_gems_in_group(group_xml: ET.Element) -> List[SkillGem]:
         is_active_skill = skill_id is not None and 'Support' not in skill_id and 'Enchantment' not in skill_id
         level = gem_xml.get('level')
         quality = gem_xml.get('quality')
-        name = GEM_MAPPING.get_name(skill_id)
         gem_id = gem_xml.get('gemId')
+        name = GEM_MAPPING.get_name(skill_id, gem_id)
         is_item_provided = True if gem_id is None else False
         alt_quality_pref = ALT_QUALITY_PREF_MAPPING.get(gem_xml.get('qualityId'), '')
         gem = SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill, level=level,

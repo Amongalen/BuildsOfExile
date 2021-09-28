@@ -87,16 +87,22 @@ def assign_skills_to_items(item_sets: List[ItemSet], skill_groups: List[SkillGro
 class GemMapping:
     def __init__(self):
         gems_file = finders.find(GEMS_FILE)
-        self.mapping = {}
         with open(gems_file, 'r', encoding='utf-8') as file:
             data = json.load(file)
+            self.mapping_by_skill_id = {}
+            self.mapping_by_gem_id = {}
             for key, details in data.items():
                 if 'active_skill' in details:
-                    self.mapping[key] = details['active_skill']['display_name']
+                    self.mapping_by_skill_id[key] = details['active_skill']['display_name']
                 elif 'base_item' in details and details['base_item'] is not None:
-                    self.mapping[key] = details['base_item']['display_name']
+                    self.mapping_by_skill_id[key] = details['base_item']['display_name']
                 else:
-                    self.mapping[key] = 'None'
+                    self.mapping_by_skill_id[key] = 'None'
+                if 'base_item' in details and details['base_item'] is not None:
+                    self.mapping_by_gem_id[key] = details['base_item']['id']
 
-    def get_name(self, skill_id: int) -> str:
-        return self.mapping[skill_id]
+    def get_name(self, skill_id: int, gem_id) -> str:
+        if skill_id in self.mapping_by_skill_id:
+            return self.mapping_by_skill_id[skill_id]
+        else:
+            return self.mapping_by_gem_id.get(gem_id, f'Unknown skill {skill_id}')
