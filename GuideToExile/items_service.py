@@ -67,6 +67,8 @@ def assign_skills_to_items(item_sets: List[ItemSet], skill_groups: List[SkillGro
     item_sets = copy.deepcopy(item_sets)
     skill_groups_by_slot = defaultdict(list)
     for skill_group in skill_groups:
+        if skill_group.is_ignored:
+            continue
         slot_name = skill_group.slot.lower().replace(' ', '-')
         skill_groups_by_slot[slot_name].append(skill_group)
 

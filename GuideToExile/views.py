@@ -236,7 +236,7 @@ def edit_guide_view(request, pk):
     # Form field requires (value, label) tuples for options, list of those is created here
     active_skills = set((gem.name, gem.name) for skill_group in draft_guide.pob_details.skill_groups
                         for gem in skill_group.gems
-                        if gem.is_active_skill)
+                        if gem.is_active_skill and not skill_group.is_ignored)
     active_skills = list(active_skills)
     imported_primary_skill = draft_guide.pob_details.imported_primary_skill
     active_skills.sort(key=lambda v: v[0] == imported_primary_skill, reverse=True)

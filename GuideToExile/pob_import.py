@@ -29,6 +29,8 @@ ALT_QUALITY_PREF_MAPPING = {
 
 GEM_MAPPING = items_service.GemMapping()
 
+pob = PathOfBuilding(POB_PATH, POB_PATH)
+
 
 def import_from_pastebin(url: str) -> str:
     logger.debug('Importing from Pastebin: %s', url)
@@ -137,7 +139,7 @@ def extract_stats(xml_root: ET.Element) -> Dict[str, Union[int, float]]:
 def extract_items(xml_root: ET.Element) -> List[Item]:
     logger.debug('Extracting items')
     items = []
-    pob = PathOfBuilding(POB_PATH, POB_PATH)
+
     for item_xml in xml_root.find('Items').findall('Item'):
         item_id = int(item_xml.get('id'))
         item_str = item_xml.text.strip()
@@ -156,7 +158,6 @@ def extract_items(xml_root: ET.Element) -> List[Item]:
                           rarity=item_rarity,
                           display_html=item_display_html,
                           support_gems=extract_support_gems_from_item(item_lines)))
-    pob.kill()
     return items
 
 
@@ -214,14 +215,14 @@ def extract_skills_groups(xml_root: ET.Element) -> List[SkillGroup]:
         slot = slot if (slot := group_xml.get('slot')) else 'Unassigned'
         gems = extract_gems_in_group(group_xml)
 
-        if source is not None and 'Tree' in source:
-            continue
+        is_ignored = (not gems) or (source is not None and source.startswith('Tree'))
+
         is_group_enabled = parse_bool(group_xml.get('enabled'))
         main_active_skill_index = group_xml.get('mainActiveSkill')
         main_active_skill_index = int(main_active_skill_index) - 1 if not main_active_skill_index == 'nil' else 0
         skill_groups.append(SkillGroup(is_enabled=is_group_enabled,
                                        main_active_skill_index=main_active_skill_index,
-                                       gems=gems, source=source, slot=slot))
+                                       gems=gems, source=source, slot=slot, is_ignored=is_ignored))
     return skill_groups
 
 

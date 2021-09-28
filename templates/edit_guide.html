@@ -36,7 +36,7 @@
       <div class="row">
         <div class="col">
           Items: <sup style="font-size:small"><abbr
-                title="Double-click to add to the editor. Tooltip will be visible after publishing.">?</abbr></sup>
+          title="Double-click to add to the editor. Tooltip will be visible after publishing.">?</abbr></sup>
           <div class="poe-container">
             {% for item in guide.pob_details.items %}
               <div class="poe-line">
@@ -59,17 +59,19 @@
           Gems: <sup style="font-size:small"><abbr title="Double-click to add to the editor.">?</abbr></sup>
           <div class="poe-container">
             {% for skill_group in guide.pob_details.skill_groups %}
-              {% for gem in skill_group.gems %}
-                <div class="poe-line ">
-                  <button class="link" ondblclick="addText(this)">
+              {% if not skill_group.is_ignored %}
+                {% for gem in skill_group.gems %}
+                  <div class="poe-line ">
+                    <button class="link" ondblclick="addText(this)">
                     <span
-                            class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.alt_quality_pref }}{{ gem.name }}</span>
-                  </button>
-                </div>
-              {% endfor %}
+                      class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.alt_quality_pref }}{{ gem.name }}</span>
+                    </button>
+                  </div>
+                {% endfor %}
 
-              {% if not forloop.last and skill_group.gems %}
-                <hr style="margin-top: 0.2rem;  margin-bottom: 0.2rem;">
+                {% if not forloop.last and skill_group.gems %}
+                  <hr style="margin-top: 0.2rem;  margin-bottom: 0.2rem;">
+                {% endif %}
               {% endif %}
             {% endfor %}
           </div>
@@ -88,10 +90,10 @@
     function addText(el) {
       let test = el.firstElementChild.outerHTML
       editor.chain()
-              .focus()
-              .insertContent(test)
-              .insertContent(' ')
-              .run()
+        .focus()
+        .insertContent(test)
+        .insertContent(' ')
+        .run()
 
       {# returns to default formatting #}
       const {tr} = editor.view.state
