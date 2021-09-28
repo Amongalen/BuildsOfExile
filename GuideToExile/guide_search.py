@@ -13,7 +13,7 @@ logger = logging.getLogger('guidetoexile')
 
 
 def find_with_filter(filter_form: GuideListFilterForm, user_id: int, page: int, paginate_by: int) -> Page:
-    queryset = BuildGuide.objects.defer('pob_details')
+    queryset = BuildGuide.objects.defer('pob_details', 'pob_string', 'text')
     queryset = _filter_public(queryset)
     base_filters = _get_base_filters(filter_form, user_id)
     queryset = queryset.filter(*base_filters)
@@ -28,7 +28,7 @@ def find_with_filter(filter_form: GuideListFilterForm, user_id: int, page: int, 
 
 
 def find_all(page: int, paginate_by: int) -> Page:
-    queryset = BuildGuide.objects.defer('pob_details')
+    queryset = BuildGuide.objects.defer('pob_details', 'pob_string', 'text')
     queryset = _filter_public(queryset)
     queryset = _annotate_like_counts(queryset)
     queryset = queryset.order_by('likes').all()
@@ -36,7 +36,7 @@ def find_all(page: int, paginate_by: int) -> Page:
 
 
 def find_all_by_user(user: UserProfile) -> QuerySet:
-    queryset = BuildGuide.objects.defer('pob_details')
+    queryset = BuildGuide.objects.defer('pob_details', 'pob_string', 'text')
     queryset = _annotate_like_counts(queryset)
     queryset = queryset.filter(author=user)
     # hide drafts if published version exists

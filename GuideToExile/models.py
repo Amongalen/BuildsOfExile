@@ -128,11 +128,11 @@ class BuildGuide(models.Model):
     author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     creation_datetime = models.DateTimeField(blank=True, null=True)
     modification_datetime = models.DateTimeField(blank=True, null=True)
-    pob_string = models.CharField(max_length=40000, null=True)
+    pob_string = models.TextField(null=True)
     pob_details = models.JSONField(encoder=json_encoder.BuildDetailsJsonEncoder,
                                    decoder=json_encoder.BuildDetailsJsonDecoder, null=True)
     title = models.CharField(max_length=180, null=True)
-    text = models.CharField(max_length=40000, null=True)
+    text = models.TextField(null=True)
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
     primary_skills = models.ManyToManyField(ActiveSkill)

@@ -34,8 +34,8 @@ class LikedGuidesView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return BuildGuide.objects.defer('pob_details').filter(guidelike__is_active=True,
-                                                              guidelike__user=self.request.user.userprofile).all()
+        return BuildGuide.objects.defer('pob_details', 'pob_string', 'text').filter(guidelike__is_active=True,
+                                                                                    guidelike__user=self.request.user.userprofile).all()
 
 
 def index_view(request):
@@ -134,11 +134,13 @@ def authors_list_view(request):
     authors_page = paginator.get_page(page)
     for author in authors_page:
         top3_guides = (BuildGuide.objects
+                           .defer('pob_details', 'pob_string', 'text')
                            .filter(author=author.pk)
                            .filter(status=BuildGuide.GuideStatus.PUBLIC)
                            .annotate(likes=Count('guidelike', filter=Q(guidelike__is_active=True)))
                            .order_by('-likes')[:3])
         top3_guides_recently = (BuildGuide.objects
+                                    .defer('pob_details', 'pob_string', 'text')
                                     .filter(author=author.pk)
                                     .filter(status=BuildGuide.GuideStatus.PUBLIC)
                                     .annotate(likes_recently=
