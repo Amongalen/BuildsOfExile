@@ -235,10 +235,11 @@ def extract_gems_in_group(group_xml: ET.Element) -> List[SkillGem]:
     for gem_xml in group_xml:
         is_gem_enabled = parse_bool(gem_xml.get('enabled'))
         skill_id = gem_xml.get('skillId')
-        is_active_skill = skill_id is not None and 'Support' not in skill_id and 'Enchantment' not in skill_id
         level = gem_xml.get('level')
         quality = gem_xml.get('quality')
         gem_id = gem_xml.get('gemId')
+        is_active_skill = (skill_id is not None and 'Enchantment' not in skill_id
+                           and gem_id is not None and 'Support' not in gem_id)
         name = GEM_MAPPING.get_name(skill_id, gem_id)
         is_item_provided = True if gem_id is None else False
         alt_quality_pref = ALT_QUALITY_PREF_MAPPING.get(gem_xml.get('qualityId'), '')
