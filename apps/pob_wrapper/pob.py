@@ -121,6 +121,8 @@ class PathOfBuilding:
         item_text = safe_string(item_text)
         lines = self._send(f'testItemForDisplay("{item_text}")')
 
+        if not lines:
+            return None
         # Convert the output to HTML
         lines = [_pob_line_to_html(line) for line in lines]
         output = '\n'.join(lines)

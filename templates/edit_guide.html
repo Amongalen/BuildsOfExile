@@ -39,8 +39,9 @@
           title="Double-click to add to the editor. Tooltip will be visible after publishing.">?</abbr></sup>
           <div class="poe-container">
             {% for item in guide.pob_details.items %}
-              <div class="poe-line">
-                <button class="link" ondblclick="addText(this)">
+              {% if not item.is_broken %}
+                <div class="poe-line">
+                  <button class="link" ondblclick="addText(this)">
                   <span class="poeitem-{{ item.rarity|lower }}" data-bs-placement="bottom"
                         data-bs-toggle="tooltip" data-bs-html="true"
                         title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">
@@ -50,8 +51,9 @@
                       {{ item.name }}
                     {% endif %}
                   </span>
-                </button>
-              </div>
+                  </button>
+                </div>
+              {% endif %}
             {% endfor %}
           </div>
         </div>

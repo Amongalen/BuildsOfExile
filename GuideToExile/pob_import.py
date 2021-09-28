@@ -152,12 +152,16 @@ def extract_items(xml_root: ET.Element) -> List[Item]:
             base_name = item_lines[1].strip()
 
         item_display_html = pob.item_as_html(item_str)
+
+        is_broken = True if not item_display_html else False
+
         items.append(Item(item_id_in_itemset=item_id,
                           name=item_name,
                           base_name=base_name,
                           rarity=item_rarity,
                           display_html=item_display_html,
-                          support_gems=extract_support_gems_from_item(item_lines)))
+                          support_gems=extract_support_gems_from_item(item_lines),
+                          is_broken=is_broken))
     return items
 
 

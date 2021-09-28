@@ -47,6 +47,7 @@ class Item:
     rarity: str
     display_html: str
     support_gems: List[SkillGem]
+    is_broken: bool = field(default=False)
 
     @property
     def asset(self):

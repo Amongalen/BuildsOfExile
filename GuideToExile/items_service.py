@@ -73,14 +73,18 @@ def assign_skills_to_items(item_sets: List[ItemSet], skill_groups: List[SkillGro
         skill_groups_by_slot[slot_name].append(skill_group)
 
     for item_set in item_sets:
+        item_set.unassigned_skill_groups = {k: v for k, v in skill_groups_by_slot.items() if k not in item_set.slots}
+
         for slot_name, item in item_set.slots.items():
             item.skill_groups = []
             if slot_name in skill_groups_by_slot:
                 skill_groups = copy.deepcopy(skill_groups_by_slot[slot_name])
                 for skill_group in skill_groups:
                     skill_group.gems.extend(item.support_gems)
-                item.skill_groups.extend(skill_groups)
-        item_set.unassigned_skill_groups = {k: v for k, v in skill_groups_by_slot.items() if k not in item_set.slots}
+                if not item.is_broken:
+                    item.skill_groups.extend(skill_groups)
+                else:
+                    item_set.unassigned_skill_groups[slot_name] = skill_groups
     return item_sets
 
 

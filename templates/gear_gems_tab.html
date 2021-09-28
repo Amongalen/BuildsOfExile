@@ -24,8 +24,9 @@
             <div class="gear-container">
               {% for slot_name, item in item_set.slots.items %}
                 {% if 'flask' not in slot_name and 'abyssal' not in slot_name and 'swap' not in slot_name %}
-                  <div class="gear-{{ slot_name }} gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
-                       data-bs-html="true" data-bs-placement="top" title="{{ item.display_html }}
+                  {% if not item.is_broken %}
+                    <div class="gear-{{ slot_name }} gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                         data-bs-html="true" data-bs-placement="top" title="{{ item.display_html }}
                      {% if item.skill_groups %}
                      <div class='gems-tooltip'>
                         {% for skill_group in item.skill_groups %}
@@ -57,8 +58,11 @@
                         {% endfor %}
                      </div>
                     {% endif %}">
-                    <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
-                  </div>
+                      <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+                    </div>
+                  {% else %}
+                    <div class="gear-{{ slot_name }} gear-slot gear-bg-placeholder"></div>
+                  {% endif %}
                 {% endif %}
               {% endfor %}
 
@@ -71,11 +75,16 @@
               <div class="gear-flasks">
                 {% for slot_name, item in item_set.slots.items %}
                   {% if 'flask' in slot_name %}
-                    <div class="gear-{{ slot_name }} gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
-                         data-bs-html="true" data-bs-placement="bottom"
-                         title="{{ item.display_html }}">
-                      <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
-                    </div>
+                    {% if not item.is_broken %}
+                      <div class="gear-{{ slot_name }} gear-slot gear-bg-{{ item.rarity|lower }}"
+                           data-bs-toggle="tooltip"
+                           data-bs-html="true" data-bs-placement="bottom"
+                           title="{{ item.display_html }}">
+                        <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+                      </div>
+                    {% else %}
+                      <div class="gear-{{ slot_name }} gear-slot gear-bg-placeholder"></div>
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
                 {% for slot_name in gear_slots %}
@@ -90,11 +99,13 @@
                 Abyssal jewels:
                 <div class="gear-jewels-container my-1">
                   {% for item in used_jewels.abyssal %}
-                    <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
-                         data-bs-html="true" data-bs-placement="bottom"
-                         title="{{ item.display_html }}">
-                      <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
-                    </div>
+                    {% if not item.is_broken %}
+                      <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                           data-bs-html="true" data-bs-placement="bottom"
+                           title="{{ item.display_html }}">
+                        <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+                      </div>
+                    {% endif %}
                   {% endfor %}
                 </div>
               {% endif %}
@@ -102,11 +113,13 @@
                 Cluster jewels:
                 <div class="gear-jewels-container my-1">
                   {% for item in used_jewels.cluster %}
-                    <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
-                         data-bs-html="true" data-bs-placement="bottom"
+                    {% if not item.is_broken %}
+                      <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                           data-bs-html="true" data-bs-placement="bottom"
                          title="{{ item.display_html }}">
                       <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
                     </div>
+                    {% endif %}
                   {% endfor %}
                 </div>
               {% endif %}
@@ -114,11 +127,13 @@
                 Other jewels:
                 <div class="gear-jewels-container my-1">
                   {% for item in used_jewels.normal %}
+                    {% if not item.is_broken %}
                     <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
                          data-bs-html="true" data-bs-placement="bottom"
                          title="{{ item.display_html }}">
                       <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
                     </div>
+                    {% endif %}
                   {% endfor %}
                 </div>
               {% endif %}
@@ -139,7 +154,7 @@
                         <img srcset='{% static gem.asset %}' alt="{{ gem.name }}"
                              style='max-width:30px; max-height: 30px'/>
                         <span
-                                class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>
+                          class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>
                       </div>
                       <div class="col">
                         <div class="w-100 float-end row small g-0 justify-content-between text-center"
