@@ -104,9 +104,9 @@
     <div class="col">
       <div class="float-end">
         {% if user == build_guide.author.user %}
-          {% if build_guide.is_draft and build_guide.public_version %}
+          {% if build_guide.is_draft %}
             <button class="mb-2 btn opacity-75 btn-outline-warning btn-secondary"
-                    onclick="location.href='{% url 'clear_draft' build_guide.public_version.guide_id %}'">
+                    onclick="location.href='{% url 'clear_draft' build_guide.guide_id %}'">
               Delete draft
             </button>
           {% endif %}

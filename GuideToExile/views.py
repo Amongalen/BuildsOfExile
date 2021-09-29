@@ -226,8 +226,13 @@ def clear_draft_view(request, pk):
     guide = BuildGuide.objects.get(guide_id=pk)
     if request.user.userprofile != guide.author:
         return HttpResponseForbidden
-    guide = build_guide.clear_draft(guide)
-    return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
+
+    try:
+        guide = build_guide.clear_draft(guide.public_version)
+        return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
+    except BuildGuide.DoesNotExist:
+        guide.delete()
+        return redirect('/')
 
 
 def edit_guide_view(request, pk):
