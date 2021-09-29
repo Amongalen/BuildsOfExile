@@ -254,6 +254,7 @@ def edit_guide_view(request, pk):
             draft_guide.text = form.cleaned_data['text']
 
             primary_skills_names = form.cleaned_data['primary_skills']
+            draft_guide.video_url = form.cleaned_data['video_url']
             if imported_primary_skill not in primary_skills_names:
                 primary_skills_names.insert(0, imported_primary_skill)
             draft_guide.pob_details.main_active_skills = primary_skills_names
@@ -272,6 +273,7 @@ def edit_guide_view(request, pk):
     else:
         form = EditGuideForm(active_skills, initial={'title': draft_guide.title,
                                                      'text': draft_guide.text,
+                                                     'video_url': draft_guide.video_url,
                                                      'primary_skills': draft_guide.pob_details.main_active_skills})
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': draft_guide})
 

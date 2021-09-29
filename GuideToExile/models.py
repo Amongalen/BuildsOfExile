@@ -133,6 +133,7 @@ class BuildGuide(models.Model):
                                    decoder=json_encoder.BuildDetailsJsonDecoder, null=True)
     title = models.CharField(max_length=180, null=True)
     text = models.TextField(null=True)
+    video_url = models.CharField(max_length=200, null=True, blank=True)
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
     primary_skills = models.ManyToManyField(ActiveSkill)

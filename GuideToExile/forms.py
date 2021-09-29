@@ -64,6 +64,11 @@ class EditGuideForm(Form):
     primary_skills = forms.MultipleChoiceField(choices=(),
                                                widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
                                                help_text=None)
+    video_url = forms.CharField(max_length=180,
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Youtube link'}),
+                                help_text=None,
+                                label='Video guide/showcase (optional)',
+                                required=False)
     text = forms.CharField(max_length=40000, widget=TipTapWidget(attrs={'placeholder': 'Content'}), help_text=None)
 
     def clean_text(self):
@@ -74,6 +79,18 @@ class EditGuideForm(Form):
     def clean_title(self):
         data = self.cleaned_data['title']
         data = URL_REGEX.sub('[REDACTED LINK]', data)
+        return data
+
+    def clean_video_url(self):
+        data = self.cleaned_data['video_url']
+        if not data:
+            return data
+        lower_data = data.lower()
+        if (not lower_data.startswith('https://youtube.com')
+            and not lower_data.startswith('https://www.youtube.com')
+            and not lower_data.startswith('http://youtube.com')
+            and not lower_data.startswith('http://www.youtube.com')):
+            raise ValidationError('URL must start with "youtube.com"')
         return data
 
 
