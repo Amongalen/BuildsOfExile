@@ -10,7 +10,7 @@ import requests
 
 from GuideToExile import items_service
 from GuideToExile.data_classes import SkillGem, SkillGroup, TreeSpec, ItemSet, Item, PobDetails
-from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException
+from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException, TreeParsingException
 from GuideToExile.settings import POB_PATH
 from apps.pob_wrapper import PathOfBuilding
 
@@ -27,7 +27,7 @@ ALT_QUALITY_PREF_MAPPING = {
     'Alternate3': 'Phantasmal ',
 }
 
-GEM_MAPPING = items_service.GemMapping()
+GEMS_DATA = items_service.GemsData()
 
 pob = PathOfBuilding(POB_PATH, POB_PATH)
 
@@ -189,7 +189,8 @@ def extract_item_sets(xml_root: ET.Element, items: List[Item]) -> List[ItemSet]:
             item_id = int(slot_xml.get('itemId'))
             if item_id != 0:
                 slot_name = slot_xml.get('name').lower().replace(' ', '-')
-                slots[slot_name] = items_by_id[item_id]
+                if item_id in items_by_id:
+                    slots[slot_name] = items_by_id[item_id]
         item_sets.append(ItemSet(title=title,
                                  set_id=set_id,
                                  slots=slots))
@@ -200,12 +201,16 @@ def extract_tree_specs(xml_root: ET.Element) -> List[TreeSpec]:
     logger.debug('Extracting tree specs')
     tree_specs = []
     for spec_xml in xml_root.find('Tree'):
-        nodes = list(map(str, spec_xml.get('nodes').split(',')))
-        title = title if (title := spec_xml.get('title')) is not None else 'Default'
-        tree_specs.append(TreeSpec(title=title,
-                                   nodes=nodes,
-                                   url=spec_xml.find('URL').text.strip(),
-                                   tree_version=spec_xml.get('treeVersion')))
+        nodes_str = spec_xml.get('nodes')
+        if nodes_str:
+            nodes = list(map(str, nodes_str.split(',')))
+            title = title if (title := spec_xml.get('title')) is not None else 'Default'
+            tree_specs.append(TreeSpec(title=title,
+                                       nodes=nodes,
+                                       url=(spec_xml.find('URL').text.strip()),
+                                       tree_version=(spec_xml.get('treeVersion'))))
+        else:
+            raise TreeParsingException
 
     return tree_specs
 
@@ -238,9 +243,8 @@ def extract_gems_in_group(group_xml: ET.Element) -> List[SkillGem]:
         level = gem_xml.get('level')
         quality = gem_xml.get('quality')
         gem_id = gem_xml.get('gemId')
-        is_active_skill = (skill_id is not None and 'Enchantment' not in skill_id
-                           and (gem_id is None or 'Support' not in gem_id))
-        name = GEM_MAPPING.get_name(skill_id, gem_id)
+        is_active_skill = GEMS_DATA.is_gem_active(skill_id)
+        name = GEMS_DATA.get_name(skill_id, gem_id)
         is_item_provided = True if gem_id is None else False
         alt_quality_pref = ALT_QUALITY_PREF_MAPPING.get(gem_xml.get('qualityId'), '')
         gem = SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill, level=level,

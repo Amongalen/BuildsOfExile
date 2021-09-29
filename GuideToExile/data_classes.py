@@ -3,7 +3,7 @@ from typing import Union, Optional, List, Dict
 
 from GuideToExile import items_service
 
-assetMapping = items_service.AssetMapping()
+assetMapping = items_service.AssetsData()
 
 
 @dataclass

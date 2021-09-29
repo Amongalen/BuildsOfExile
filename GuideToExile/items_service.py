@@ -10,7 +10,7 @@ from django.contrib.staticfiles import finders
 from GuideToExile.settings import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE, GEMS_FILE
 
 
-class AssetMapping:
+class AssetsData:
     def __init__(self):
         base_items_lookup_file = finders.find(BASE_ITEMS_LOOKUP_FILE)
         unique_items_lookup_file = finders.find(UNIQUE_ITEMS_LOOKUP_FILE)
@@ -88,25 +88,42 @@ def assign_skills_to_items(item_sets: List[ItemSet], skill_groups: List[SkillGro
     return item_sets
 
 
-class GemMapping:
+class GemsData:
     def __init__(self):
+        self.gem_id_to_name_mapping = {}
+        self.skill_id_to_name_mapping = {}
+        self.active_skill_gems = []
         gems_file = finders.find(GEMS_FILE)
         with open(gems_file, 'r', encoding='utf-8') as file:
             data = json.load(file)
-            self.mapping_by_skill_id = {}
-            self.mapping_by_gem_id = {}
-            for key, details in data.items():
-                if 'active_skill' in details:
-                    self.mapping_by_skill_id[key] = details['active_skill']['display_name']
-                elif 'base_item' in details and details['base_item'] is not None:
-                    self.mapping_by_skill_id[key] = details['base_item']['display_name']
-                else:
-                    self.mapping_by_skill_id[key] = 'None'
-                if 'base_item' in details and details['base_item'] is not None:
-                    self.mapping_by_gem_id[key] = details['base_item']['id']
+            self._init_name_mappings(data)
+            self._init_active_skill_gems(data)
+
+    def _init_name_mappings(self, data):
+        for key, details in data.items():
+            if 'active_skill' in details:
+                self.skill_id_to_name_mapping[key] = details['active_skill']['display_name']
+            elif 'base_item' in details and details['base_item'] is not None:
+                self.skill_id_to_name_mapping[key] = details['base_item']['display_name']
+            else:
+                self.skill_id_to_name_mapping[key] = 'None'
+            if 'base_item' in details and details['base_item'] is not None:
+                self.gem_id_to_name_mapping[key] = details['base_item']['id']
+
+    def _init_active_skill_gems(self, data):
+        for key, details in data.items():
+            if not details.get('is_support', True):
+                self.active_skill_gems.append(key)
+            elif 'secondary_granted_effect' in details:
+                granted_skill = details['secondary_granted_effect']
+                if not data[granted_skill].get('is_support', True):
+                    self.active_skill_gems.append(key)
 
     def get_name(self, skill_id: int, gem_id) -> str:
-        if skill_id in self.mapping_by_skill_id:
-            return self.mapping_by_skill_id[skill_id]
+        if skill_id in self.skill_id_to_name_mapping:
+            return self.skill_id_to_name_mapping[skill_id]
         else:
-            return self.mapping_by_gem_id.get(gem_id, f'Unknown skill {skill_id}')
+            return self.gem_id_to_name_mapping.get(gem_id, f'Unknown skill {skill_id}')
+
+    def is_gem_active(self, skill_id):
+        return skill_id in self.active_skill_gems
