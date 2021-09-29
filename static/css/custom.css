@@ -258,10 +258,30 @@ hr {
 .tooltip {
     font-size: 0.95rem;
     line-height: 1.4;
+
 }
 
 .tooltip-inner {
     position: relative;
+    border: 1px solid hsl(210, 10%, 50%);
+    border-radius: 0.25rem;
+    box-shadow: inset 0px 0px 12px -2px hsl(210, 10%, 50%), 0px 0px 10px 1px rgba(var(--bs-dark-rgb), var(--bs-bg-opacity));
+}
+
+.bs-tooltip-start .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before {
+    border-left-color: hsl(210, 10%, 60%) !important;
+}
+
+.bs-tooltip-end .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before {
+    border-right-color: hsl(210, 10%, 60%) !important;
+}
+
+.bs-tooltip-top .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
+    border-top-color: hsl(210, 10%, 60%) !important;
+}
+
+.bs-tooltip-bottom .tooltip-arrow::before, .bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
+    border-bottom-color: hsl(210, 10%, 60%) !important;
 }
 
 .chosen-container {
@@ -436,6 +456,8 @@ hr {
     border-radius: 0.25rem;
     width: 450px;
     text-align: initial;
+    border: 1px solid hsl(210, 10%, 50%);
+    box-shadow: inset 0px 0px 12px -2px hsl(210, 10%, 50%), 0px 0px 10px 1px rgba(var(--bs-dark-rgb), var(--bs-bg-opacity));
 }
 
 .inputfile + label {
@@ -623,7 +645,6 @@ input[type=number] {
     border-radius: 6px;
     border: none;
 }
-
 
 
 .autocomplete-suggestions {
