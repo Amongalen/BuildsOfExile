@@ -269,18 +269,22 @@
 
     $(document).ready(function () {
       loadGuideTab();
-      getLikes();
+      {% if build_guide.is_public %}
+        getLikes();
+      {% endif %}
     });
 
     function loadGuideTab() {
       $.get(
         "{% url 'guide_tab' pk %}",
         function (data) {
-          $("#guide-spinner").fadeOut(150, function () {
-            $(this).remove();
-            $("#nav-guide").append(data);
-            $("#guide-tab").fadeIn(250);
-            attachTooltips();
+          $("#nav-guide").append(data);
+          attachTooltips();
+          $("#guide-tab").ready(function () {
+            $("#guide-spinner").fadeOut(150, function () {
+              $("#guide-tab").fadeIn(150);
+              $(this).remove();
+            });
           });
           loadGearGemsTab();
           loadSkillTreeTab();
