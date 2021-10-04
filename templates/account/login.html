@@ -1,0 +1,66 @@
+{% extends "account/base.html" %}
+{% load myfilters %}
+{% load i18n %}
+
+{% block head_links %}
+
+  <title>The Test</title>
+
+{% endblock %}
+
+{% block head_title %}{% trans "Sign In" %} {% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="py-3 col-4 px-0 border border-1 border-light rounded-2 bg-secondary">
+      <h3 class="text-center" id="head_banner">{% trans "Sign In" %}</h3>
+      <form class="text-center" id="login_form" method="POST" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <table class="mx-auto" style="border-collapse:separate; border-spacing: 0 0.5em;">
+          <tr>
+            <td class="text-end pe-2 text-light">{{ form.login.label_tag }}</td>
+            <td>{{ form.login|addclass:'form-control' }}</td>
+            <td>{{ form.login.errors }}</td>
+          </tr>
+          <tr>
+            <td class="text-end pe-2 text-light">{{ form.password.label_tag }}</td>
+            <td>{{ form.password|addclass:'form-control' }}</td>
+            <td>{{ form.password.errors }}</td>
+          </tr>
+          <tr>
+            <td class="text-end pe-2 text-light">{{ form.remember.label_tag }}</td>
+            <td>{{ form.remember|addclass:'form-check' }}</td>
+            <td>{{ form.remember.errors }}</td>
+          </tr>
+        </table>
+        {% if redirect_field_value %}
+
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+
+        {% endif %}
+
+        <button class="btn btn-outline-light btn-secondary" type="submit">{% trans "Sign In" %}</button>
+        <a class="btn btn-outline-light btn-secondary"
+           href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+
+      </form>
+
+      <div class="text-center pb-2">A new user? <a class="text-info fw-bolder" href="{{ signup_url }}">Signup</a></div>
+      <div class="strike">
+        <span>Or</span>
+      </div>
+
+      {% load account socialaccount %}
+
+      {% get_providers as socialaccount_providers %}
+      <ul class="p-2 pb-0">
+        {% for provider in socialaccount_providers %}
+          <a title="{{ provider.name }}" class="social-btn-{{ provider.name }} mx-auto border-0 p-0 m-1 d-block"
+             href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"></a>
+        {% endfor %}
+      </ul>
+
+    </div>
+  </div>
+{% endblock %}

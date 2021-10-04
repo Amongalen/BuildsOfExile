@@ -687,3 +687,79 @@ input[type=number] {
     background-color: hsl(210, 15%, 35%);
 }
 
+.social-btn-Google {
+    background: url('/static/buttons/google.png');
+    background-size: 185px 36px;
+    width: 185px;
+    height: 36px;
+}
+
+.social-btn-Facebook {
+    background: url('/static/buttons/facebook.png');
+    background-size: 185px 36px;
+    width: 185px;
+    height: 36px;
+}
+
+.strike {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 20px 0 20px;
+}
+
+.strike > span {
+    position: relative;
+    display: inline-block;
+}
+
+.strike > span:before,
+.strike > span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9999px;
+    height: 1px;
+    background: hsl(210, 10%, 72%);
+}
+
+.strike > span:before {
+    right: 100%;
+    margin-right: 10px;
+}
+
+.strike > span:after {
+    left: 100%;
+    margin-left: 10px;
+}
+
+#login_form > .errorlist {
+    padding-left: 0;
+    list-style: none;
+    color: #dc3545;
+    border: white;
+    font-weight: bold;
+}
+
+#login_form .errorlist {
+    padding-left: 0;
+    list-style: none;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+#signup_form .errorlist {
+    padding-left: 0;
+    list-style: none;
+    color: #dc3545;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+
+#reset_password_form .errorlist {
+    padding-left: 1em;
+    list-style: none;
+    color: #dc3545;
+    font-weight: bold;
+}
