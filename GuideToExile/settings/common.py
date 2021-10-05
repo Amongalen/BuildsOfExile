@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'storages',
     'django_inlinecss',
+    'fullurl',
 
     'allauth',
     'allauth.account',

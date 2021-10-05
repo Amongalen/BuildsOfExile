@@ -763,3 +763,24 @@ input[type=number] {
     color: #dc3545;
     font-weight: bold;
 }
+
+.footer {
+    width: 100%;
+    background-color: hsl(210, 5%, 17%);
+    color: hsl(210, 10%, 72%);
+    text-align: center;
+    padding-top: 1rem;
+}
+
+.anchor:before {
+    content: '';
+    display: block;
+    position: relative;
+    width: 0;
+    height: 3em;
+    margin-top: -3em
+}
+
+a.anchor {
+    text-decoration: none;
+}

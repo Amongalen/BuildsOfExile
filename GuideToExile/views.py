@@ -464,3 +464,11 @@ def activate(request, uidb64, token):
 
 def activation_sent_view(request):
     return render(request, 'registration/activation_sent.html')
+
+
+class CookiePolicy(generic.TemplateView):
+    template_name = "cookies_policy.html"
+
+
+class PrivacyPolicy(generic.TemplateView):
+    template_name = "privacy_policy.html"
