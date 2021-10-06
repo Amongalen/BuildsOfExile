@@ -6,20 +6,21 @@
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
 {% block content %}
-  <h3 class="h3" id="head_banner">{% trans "Sign Up" %}</h3>
-  <p>{% blocktrans with provider_name=account.get_provider.name site_name=site.name %}You are about to use your
-    {{ provider_name }} account to login to
-    {{ site_name }}. As a final step, please complete the following form:{% endblocktrans %}</p>
-
-  <form method="POST" class="container-fluid" id="signup_form" action="{% url 'socialaccount_signup' %}">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td class="text-end pe-2 text-light">{{ form.username.label_tag }}</td>
-        <td>{{ form.username|addclass:'form-control' }}</td>
-        <td>{{ form.username.errors }}</td>
-      </tr>
-    </table>
-    <input class="mt-2 btn btn-outline-light btn-secondary" type="submit" value="{% trans 'Sign Up' %}"/>
-  </form>
+  <div class="row justify-content-center">
+    <div class="py-3 col-4 px-0 border border-1 border-light rounded-2 bg-secondary">
+      <h3 class="text-center" id="head_banner">{% trans "Sign Up" %}</h3>
+      <div class="text-center">{% blocktrans %}Insert you username to complete registration:{% endblocktrans %}</div>
+      <form class="text-center" id="signup_form" method="POST" action="{% url 'socialaccount_signup' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <table class="mx-auto" style="border-collapse:separate; border-spacing: 0 0.5em;">
+          <tr>
+            <td>{{ form.username|addclass:'form-control' }}</td>
+            <td>{{ form.username.errors }}</td>
+          </tr>
+        </table>
+        <input class="btn btn-outline-light btn-secondary" type="submit" value="{% trans 'Sign Up' %}"/>
+      </form>
+    </div>
+  </div>
 {% endblock %}
