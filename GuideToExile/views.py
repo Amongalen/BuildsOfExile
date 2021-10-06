@@ -467,8 +467,12 @@ def activation_sent_view(request):
 
 
 class CookiePolicy(generic.TemplateView):
-    template_name = "cookies_policy.html"
+    template_name = "policies/cookies_policy.html"
 
 
 class PrivacyPolicy(generic.TemplateView):
-    template_name = "privacy_policy.html"
+    template_name = "policies/privacy_policy.html"
+
+
+class TermsOfUse(generic.TemplateView):
+    template_name = "policies/terms_of_use.html"

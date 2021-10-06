@@ -54,6 +54,7 @@ urlpatterns = [
     path('activate/<slug:uidb64>/<slug:token>/', views.activate, name='activate'),
     path('cookies-policy', views.CookiePolicy.as_view(), name='cookie_policy'),
     path('privacy-policy', views.PrivacyPolicy.as_view(), name='privacy_policy'),
+    path('terms-of-use', views.TermsOfUse.as_view(), name='terms_of_use'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL,
