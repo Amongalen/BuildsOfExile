@@ -14,7 +14,6 @@
            data-bs-parent="#filterAccordion">
         <div class="accordion-body pb-2">
           <form id="filterForm" autocomplete="off">
-            {% csrf_token %}
             <div class="row">
               <div class="col-6 mb-2">
                 {{ filter_form.title.label_tag }}
@@ -58,13 +57,19 @@
               {{ filter_form.order_by|addclass:'chosen-select p-1' }}
             </div>
             <input type="button" class="my-1 btn btn-outline-light btn-secondary" id="submitButton" value="Search"/>
-
           </form>
         </div>
       </div>
     </div>
   </div>
-  <div id="guideList"></div>
+  <div id="guide-list-container">
+    <div id="loading-spinner" class="lds-ring-big lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
   <script>
     $(".chosen-select").chosen({disable_search_threshold: 10, width: '100%'})
 
@@ -74,12 +79,24 @@
       var str = $("#filterForm").serialize();
       str += "&page=" + page;
 
+      $("#guide-list").fadeOut(150, function () {
+        $("#loading-spinner").fadeIn(150);
+        $("#guide-list").remove();
+      });
+
+
       $.ajax({
         url: "{% url 'guide_list' %}",
         data: str,
-        type: 'post',
+        type: 'get',
         success: function (data) {
-          $('#guideList').html(data)
+          $('#guide-list-container').append(data)
+          $("#guide-list").ready(function () {
+            $("#loading-spinner").fadeOut(150, function () {
+              $("#guide-list").fadeIn(150);
+            });
+          });
+          $("#submitButton").blur()
         }
       });
     }

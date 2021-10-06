@@ -1,11 +1,12 @@
 import io
 import logging
+import re
 from datetime import datetime, timedelta
 
 from PIL import Image
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms import Form, ModelForm, Select
 
@@ -15,16 +16,26 @@ from apps.django_tiptap.widgets import TipTapWidget
 
 logger = logging.getLogger('guidetoexile')
 
+URL_REGEX = re.compile(
+    r'''(https?:\/\/)(\s)*(www\.)?(\s)*((\w|\s)+\.)*([\w\-\s]+\/)*([\w\-]+)(\/)?(\.html)?((\?)?[\w\s]*=\s*[\w\%&]*)*''',
+    flags=re.MULTILINE)
+
 
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(max_length=150)
 
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('username', 'email', 'password1', 'password2',)
 
+    def clean_username(self):
+        data = self.cleaned_data['username']
+        if get_user_model().objects.filter(username__iexact=data).exists():
+            raise ValidationError('Username already taken', code='username_taken')
+        return data
 
-class NewGuideForm(Form):
+
+class PobStringForm(Form):
     pob_input = forms.CharField(max_length=40000,
                                 label="Enter Path of Building export code or a Pastebin link containing it",
                                 widget=forms.TextInput(attrs={'class': ' form-control'}))
@@ -47,12 +58,40 @@ class EditGuideForm(Form):
         super(EditGuideForm, self).__init__(*args, **kwargs)
         self.fields['primary_skills'].choices = skill_choices
 
-    title = forms.CharField(max_length=180, widget=forms.TextInput(attrs={'class': 'form-control'}),
+    title = forms.CharField(max_length=180,
+                            widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title'}),
                             help_text=None)
     primary_skills = forms.MultipleChoiceField(choices=(),
                                                widget=forms.SelectMultiple(attrs={'class': 'chosen-select'}),
                                                help_text=None)
-    text = forms.CharField(max_length=40000, widget=TipTapWidget(), help_text=None)
+    video_url = forms.CharField(max_length=180,
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Youtube link'}),
+                                help_text=None,
+                                label='Video guide/showcase (optional)',
+                                required=False)
+    text = forms.CharField(max_length=40000, widget=TipTapWidget(attrs={'placeholder': 'Content'}), help_text=None)
+
+    def clean_text(self):
+        data = self.cleaned_data['text']
+        data = URL_REGEX.sub('[REDACTED LINK]', data)
+        return data
+
+    def clean_title(self):
+        data = self.cleaned_data['title']
+        data = URL_REGEX.sub('[REDACTED LINK]', data)
+        return data
+
+    def clean_video_url(self):
+        data = self.cleaned_data['video_url']
+        if not data:
+            return data
+        lower_data = data.lower()
+        if (not lower_data.startswith('https://youtube.com')
+            and not lower_data.startswith('https://www.youtube.com')
+            and not lower_data.startswith('http://youtube.com')
+            and not lower_data.startswith('http://www.youtube.com')):
+            raise ValidationError('URL must start with "youtube.com"')
+        return data
 
 
 class GuideListFilterForm(Form):
@@ -159,14 +198,20 @@ class ProfileForm(ModelForm):
 
     def clean_avatar(self):
         data = self.cleaned_data['avatar']
-        if data:
-            im = data.read()
-            image_file = io.BytesIO(im)
-            image = Image.open(image_file)
-            image = image.resize((200, 200), Image.ANTIALIAS)
+        if not data:
+            return data
 
-            image_file = io.BytesIO()
-            image.save(image_file, 'PNG', quality=90)
+        if data.size > 1 * 1024 * 1024:
+            raise ValidationError("Image file too large ( >1MB )")
 
-            data.file = image_file
+        im = data.read()
+        image_file = io.BytesIO(im)
+        image = Image.open(image_file)
+        image = image.resize((200, 200), Image.ANTIALIAS)
+
+        image_file = io.BytesIO()
+        image.save(image_file, 'PNG', quality=90)
+
+        data.file = image_file
+
         return data

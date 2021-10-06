@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load myfilters %}
+{% block content %}
+  <div id="authors-list-container">
+    <div id="loading-spinner" class="lds-ring-big lds-ring">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <script>
+    let page = 1;
+
+    function find_authors(page) {
+      var page_str = "&page=" + page;
+
+      $("#authors-list").fadeOut(150, function () {
+        $("#loading-spinner").fadeIn(150);
+        $("#authors-list").remove();
+      });
+
+      $.ajax({
+        url: "{% url 'authors_list' %}",
+        data: page_str,
+        type: 'get',
+        success: function (data) {
+          $('#authors-list-container').append(data)
+          $("#authors-list").ready(function () {
+            $("#loading-spinner").fadeOut(150, function () {
+              $("#authors-list").fadeIn(150);
+            });
+          });
+        }
+      });
+    }
+
+
+    $(document).ready(function () {
+      find_authors(page)
+    });
+
+  </script>
+{% endblock %}

@@ -1,10 +1,11 @@
 import logging
+from datetime import timedelta, datetime
 
 import pytz
-from django.contrib.auth import login
-from django.contrib.auth.models import User
+from django.contrib.auth import login, get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
+from django.db.models import Count, Q
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 # Create your views here.
@@ -16,7 +17,8 @@ from django.views import generic
 
 from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike, ActiveSkill
 from . import skill_tree, build_guide, items_service, guide_search
-from .forms import SignUpForm, NewGuideForm, EditGuideForm, ProfileForm, GuideListFilterForm
+from .forms import SignUpForm, PobStringForm, EditGuideForm, ProfileForm, GuideListFilterForm, URL_REGEX
+from .settings import LIKES_RECENTLY_OFFSET
 from .tokens import account_activation_token
 
 logger = logging.getLogger('guidetoexile')
@@ -32,34 +34,12 @@ class LikedGuidesView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return BuildGuide.objects.defer('pob_details').filter(guidelike__is_active=True,
-                                                              guidelike__user=self.request.user.userprofile).all()
-
-
-class UserProfileView(generic.DetailView):
-    template_name = 'user_profile.html'
-    context_object_name = 'user_profile'
-    model = UserProfile
-    slug_field = 'user_id'
-    slug_url_kwarg = 'user_id'
-    paginate_by = 50
-
-    def get_context_data(self, **kwargs):
-        context = super(UserProfileView, self).get_context_data(**kwargs)
-        guides = self.get_related_guides()
-        context['guides'] = guides
-        context['page_obj'] = guides
-        return context
-
-    def get_related_guides(self):
-        queryset = self.object.buildguide_set.defer('pob_details').all()
-        paginator = Paginator(queryset, self.paginate_by)
-        page = self.request.GET.get('page')
-        return paginator.get_page(page)
+        return BuildGuide.objects.defer('pob_details', 'pob_string', 'text').filter(guidelike__is_active=True,
+                                                                                    guidelike__user=self.request.user.userprofile).all()
 
 
 def index_view(request):
-    form = GuideListFilterForm()
+    form = GuideListFilterForm(initial=request.GET)
     if not request.user.is_authenticated:
         form.fields['liked_by_me'].disabled = True
     return render(request, 'index.html', {
@@ -71,17 +51,12 @@ def index_view(request):
 
 def guide_list_view(request):
     paginate_by = 50
-    if request.method == 'POST':
-        form = GuideListFilterForm(request.POST)
-        if form.is_valid():
-            user_id = request.user.userprofile.user_id if request.user.is_authenticated else 0
-            page = request.POST.get('page')
-            page_obj = guide_search.find_with_filter(form, user_id, page, paginate_by)
-            return render(request, 'guide_list.html', {'page_obj': page_obj})
-
-    page = request.POST.get('page')
-    page_obj = guide_search.find_all(page, paginate_by)
-    return render(request, 'guide_list.html', {'page_obj': page_obj})
+    form = GuideListFilterForm(request.GET)
+    if form.is_valid():
+        user_id = request.user.userprofile.user_id if request.user.is_authenticated else 0
+        page = request.GET.get('page')
+        page_obj = guide_search.find_with_filter(form, user_id, page, paginate_by)
+        return render(request, 'guide_list.html', {'page_obj': page_obj})
 
 
 def show_guide_view(request, pk, slug):
@@ -131,17 +106,58 @@ class MyGuidesListView(generic.ListView):
     paginate_by = 50
 
     def get_queryset(self):
-        return guide_search.find_all_by_user(self.request.user)
+        return guide_search.find_all_by_user(self.request.user.userprofile)
 
 
 def my_guides_view(request):
     return render(request, 'my_guides.html')
 
 
-def new_guide_view(request):
+def authors_view(request):
+    return render(request, 'authors.html')
+
+
+def authors_list_view(request):
+    recently_threshold = datetime.today() - timedelta(days=LIKES_RECENTLY_OFFSET)
+    is_public_q = Q(buildguide__status=BuildGuide.GuideStatus.PUBLIC)
+    is_active_q = Q(buildguide__guidelike__is_active=True)
+    recently_q = Q(
+        buildguide__guidelike__creation_datetime__gte=recently_threshold)
+    authors = (UserProfile.objects.filter(buildguide__isnull=False, buildguide__status=BuildGuide.GuideStatus.PUBLIC)
+               .annotate(likes=Count('buildguide__guidelike', filter=is_active_q & is_public_q))
+               .annotate(likes_recently=Count('buildguide__guidelike', filter=is_active_q & recently_q & is_public_q))
+               .order_by('-likes', 'user__username'))
+    logger.info(authors.query)
+    paginate_by = 50
+    page = request.GET.get('page')
+    paginator = Paginator(authors, paginate_by)
+    authors_page = paginator.get_page(page)
+    for author in authors_page:
+        top3_guides = (BuildGuide.objects
+                           .defer('pob_details', 'pob_string', 'text')
+                           .filter(author=author.pk)
+                           .filter(status=BuildGuide.GuideStatus.PUBLIC)
+                           .annotate(likes=Count('guidelike', filter=Q(guidelike__is_active=True)))
+                           .order_by('-likes')[:3])
+        top3_guides_recently = (BuildGuide.objects
+                                    .defer('pob_details', 'pob_string', 'text')
+                                    .filter(author=author.pk)
+                                    .filter(status=BuildGuide.GuideStatus.PUBLIC)
+                                    .annotate(likes_recently=
+                                              Count('guidelike',
+                                                    filter=Q(guidelike__is_active=True)
+                                                           & Q(guidelike__creation_datetime__gte=recently_threshold)))
+                                    .order_by('-likes_recently')[:3])
+        author.top3_guides = top3_guides
+        author.top3_guides_recently = top3_guides_recently
+
+    return render(request, 'authors_list.html', {'page_obj': authors_page})
+
+
+def new_guide_pob_view(request):
     if request.method == 'POST':
         logger.info('Creating new guide')
-        form = NewGuideForm(request.POST)
+        form = PobStringForm(request.POST)
         if form.is_valid():
             build_details, pob_string = form.cleaned_data['pob_input']
             author = request.user.userprofile
@@ -150,9 +166,23 @@ def new_guide_view(request):
             return redirect('edit_guide', pk=new_build_guide.guide_id)
 
     else:
-        form = NewGuideForm()
+        form = PobStringForm()
 
-    return render(request, 'new_guide.html', {'form': form})
+    return render(request, 'pob_string_form.html', {'form': form})
+
+
+def edit_pob_view(request, pk):
+    if request.method == 'POST':
+        form = PobStringForm(request.POST)
+        if form.is_valid():
+            build_details, pob_string = form.cleaned_data['pob_input']
+            guide = BuildGuide.objects.get(guide_id=pk)
+            build_guide.assign_pob_details_to_guide(guide, build_details, pob_string, skill_tree_service)
+            return redirect('edit_guide', pk=guide.guide_id)
+
+    else:
+        form = PobStringForm()
+    return render(request, 'pob_string_form.html', {'pk': pk, 'form': form})
 
 
 def publish_guide_view(request, pk):
@@ -196,17 +226,24 @@ def clear_draft_view(request, pk):
     guide = BuildGuide.objects.get(guide_id=pk)
     if request.user.userprofile != guide.author:
         return HttpResponseForbidden
-    guide = build_guide.clear_draft(guide)
-    return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
+
+    try:
+        guide = build_guide.clear_draft(guide.public_version)
+        return redirect('show_guide', pk=guide.guide_id, slug=guide.slug)
+    except BuildGuide.DoesNotExist:
+        guide.delete()
+        return redirect('/')
 
 
 def edit_guide_view(request, pk):
     guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user.userprofile != guide.author:
+        return HttpResponseForbidden
     draft_guide = guide if guide.status == BuildGuide.GuideStatus.DRAFT else guide.draft
     # Form field requires (value, label) tuples for options, list of those is created here
     active_skills = set((gem.name, gem.name) for skill_group in draft_guide.pob_details.skill_groups
                         for gem in skill_group.gems
-                        if gem.is_active_skill)
+                        if gem.is_active_skill and not skill_group.is_ignored)
     active_skills = list(active_skills)
     imported_primary_skill = draft_guide.pob_details.imported_primary_skill
     active_skills.sort(key=lambda v: v[0] == imported_primary_skill, reverse=True)
@@ -222,22 +259,41 @@ def edit_guide_view(request, pk):
             draft_guide.text = form.cleaned_data['text']
 
             primary_skills_names = form.cleaned_data['primary_skills']
+            draft_guide.video_url = form.cleaned_data['video_url']
             if imported_primary_skill not in primary_skills_names:
                 primary_skills_names.insert(0, imported_primary_skill)
             draft_guide.pob_details.main_active_skills = primary_skills_names
             draft_guide.primary_skills.clear()
             draft_guide.primary_skills.add(*ActiveSkill.objects.filter(name__in=primary_skills_names).all())
-            draft_guide.modification_datetime = timezone.now()
+
+            now = timezone.now()
+            draft_guide.modification_datetime = now
+            if not draft_guide.creation_datetime:
+                draft_guide.creation_datetime = now
 
             draft_guide.save()
 
             return redirect('show_draft', pk=pk)
 
     else:
-        form = EditGuideForm(active_skills, {'title': draft_guide.title,
-                                             'text': draft_guide.text,
-                                             'primary_skills': draft_guide.pob_details.main_active_skills}, )
+        form = EditGuideForm(active_skills, initial={'title': draft_guide.title,
+                                                     'text': draft_guide.text,
+                                                     'video_url': draft_guide.video_url,
+                                                     'primary_skills': draft_guide.pob_details.main_active_skills})
     return render(request, 'edit_guide.html', {'form': form, 'pk': pk, 'guide': draft_guide})
+
+
+def cancel_edit_view(request, pk):
+    guide = BuildGuide.objects.get(guide_id=pk)
+    if request.user.userprofile != guide.author:
+        return HttpResponseForbidden
+    if not guide.creation_datetime:
+        guide.delete()
+        return redirect('/')
+    try:
+        return redirect('show_guide', pk=guide.public_version.pk, slug=guide.public_version.slug)
+    except BuildGuide.DoesNotExist:
+        return redirect('show_guide', pk=guide.pk, slug=guide.slug)
 
 
 def user_settings_view(request):
@@ -324,6 +380,8 @@ def add_comment(request, guide_id):
         return HttpResponseForbidden()
     if request.method == 'POST':
         comment_text = request.POST['comment']
+        comment_text = URL_REGEX.sub('[REDACTED LINK]', comment_text)
+
         comment = GuideComment()
         comment.author = request.user.userprofile
         comment.guide = get_object_or_404(BuildGuide, guide_id=guide_id)
@@ -388,8 +446,8 @@ def signup_view(request):
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
         user = None
     # checking if the user exists, if the token is valid.
     if user is not None and account_activation_token.check_token(user, token):
@@ -406,3 +464,15 @@ def activate(request, uidb64, token):
 
 def activation_sent_view(request):
     return render(request, 'registration/activation_sent.html')
+
+
+class CookiePolicy(generic.TemplateView):
+    template_name = "policies/cookies_policy.html"
+
+
+class PrivacyPolicy(generic.TemplateView):
+    template_name = "policies/privacy_policy.html"
+
+
+class TermsOfUse(generic.TemplateView):
+    template_name = "policies/terms_of_use.html"

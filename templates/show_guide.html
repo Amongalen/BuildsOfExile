@@ -1,48 +1,69 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-  <div class="row bg-secondary border border-primary-lighter rounded-3 mb-2 mx-0 p-2">
-    <div class="col-10">
-      <h4><strong>{{ build_guide.title }}</strong></h4>
-      <h4>
-        {% if build_guide.pob_details.ascendancy_name != 'None' %}
-          {{ build_guide.pob_details.ascendancy_name }}
-        {% else %}
-          {{ build_guide.pob_details.class_name }}
-        {% endif %}
-      </h4>
-      Primary active skills: {{ build_guide.pob_details.main_active_skills|join:', ' }}
+
+  <div class="row mb-2 mx-0 gap-2">
+
+    <div class="col bg-secondary border border-primary-lighter rounded-3 p-2">
+      <div class="row m-0">
+        <img src="{% static build_guide.ascendancy_class.portrait_icon_80x80 %}" height="80" width="80"
+             class="w-auto p-0" title="{{ build_guide.ascendancy_class }}">
+        <div class="col">
+          <h5><strong>{{ build_guide.title }}</strong></h5>
+          <strong>Primary skills:</strong> {{ build_guide.pob_details.main_active_skills|join:', ' }}
+        </div>
+      </div>
+
+      <div class="row mt-1 lh-sm">
+        <small>
+          {% if build_guide.creation_datetime %}
+            Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}
+          {% endif %}
+          {% if build_guide.creation_datetime != build_guide.modification_datetime %}
+            <br/>Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}
+          {% endif %}
+        </small>
+      </div>
 
     </div>
-    <div class="col row text-end">
-      {% with build_guide.author as user_profile %}
-        <div class="col"><h4 class="mb-0"><a
-                href="{% url 'user_profile' user_profile.user_id user_profile.user.username %}">
-          {{ user_profile.user.username }}</a></h4>
-          {% if user_profile.youtube_url %}
-            <a href="{{ user_profile.youtube_url }}">YouTube.com</a><br/>
+    <div class="ps-3 p-1 bg-secondary col-auto text-end float-end border border-primary-lighter rounded-3">
+      {% with build_guide.author as author %}
+        <div class="row">
+        <div class="col-auto "><h5>
+          <strong>{{ author.user.username }}</strong></h5>
+          {% if author.youtube_url %}
+            <a class="fs-7 text-light bg-dark border border-1 border-primary-lighter
+            rounded-pill badge text-decoration-none"
+               href="{{ author.youtube_url }}">
+              YouTube.com
+            </a><br/>
           {% endif %}
-
-          {% if user_profile.twitch_url %}
-            <a href="{{ user_profile.twitch_url }}">Twitch.tv</a>
+          {% if author.twitch_url %}
+            <a
+              class="fs-7 text-light bg-dark border border-1 border-primary-lighter rounded-pill badge text-decoration-none"
+              href="{{ author.twitch_url }}">
+              Twitch.tv
+            </a><br/>
           {% endif %}
+          <a
+            class="fs-7 text-light bg-dark border border-1 border-primary-lighter rounded-pill badge text-decoration-none"
+            href="{% url 'index' %}?author_username={{ author.user.username }}">
+            All guides
+          </a>
         </div>
-        <div class="col-auto "><img id="avatar_preview" alt="Avatar" width="80" height="80"
-                                    src="{% if user_profile.avatar %}
+        <div class="col-auto"><img id="avatar_preview" alt="Avatar" width="120" height="120"
+                                   src="{% if user_profile.avatar %}
                                           {{ user_profile.avatar.url }}
                                         {% else %}
                                           {% static 'icons/avatar_placeholder.svg' %}
                                         {% endif %}"
-                                    class="user-avatar"/></div>
+                                   class="user-avatar"/></div>
       {% endwith %}
-      <div style="font-size: small">
-        Created: {{ build_guide.creation_datetime|date:'Y-m-d H:i' }}
-        {% if build_guide.creation_datetime != build_guide.modification_datetime %}
-          <br/>Last modified: {{ build_guide.modification_datetime|date:'Y-m-d H:i' }}
-        {% endif %}
       </div>
     </div>
   </div>
+
+
   {% if build_guide.is_draft %}
     <div class="mb-2 bg-warning text-warning bg-opacity-25 p-2  border border-warning rounded-3">This is just a <strong>Draft</strong>.
       Others won't be able to see it unless you <strong>Publish</strong> it!
@@ -56,14 +77,15 @@
   {% endif %}
   <div class="row">
     <div class="col">
-      <button class="mb-2 btn btn-outline-light btn-secondary" id="like-btn"
-              onclick="addRemoveLike()" {% if not user.is_authenticated or user == build_guide.author.user %}
-              disabled {% endif %}
-              title="test" data-bs-placement="bottom" data-bs-toggle="tooltip">
-        0
-        <svg height="20px" width="20px"
-             viewBox="0 0 512 512" style="margin-top: -2px">
-          <path d="M474.644,74.27C449.391,45.616,414.358,29.836,376,29.836c-53.948,0-88.103,32.22-107.255,59.25
+      {% if not build_guide.is_draft %}
+        <button class="mb-2 btn btn-outline-light btn-secondary" id="like-btn"
+                onclick="addRemoveLike()" {% if not user.is_authenticated or user == build_guide.author.user %}
+                disabled {% endif %}
+                title="test" data-bs-placement="bottom" data-bs-toggle="tooltip">
+          ?
+          <svg height="20px" width="20px"
+               viewBox="0 0 512 512" style="margin-top: -2px">
+            <path d="M474.644,74.27C449.391,45.616,414.358,29.836,376,29.836c-53.948,0-88.103,32.22-107.255,59.25
               c-4.969,7.014-9.196,14.047-12.745,20.665c-3.549-6.618-7.775-13.651-12.745-20.665c-19.152-27.03-53.307-59.25-107.255-59.25
               c-38.358,0-73.391,15.781-98.645,44.435C13.267,101.605,0,138.213,0,177.351c0,42.603,16.633,82.228,52.345,124.7
               c31.917,37.96,77.834,77.088,131.005,122.397c19.813,16.884,40.302,34.344,62.115,53.429l0.655,0.574
@@ -75,12 +97,19 @@
               c2.011,6.175,7.768,10.354,14.262,10.354c6.494,0,12.251-4.179,14.262-10.354c2.404-7.377,9.453-26.595,22.962-45.66
               c15.06-21.255,41.647-46.593,82.776-46.593c29.621,0,56.66,12.171,76.137,34.27C471.395,115.957,482,145.521,482,177.351
               C482,254.358,413.255,312.939,309.193,401.614z" fill="currentcolor"></path>
-        </svg>
-      </button>
+          </svg>
+        </button>
+      {% endif %}
     </div>
     <div class="col">
       <div class="float-end">
         {% if user == build_guide.author.user %}
+          {% if build_guide.is_draft %}
+            <button class="mb-2 btn opacity-75 btn-outline-warning btn-secondary"
+                    onclick="location.href='{% url 'clear_draft' build_guide.guide_id %}'">
+              Delete draft
+            </button>
+          {% endif %}
           {% if build_guide.is_draft and build_guide.public_version %}
             <button class="mb-2 btn btn-outline-light btn-secondary"
                     onclick="location.href='{% url 'show_guide' build_guide.public_version.guide_id build_guide.public_version.slug %}'">
@@ -95,12 +124,6 @@
             <button class="mb-2 btn btn-outline-light btn-secondary"
                     onclick="location.href='{% url 'show_draft' pk %}'">
               Show draft
-            </button>
-          {% endif %}
-          {% if build_guide.is_draft and build_guide.public_version %}
-            <button class="mb-2 btn btn-outline-light btn-secondary"
-                    onclick="location.href='{% url 'clear_draft' build_guide.public_version.guide_id %}'">
-              Clear draft
             </button>
           {% endif %}
           {% if build_guide.is_draft %}
@@ -141,9 +164,11 @@
       <button class="nav-link" id="nav-gear-and-gems-tab" data-bs-toggle="tab" data-bs-target="#nav-gear-and-gems"
               type="button" role="tab" aria-controls="nav-gear-and-gems" aria-selected="false">Gear and gems
       </button>
-      <button class="nav-link" id="nav-discuss-tab" data-bs-toggle="tab" data-bs-target="#nav-discuss"
-              type="button" role="tab" aria-controls="nav-discuss" aria-selected="false">Discuss
-      </button>
+      {% if not build_guide.is_draft %}
+        <button class="nav-link" id="nav-discuss-tab" data-bs-toggle="tab" data-bs-target="#nav-discuss"
+                type="button" role="tab" aria-controls="nav-discuss" aria-selected="false">Discuss
+        </button>
+      {% endif %}
     </div>
   </nav>
   <div class="tab-content" id="nav-tabContent">
@@ -222,73 +247,77 @@
 
     function getLikes() {
       $.get(
-              "{% url 'guide_likes' pk %}",
-              function (data) {
-                let likesAmount = data['likes_amount'];
-                let doUserLike = data['do_user_like'];
-                is_guide_liked = doUserLike
-                let heart = doUserLike ? fullHeart : emptyHeart;
-                let likeBtn = $('#like-btn');
-                likeBtn.html(`${likesAmount} ${heart}`);
+        "{% url 'guide_likes' pk %}",
+        function (data) {
+          let likesAmount = data['likes_amount'];
+          let doUserLike = data['do_user_like'];
+          is_guide_liked = doUserLike
+          let heart = doUserLike ? fullHeart : emptyHeart;
+          let likeBtn = $('#like-btn');
+          likeBtn.html(`${likesAmount} ${heart}`);
 
-                let tooltip = bootstrap.Tooltip.getInstance(likeBtn);
-                if (tooltip != null) {
-                  tooltip.dispose();
-                }
-                likeBtn.attr('title', doUserLike ? 'Unlike' : 'Like');
-                let newTooltip = new bootstrap.Tooltip(likeBtn);
-                likeBtn.blur()
-              }
+          let tooltip = bootstrap.Tooltip.getInstance(likeBtn);
+          if (tooltip != null) {
+            tooltip.dispose();
+          }
+          likeBtn.attr('title', doUserLike ? 'Unlike' : 'Like');
+          let newTooltip = new bootstrap.Tooltip(likeBtn);
+          likeBtn.blur()
+        }
       );
     }
 
     $(document).ready(function () {
       loadGuideTab();
-      getLikes();
+      {% if build_guide.is_public %}
+        getLikes();
+      {% endif %}
     });
 
     function loadGuideTab() {
       $.get(
-              "{% url 'guide_tab' pk %}",
-              function (data) {
-                $("#guide-spinner").fadeOut(150, function () {
-                  $(this).remove();
-                  $("#nav-guide").append(data);
-                  $("#guide-tab").fadeIn(250);
-                  attachTooltips();
-                });
-                loadGearGemsTab();
-                loadSkillTreeTab();
-              });
+        "{% url 'guide_tab' pk %}",
+        function (data) {
+          $("#nav-guide").append(data);
+          attachTooltips();
+          $("#guide-tab").ready(function () {
+            $("#guide-spinner").fadeOut(150, function () {
+              $("#guide-tab").fadeIn(150);
+              $(this).remove();
+            });
+          });
+          loadGearGemsTab();
+          loadSkillTreeTab();
+        });
     }
 
     function loadSkillTreeTab() {
       $.get(
-              "{% url 'skill_tree_tab' pk %}",
-              function (data) {
-                $("#nav-skill-tree").append(data);
-                $("#skill-tree-tab").ready(function () {
-                  $("#skill-tree-spinner").fadeOut(150, function () {
-                    $(this).remove();
-                    $("#skill-tree-tab").fadeIn(150);
-                  });
-                });
-              });
+        "{% url 'skill_tree_tab' pk %}",
+        function (data) {
+          $("#nav-skill-tree").append(data);
+          $("#skill-tree-tab").ready(function () {
+            $("#skill-tree-spinner").fadeOut(150, function () {
+              $(this).remove();
+              $("#skill-tree-tab").fadeIn(150);
+            });
+          });
+        });
     }
 
     function loadGearGemsTab() {
       $.get(
-              "{% url 'gear_gems_tab' pk %}",
-              function (data) {
-                $("#nav-gear-and-gems").append(data);
-                $("#gear-gems-tab").ready(function () {
-                  $("#gear-gems-spinner").fadeOut(150, function () {
-                    $(this).remove();
-                    $("#gear-gems-tab").fadeIn(150);
-                    attachTooltips();
-                  });
-                });
-              });
+        "{% url 'gear_gems_tab' pk %}",
+        function (data) {
+          $("#nav-gear-and-gems").append(data);
+          $("#gear-gems-tab").ready(function () {
+            $("#gear-gems-spinner").fadeOut(150, function () {
+              $(this).remove();
+              $("#gear-gems-tab").fadeIn(150);
+              attachTooltips();
+            });
+          });
+        });
     }
 
     function attachTooltips() {

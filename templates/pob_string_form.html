@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="col-6">
+    <form id="form" method="post" onsubmit="onSubmit()"
+          action="{% if pk %}
+                    {% url 'edit_pob' pk %}
+                  {% else %}
+                    {% url 'new_guide' %}
+                  {% endif %}">
+      {% csrf_token %}
+      {{ form }}
+      <button id='submit_btn' class='btn my-2 btn-outline-light btn-secondary' type="submit" value="Submit">Submit
+      </button>
+      <button type="button" class="btn my-2 btn-outline-light btn-secondary"
+              onclick="{% if pk %}
+                location.href='{% url 'edit_guide' pk %}'
+              {% else %}
+                location.href='{% url 'index' %}'
+              {% endif %}">
+        Cancel
+      </button>
+      <div id='spinner' class="lds-ring" style="display: none">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div>Before exporting a build, make sure to select in Path of Build a correct skill, gear set and tree.
+        Statistics in your build guide are based on selections made in Path of Building.
+      </div>
+    </form>
+  </div>
+  <script>
+    function onSubmit() {
+      setTimeout(function () {
+        $("#submit_btn").blur();
+      }, 200);
+      showSpinner()
+      disableForm()
+
+    }
+
+    function disableForm() {
+      $("#form input").prop("readonly", true)
+      $("#form button").prop("disabled", true)
+    }
+
+    function showSpinner() {
+      let x = document.getElementById("spinner");
+      x.style.display = "inline-block";
+
+    }
+  </script>
+{% endblock %}

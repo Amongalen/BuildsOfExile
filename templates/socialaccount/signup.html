@@ -1,0 +1,26 @@
+{% extends "socialaccount/base.html" %}
+
+{% load i18n %}
+{% load myfilters %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="py-3 col-4 px-0 border border-1 border-light rounded-2 bg-secondary">
+      <h3 class="text-center" id="head_banner">{% trans "Sign Up" %}</h3>
+      <div class="text-center">{% blocktrans %}Insert you username to complete registration:{% endblocktrans %}</div>
+      <form class="text-center" id="signup_form" method="POST" action="{% url 'socialaccount_signup' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <table class="mx-auto" style="border-collapse:separate; border-spacing: 0 0.5em;">
+          <tr>
+            <td>{{ form.username|addclass:'form-control' }}</td>
+            <td>{{ form.username.errors }}</td>
+          </tr>
+        </table>
+        <input class="btn btn-outline-light btn-secondary" type="submit" value="{% trans 'Sign Up' %}"/>
+      </form>
+    </div>
+  </div>
+{% endblock %}

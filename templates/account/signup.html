@@ -1,0 +1,91 @@
+{% extends "account/base.html" %}
+{% load myfilters %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+{% block head_links %}
+
+  <title>The Test</title>
+
+{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="py-3 px-4 col-auto px-0 border border-1 border-light rounded-2 bg-secondary">
+      <h3 class="text-center" id="head_banner">{% trans "Sign Up" %}</h3>
+      <form class="text-center" id="signup_form" method="POST" action="{% url 'account_signup' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <table class="mx-auto" style="border-collapse:separate; border-spacing: 0 0.5em;">
+          <tr>
+            <td class="text-end pe-2 text-light">{{ form.username.label_tag }}</td>
+            <td>{{ form.username|addclass:'form-control' }}</td>
+          </tr>
+          {% if form.username.errors %}
+            <tr>
+              <td colspan="2">{{ form.username.errors }}</td>
+            </tr>
+          {% endif %}
+          <tr>
+            <td class="text-end pe-2 text-light">{{ form.email.label_tag }}</td>
+            <td>{{ form.email|addclass:'form-control' }}</td>
+          </tr>
+          {% if form.email.errors %}
+            <tr>
+              <td colspan="2">{{ form.email.errors }}</td>
+            </tr>
+          {% endif %}
+          <tr>
+            <td class="text-end pe-2 text-light">{{ form.password1.label_tag }}</td>
+            <td>{{ form.password1|addclass:'form-control' }}</td>
+          </tr>
+          {% if form.password1.errors %}
+            <tr>
+              <td colspan="2">{{ form.password1.errors }}</td>
+            </tr>
+          {% endif %}
+          <tr>
+            <td class="text-end pe-2 text-light">{{ form.password2.label_tag }}</td>
+            <td>{{ form.password2|addclass:'form-control' }}</td>
+          </tr>
+          {% if form.password2.errors %}
+            <tr>
+              <td colspan="2">{{ form.password2.errors }}</td>
+            </tr>
+          {% endif %}
+          <tr>
+            <td></td>
+            <td>
+              <button class="btn btn-outline-light btn-secondary" type="submit">{% trans "Sign Up" %}</button>
+            </td>
+            <td></td>
+          </tr>
+        </table>
+        {% if redirect_field_value %}
+
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+
+        {% endif %}
+
+
+      </form>
+
+      <div class="text-center pb-2">{% blocktrans %}Already have an account?
+        <a class="text-info fw-bolder" href="{{ login_url }}">Sign in</a>.{% endblocktrans %}</div>
+      <div class="strike">
+        <span>Or</span>
+      </div>
+
+      {% load account socialaccount %}
+
+      {% get_providers as socialaccount_providers %}
+      <ul class="p-2 pb-0">
+        {% for provider in socialaccount_providers %}
+          <a title="{{ provider.name }}" class="social-btn-{{ provider.name }} mx-auto border-0 p-0 m-1 d-block"
+             href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}"></a>
+        {% endfor %}
+      </ul>
+
+    </div>
+  </div>
+{% endblock %}

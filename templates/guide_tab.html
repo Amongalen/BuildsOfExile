@@ -15,6 +15,16 @@
               onclick="copyPobString(this)">Copy
       </button>
     </div>
+    {% if build_guide.video_url %}
+      <div class="bg-secondary border border-primary-lighter rounded-3 mt-1 mb-3 p-3">
+        <h6>Video guide/showcase:</h6>
+        <input id="pobString" class='d-inline w-75 align-middle form-control form-control-sm'
+               readonly value="{{ build_guide.video_url }}"/>
+        <button id="pobStringCopyBtn" style='width:75px' class=" btn btn-sm btn-outline-light btn-secondary"
+                onclick="window.open('{{ build_guide.video_url }}','_blank')">Open
+        </button>
+      </div>
+    {% endif %}
     <div class="bg-secondary border border-primary-lighter rounded-3 p-3">
       <h3>Statistics:<sup><abbr
         title="Note that all statistics are imported from PoB. They highly depend on settings made before exporting and might be misleading.">?</abbr></sup>
@@ -102,7 +112,7 @@
             {% if 'critmultiplier' in stats %}
               <div class="row">
                 <div class="col-7">Crit Multiplier</div>
-                <div class="col text-end">{{ stats.critmultiplier|mul:100 }}%</div>
+                <div class="col text-end">{{ stats.critmultiplier|mul:100|floatformat:0|intcomma }}%</div>
               </div>
             {% endif %}
             {% if 'hitchance' in stats %}

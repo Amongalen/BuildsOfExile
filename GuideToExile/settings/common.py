@@ -36,6 +36,7 @@ PROJECT_TEMPLATES = [
 sys.path.append(normpath(join(PROJECT_ROOT, 'apps')))
 
 # ##### APPLICATION CONFIGURATION #########################
+AUTH_USER_MODEL = "GuideToExile.User"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -48,11 +49,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'django_extensions',
     'apps.django_tiptap',
     'mathfilters',
     'django.contrib.humanize',
     'storages',
+    'django_inlinecss',
+    'fullurl',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 AWS_S3_OBJECT_PARAMETERS = {
@@ -95,6 +105,11 @@ TEMPLATES = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
 USE_TZ = True
 
 # Internationalization
@@ -131,6 +146,54 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
+# ##### ALLAUTH CONFIGURATION ###############################
+
+ACCOUNT_LOGOUT_REDIRECT_URL = LOGOUT_REDIRECT_URL
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
+ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 86400  # 1 day in seconds
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_STORE_TOKENS = False
+SOCIALACCOUNT_EMAIL_VERIFICATION = False
+
+SITE_ID = 1
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'name',
+            'name_format',
+            'short_name',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': lambda request: 'en_US',
+        'VERIFIED_EMAIL': False,
+    },
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = False
@@ -157,7 +220,7 @@ DJANGO_TIPTAP_CONFIG = {
         "typography",
         "clearFormat"
     ],
-    "placeholderText": "Begin typing here...",  # set None to skip display
+    "placeholderText": "Guide content ...",  # set None to skip display
     "unsavedChangesWarningText": "You have unsaved changes",  # set None to skip display
     "lang": "EN",  # if you want to use default tooltips and translations, use this. Valid Options => EN/DE(for now)
     "tooltips": {

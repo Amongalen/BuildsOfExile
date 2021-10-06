@@ -1,10 +1,12 @@
 {% load static %}
+<div id="guide-list" style="display: none">
 {% if page_obj %}
   <div class="list-group">
     {% for guide in page_obj %}
       <a href="{% url 'show_guide' guide.guide_id guide.slug %}"
          class="mx-0 my-1 row bg-secondary d-flex text-decoration-none border border-1 border-primary-lighter rounded-2">
-        <img src="{% static guide.ascendancy_class.portrait_icon %}" height="80" width="110" class="w-auto p-0">
+        <img src="{% static guide.ascendancy_class.portrait_icon %}" height="80" width="110" class="w-auto p-0"
+             title="{{ guide.ascendancy_class }}">
         <div class="col-10 py-1 d-flex h-auto flex-column">
           <div class="row">
             <h5 class="mb-0"><strong>{{ guide.title }}</strong></h5>
@@ -114,3 +116,4 @@
     return new bootstrap.Tooltip(tooltipTriggerEl)
   })
 </script>
+</div>

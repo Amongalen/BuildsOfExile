@@ -15,16 +15,25 @@
           {{ form.title.errors }}
         </div>
         <div class="fieldWrapper">
+          {{ form.video_url.label_tag }}
+          {{ form.video_url }}
+          {{ form.video_url.errors }}
+        </div>
+        <div class="fieldWrapper">
           {{ form.primary_skills.label_tag }}
           {{ form.primary_skills }}
         </div>
         <div class="fieldWrapper">
           {{ form.text.label_tag }}
-          {{ form.text.errors }}
           {{ form.text }}
+          {{ form.text.errors }}
         </div>
         <input type="submit" class="my-2 btn btn-outline-light btn-secondary" value="Save as draft">
-        <button type="button" class="my-2 btn btn-outline-light btn-secondary" onclick="window.history.back();">Cancel
+        <button type="button" class="my-2 btn btn-outline-light btn-secondary"
+                onclick="location.href='{% url 'cancel_edit' guide.guide_id %}'">Cancel
+        </button>
+        <button type="button" class="me-1 btn btn-outline-light btn-secondary"
+                onclick="location.href='{% url 'edit_pob' guide.guide_id %}'">Reload PoB
         </button>
       </form>
     </div>
@@ -32,24 +41,24 @@
       <div class="row">
         <div class="col">
           Items: <sup style="font-size:small"><abbr
-                title="Double-click to add to the editor. Tooltip will be visible after publishing.">?</abbr></sup>
+          title="Double-click to add to the editor. Tooltip will be visible after publishing.">?</abbr></sup>
           <div class="poe-container">
             {% for item in guide.pob_details.items %}
-              <div class="poe-line">
-                <button class="link" ondblclick="addText(this)">
-                                <span class="poeitem-{{ item.rarity|lower }}" data-bs-placement="bottom"
-                                      data-bs-toggle="tooltip" data-bs-html="true"
-                                      title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">
-                                  {% if item.rarity == 'RARE' or item.rarity == 'UNIQUE' %}
-                                    {{ item.name }}, {{ item.base_name }}
-                                  {% else %}
-                                    {{ item.name }}
-                                  {% endif %}
-                                </span>
-                </button>
-              </div>
-
-
+              {% if not item.is_broken %}
+                <div class="poe-line">
+                  <button class="link" ondblclick="addText(this)">
+                  <span class="poeitem-{{ item.rarity|lower }}" data-bs-placement="bottom"
+                        data-bs-toggle="tooltip" data-bs-html="true"
+                        title="<img srcset='{% static item.asset %} 2x'/>{{ item.display_html }}">
+                    {% if item.rarity == 'RARE' or item.rarity == 'UNIQUE' %}
+                      {{ item.name }}, {{ item.base_name }}
+                    {% else %}
+                      {{ item.name }}
+                    {% endif %}
+                  </span>
+                  </button>
+                </div>
+              {% endif %}
             {% endfor %}
           </div>
         </div>
@@ -57,17 +66,19 @@
           Gems: <sup style="font-size:small"><abbr title="Double-click to add to the editor.">?</abbr></sup>
           <div class="poe-container">
             {% for skill_group in guide.pob_details.skill_groups %}
-              {% for gem in skill_group.gems %}
-                <div class="poe-line ">
-                  <button class="link" ondblclick="addText(this)">
+              {% if not skill_group.is_ignored %}
+                {% for gem in skill_group.gems %}
+                  <div class="poe-line ">
+                    <button class="link" ondblclick="addText(this)">
                     <span
                       class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.alt_quality_pref }}{{ gem.name }}</span>
-                  </button>
-                </div>
-              {% endfor %}
+                    </button>
+                  </div>
+                {% endfor %}
 
-              {% if not forloop.last %}
-                <hr style="margin-top: 0.2rem;  margin-bottom: 0.2rem;">
+                {% if not forloop.last and skill_group.gems %}
+                  <hr style="margin-top: 0.2rem;  margin-bottom: 0.2rem;">
+                {% endif %}
               {% endif %}
             {% endfor %}
           </div>

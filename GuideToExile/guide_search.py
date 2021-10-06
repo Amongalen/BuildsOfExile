@@ -2,19 +2,18 @@ import logging
 from datetime import datetime, timedelta
 from typing import List
 
-from django.contrib.auth.models import User
 from django.core.paginator import Paginator, Page
 from django.db.models import Q, Count, QuerySet
 
 from GuideToExile.forms import GuideListFilterForm
-from GuideToExile.models import BuildGuide
+from GuideToExile.models import BuildGuide, UserProfile
 from GuideToExile.settings import LIKES_RECENTLY_OFFSET
 
 logger = logging.getLogger('guidetoexile')
 
 
 def find_with_filter(filter_form: GuideListFilterForm, user_id: int, page: int, paginate_by: int) -> Page:
-    queryset = BuildGuide.objects.defer('pob_details')
+    queryset = BuildGuide.objects.defer('pob_details', 'pob_string', 'text')
     queryset = _filter_public(queryset)
     base_filters = _get_base_filters(filter_form, user_id)
     queryset = queryset.filter(*base_filters)
@@ -29,17 +28,17 @@ def find_with_filter(filter_form: GuideListFilterForm, user_id: int, page: int, 
 
 
 def find_all(page: int, paginate_by: int) -> Page:
-    queryset = BuildGuide.objects.defer('pob_details')
+    queryset = BuildGuide.objects.defer('pob_details', 'pob_string', 'text')
     queryset = _filter_public(queryset)
     queryset = _annotate_like_counts(queryset)
     queryset = queryset.order_by('likes').all()
     return _get_page(page, paginate_by, queryset)
 
 
-def find_all_by_user(user: User) -> QuerySet:
-    queryset = BuildGuide.objects.defer('pob_details')
+def find_all_by_user(user: UserProfile) -> QuerySet:
+    queryset = BuildGuide.objects.defer('pob_details', 'pob_string', 'text')
     queryset = _annotate_like_counts(queryset)
-    queryset = queryset.filter(author__user=user)
+    queryset = queryset.filter(author=user)
     # hide drafts if published version exists
     queryset = queryset.exclude(status=BuildGuide.GuideStatus.DRAFT, public_version__isnull=False)
     queryset = queryset.order_by('-modification_datetime').all()

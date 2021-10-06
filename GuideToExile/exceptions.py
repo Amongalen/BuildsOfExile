@@ -2,7 +2,7 @@ class SkillTreeLoadingException(Exception):
     pass
 
 
-class TreeUrlParsingException(Exception):
+class TreeParsingException(Exception):
     pass
 
 

@@ -3,7 +3,7 @@ from typing import Union, Optional, List, Dict
 
 from GuideToExile import items_service
 
-assetMapping = items_service.AssetMapping()
+assetMapping = items_service.AssetsData()
 
 
 @dataclass
@@ -28,6 +28,7 @@ class SkillGroup:
     is_enabled: bool
     main_active_skill_index: int
     gems: List[SkillGem]
+    is_ignored: bool = field(default=False)
 
 
 @dataclass
@@ -46,6 +47,7 @@ class Item:
     rarity: str
     display_html: str
     support_gems: List[SkillGem]
+    is_broken: bool = field(default=False)
 
     @property
     def asset(self):

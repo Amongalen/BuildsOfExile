@@ -1,4 +1,5 @@
 import base64
+import copy
 import logging
 import re
 import xml.etree.ElementTree as ET
@@ -9,13 +10,14 @@ import requests
 
 from GuideToExile import items_service
 from GuideToExile.data_classes import SkillGem, SkillGroup, TreeSpec, ItemSet, Item, PobDetails
-from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException
+from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException, TreeParsingException
 from GuideToExile.settings import POB_PATH
 from apps.pob_wrapper import PathOfBuilding
 
 logger = logging.getLogger('guidetoexile')
 
-SLOTS_ORDER = ['Weapon 1', 'Weapon 2', 'Body Armour', 'Gloves', 'Helmet', 'Boots', 'Amulet', 'Ring 1', 'Ring 2',
+SLOTS_ORDER = ['Weapon 1', 'Weapon 1 Swap', 'Weapon 2', 'Weapon 2 Swap', 'Body Armour', 'Gloves', 'Helmet', 'Boots',
+               'Amulet', 'Ring 1', 'Ring 2',
                'Belt', 'Unassigned']
 
 ALT_QUALITY_PREF_MAPPING = {
@@ -25,7 +27,9 @@ ALT_QUALITY_PREF_MAPPING = {
     'Alternate3': 'Phantasmal ',
 }
 
-GEM_MAPPING = items_service.GemMapping()
+GEMS_DATA = items_service.GemsData()
+
+pob = PathOfBuilding(POB_PATH, POB_PATH)
 
 
 def import_from_pastebin(url: str) -> str:
@@ -135,7 +139,7 @@ def extract_stats(xml_root: ET.Element) -> Dict[str, Union[int, float]]:
 def extract_items(xml_root: ET.Element) -> List[Item]:
     logger.debug('Extracting items')
     items = []
-    pob = PathOfBuilding(POB_PATH, POB_PATH)
+
     for item_xml in xml_root.find('Items').findall('Item'):
         item_id = int(item_xml.get('id'))
         item_str = item_xml.text.strip()
@@ -148,13 +152,16 @@ def extract_items(xml_root: ET.Element) -> List[Item]:
             base_name = item_lines[1].strip()
 
         item_display_html = pob.item_as_html(item_str)
+
+        is_broken = True if not item_display_html else False
+
         items.append(Item(item_id_in_itemset=item_id,
                           name=item_name,
                           base_name=base_name,
                           rarity=item_rarity,
                           display_html=item_display_html,
-                          support_gems=extract_support_gems_from_item(item_lines)))
-    pob.kill()
+                          support_gems=extract_support_gems_from_item(item_lines),
+                          is_broken=is_broken))
     return items
 
 
@@ -182,7 +189,8 @@ def extract_item_sets(xml_root: ET.Element, items: List[Item]) -> List[ItemSet]:
             item_id = int(slot_xml.get('itemId'))
             if item_id != 0:
                 slot_name = slot_xml.get('name').lower().replace(' ', '-')
-                slots[slot_name] = items_by_id[item_id]
+                if item_id in items_by_id:
+                    slots[slot_name] = items_by_id[item_id]
         item_sets.append(ItemSet(title=title,
                                  set_id=set_id,
                                  slots=slots))
@@ -193,12 +201,16 @@ def extract_tree_specs(xml_root: ET.Element) -> List[TreeSpec]:
     logger.debug('Extracting tree specs')
     tree_specs = []
     for spec_xml in xml_root.find('Tree'):
-        nodes = list(map(str, spec_xml.get('nodes').split(',')))
-        title = title if (title := spec_xml.get('title')) is not None else 'Default'
-        tree_specs.append(TreeSpec(title=title,
-                                   nodes=nodes,
-                                   url=spec_xml.find('URL').text.strip(),
-                                   tree_version=spec_xml.get('treeVersion')))
+        nodes_str = spec_xml.get('nodes')
+        if nodes_str:
+            nodes = list(map(str, nodes_str.split(',')))
+            title = title if (title := spec_xml.get('title')) is not None else 'Default'
+            tree_specs.append(TreeSpec(title=title,
+                                       nodes=nodes,
+                                       url=(spec_xml.find('URL').text.strip()),
+                                       tree_version=(spec_xml.get('treeVersion'))))
+        else:
+            raise TreeParsingException
 
     return tree_specs
 
@@ -212,16 +224,14 @@ def extract_skills_groups(xml_root: ET.Element) -> List[SkillGroup]:
         slot = slot if (slot := group_xml.get('slot')) else 'Unassigned'
         gems = extract_gems_in_group(group_xml)
 
-        if not gems:
-            continue
-        if source is not None and 'Tree' in source:
-            continue
+        is_ignored = (not gems) or (source is not None and source.startswith('Tree'))
+
         is_group_enabled = parse_bool(group_xml.get('enabled'))
         main_active_skill_index = group_xml.get('mainActiveSkill')
         main_active_skill_index = int(main_active_skill_index) - 1 if not main_active_skill_index == 'nil' else 0
         skill_groups.append(SkillGroup(is_enabled=is_group_enabled,
                                        main_active_skill_index=main_active_skill_index,
-                                       gems=gems, source=source, slot=slot))
+                                       gems=gems, source=source, slot=slot, is_ignored=is_ignored))
     return skill_groups
 
 
@@ -230,20 +240,26 @@ def extract_gems_in_group(group_xml: ET.Element) -> List[SkillGem]:
     for gem_xml in group_xml:
         is_gem_enabled = parse_bool(gem_xml.get('enabled'))
         skill_id = gem_xml.get('skillId')
-        if 'Enchantment' in skill_id:
-            continue
-        is_active_skill = skill_id is not None and 'Support' not in skill_id
         level = gem_xml.get('level')
         quality = gem_xml.get('quality')
-        name = GEM_MAPPING.get_name(skill_id)
         gem_id = gem_xml.get('gemId')
+        is_active_skill = GEMS_DATA.is_gem_active(skill_id)
+        name = GEMS_DATA.get_name(skill_id, gem_id)
         is_item_provided = True if gem_id is None else False
         alt_quality_pref = ALT_QUALITY_PREF_MAPPING.get(gem_xml.get('qualityId'), '')
-        gems.append(
-            SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill,
-                     level=level, quality=quality, is_item_provided=is_item_provided,
-                     alt_quality_pref=alt_quality_pref))
+        gem = SkillGem(name=name, is_enabled=is_gem_enabled, is_active_skill=is_active_skill, level=level,
+                       quality=quality, is_item_provided=is_item_provided, alt_quality_pref=alt_quality_pref)
+        gems.append(gem)
+        if 'Vaal' in name:
+            nonvaal_gem = get_nonvaal_gem_version(gem)
+            gems.append(nonvaal_gem)
     return gems
+
+
+def get_nonvaal_gem_version(gem: SkillGem) -> SkillGem:
+    nonvaal_gem = copy.copy(gem)
+    nonvaal_gem.name = gem.name.replace('Vaal ', '')
+    return nonvaal_gem
 
 
 def get_main_active_skill(skill_groups: List[SkillGroup], xml_root: ET.Element) -> Optional[str]:

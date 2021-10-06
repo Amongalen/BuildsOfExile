@@ -1,11 +1,11 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.text import slugify
 
-from GuideToExile import json_encoder
+from GuideToExile import json_encoder, settings
 
 
 class Keystone(models.Model):
@@ -25,8 +25,18 @@ class UserProfileManager(models.Manager):
         return self.get(user__username=username)
 
 
+class CustomUserManager(UserManager):
+    def get_by_natural_key(self, username):
+        case_insensitive_username_field = '{}__iexact'.format(self.model.USERNAME_FIELD)
+        return self.get(**{case_insensitive_username_field: username})
+
+
+class User(AbstractUser):
+    objects = CustomUserManager()
+
+
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     email = models.EmailField(max_length=150)
     twitch_url = models.URLField(blank=True, null=True)
     youtube_url = models.URLField(blank=True, null=True)
@@ -84,12 +94,27 @@ class AscendancyClass(models.Model):
     base_name_l2v_mapping = {i.label: i.value for i in BaseClassName}
 
     @property
-    def portrait_icon(self):
+    def icon_name(self):
         if self.name == AscendancyClass.AscClassName.NONE:
             icon_name = self.base_name_v2l_mapping[self.base_class_name]
         else:
             icon_name = self.asc_name_v2l_mapping[self.name]
-        return f'/icons/{icon_name.lower()}.png'
+        return icon_name
+
+    @property
+    def portrait_icon(self):
+        return f'/icons/{self.icon_name.lower()}.png'
+
+    @property
+    def portrait_icon_80x80(self):
+        return f'/icons/{self.icon_name.lower()}_80x80.png'
+
+    def __str__(self):
+        if self.name == AscendancyClass.AscClassName.NONE:
+            name = self.base_name_v2l_mapping[self.base_class_name]
+        else:
+            name = self.asc_name_v2l_mapping[self.name]
+        return name
 
 
 class BuildGuide(models.Model):
@@ -103,11 +128,12 @@ class BuildGuide(models.Model):
     author = models.ForeignKey(UserProfile, on_delete=models.SET_NULL, null=True)
     creation_datetime = models.DateTimeField(blank=True, null=True)
     modification_datetime = models.DateTimeField(blank=True, null=True)
-    pob_string = models.CharField(max_length=40000)
+    pob_string = models.TextField(null=True)
     pob_details = models.JSONField(encoder=json_encoder.BuildDetailsJsonEncoder,
-                                   decoder=json_encoder.BuildDetailsJsonDecoder)
-    title = models.CharField(max_length=180)
-    text = models.CharField(max_length=40000)
+                                   decoder=json_encoder.BuildDetailsJsonDecoder, null=True)
+    title = models.CharField(max_length=180, null=True)
+    text = models.TextField(null=True)
+    video_url = models.CharField(max_length=200, null=True, blank=True)
     unique_items = models.ManyToManyField(UniqueItem, related_name='unique_items_related_builds')
     keystones = models.ManyToManyField(Keystone, related_name='keystones_related_builds')
     primary_skills = models.ManyToManyField(ActiveSkill)
@@ -148,7 +174,7 @@ class GuideComment(models.Model):
     modification_datetime = models.DateTimeField()
 
 
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def update_profile_signal(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
