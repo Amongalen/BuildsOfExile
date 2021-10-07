@@ -10,7 +10,7 @@ from .common import *
 DEBUG = False
 
 # You will have to determine, which hostnames should be served by Django
-ALLOWED_HOSTS = ['GuideToExile-prod.eu-central-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['GuideToExile-prod.eu-central-1.elasticbeanstalk.com', 'guidetoexile.com']
 
 # ##### SECURITY CONFIGURATION ############################
 
@@ -107,7 +107,7 @@ CURRENT_TREE_VERSION = '3_15'
 
 POB_PATH = join(PROJECT_ROOT, 'pathofbuilding')
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # todo change email backend
+EMAIL_BACKEND = 'django_ses.SESBackend'
 
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
@@ -133,3 +133,5 @@ with open(AWS_CONFIG_FILE) as conf_file:
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3Boto3Storage'
+
+DEFAULT_FROM_EMAIL = 'accounts@guidetoexile.com'
