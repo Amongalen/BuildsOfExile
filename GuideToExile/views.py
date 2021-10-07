@@ -426,7 +426,7 @@ def signup_view(request):
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
-            subject = 'Please Activate Your Account'
+            subject = '[Guide to Exile] Account activation'
             # load a template like get_template()
             # and calls its render() method immediately.
             message = render_to_string('registration/activation_request.html', {

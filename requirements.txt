@@ -12,3 +12,10 @@ boto3~=1.18.43
 cfscrape~=2.1.1
 bs4~=0.0.1
 beautifulsoup4~=4.9.3
+
+parameterized~=0.8.1
+django-fullurl~=1.1
+
+django-allauth~=0.45.0
+django-ses~=2.3.0
+
