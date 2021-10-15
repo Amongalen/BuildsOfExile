@@ -372,7 +372,7 @@ def show_comments(request, guide_id):
     page = request.GET.get('page')
     page_obj = paginator.get_page(page)
     guide = BuildGuide.objects.get(pk=guide_id)
-    guide_author_username = guide.author.user.username if guide.author else 'None'
+    guide_author_username = guide.author.user.username if guide.author else ''
     return render(request, 'comments.html', {'page_obj': page_obj, 'guide_author_username': guide_author_username})
 
 

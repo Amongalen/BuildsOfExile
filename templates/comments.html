@@ -18,7 +18,11 @@
                 </g>
               </svg>
             {% endif %}
-            <strong>{{ comment.author }}</strong>
+            {% if comment.author %}
+              <strong>{{ comment.author }}</strong>
+            {% else %}
+              <strong>Unknown</strong>
+            {% endif %}
             at {{ comment.creation_datetime|date:'Y-m-d H:i' }}.
             {% if comment.creation_datetime != comment.modification_datetime %}
               Edited at {{ comment.modification_datetime|date:'Y-m-d H:i' }}.
