@@ -1051,12 +1051,13 @@ progress {
         flex: 0 0 auto;
         width: 41.66667%;
     }
-  .col-sm-6 {
-      -webkit-box-flex: 0;
-      -ms-flex: 0 0 auto;
-      flex: 0 0 auto;
-      width: 50%;
-  }
+
+    .col-sm-6 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        width: 50%;
+    }
   .col-sm-7 {
       -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
@@ -1276,12 +1277,13 @@ progress {
         flex: 0 0 auto;
         width: 41.66667%;
     }
-  .col-md-6 {
-      -webkit-box-flex: 0;
-      -ms-flex: 0 0 auto;
-      flex: 0 0 auto;
-      width: 50%;
-  }
+
+    .col-md-6 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        width: 50%;
+    }
   .col-md-7 {
       -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
@@ -1501,12 +1503,13 @@ progress {
         flex: 0 0 auto;
         width: 41.66667%;
     }
-  .col-lg-6 {
-      -webkit-box-flex: 0;
-      -ms-flex: 0 0 auto;
-      flex: 0 0 auto;
-      width: 50%;
-  }
+
+    .col-lg-6 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        width: 50%;
+    }
   .col-lg-7 {
       -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
@@ -1726,12 +1729,13 @@ progress {
         flex: 0 0 auto;
         width: 41.66667%;
     }
-  .col-xl-6 {
-      -webkit-box-flex: 0;
-      -ms-flex: 0 0 auto;
-      flex: 0 0 auto;
-      width: 50%;
-  }
+
+    .col-xl-6 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        width: 50%;
+    }
   .col-xl-7 {
       -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
@@ -1951,12 +1955,13 @@ progress {
         flex: 0 0 auto;
         width: 41.66667%;
     }
-  .col-xxl-6 {
-      -webkit-box-flex: 0;
-      -ms-flex: 0 0 auto;
-      flex: 0 0 auto;
-      width: 50%;
-  }
+
+    .col-xxl-6 {
+        -webkit-box-flex: 0;
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        width: 50%;
+    }
   .col-xxl-7 {
       -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
@@ -2661,7 +2666,7 @@ textarea.form-control-lg {
 
 .form-check-input:checked {
     background-color: #292b2e;
-    border-color: #292b2e;
+    border-color: rgba(176, 184, 191, 0.5);
 }
 
 .form-check-input:checked[type="checkbox"] {
