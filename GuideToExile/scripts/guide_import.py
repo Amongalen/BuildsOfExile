@@ -1,7 +1,6 @@
 # manage.py runscript guide_import
 import collections
 import logging
-import os
 import re
 
 import cfscrape
@@ -10,6 +9,7 @@ from django.contrib.auth import get_user_model
 
 from GuideToExile import pob_import, build_guide, skill_tree
 from GuideToExile.models import BuildGuide
+from GuideToExile.settings import GUIDE_IMPORT_USERNAME, GUIDE_IMPORT_MAIL, GUIDE_IMPORT_PASSWORD
 
 logger = logging.getLogger('guidetoexile')
 
@@ -28,18 +28,9 @@ PASTEBIN_URL_REGEX = re.compile(r'https://pastebin\.com/\w*')
 skill_tree_service = skill_tree.SkillTreeService()
 
 
-def make_importing_user():
-    username = os.environ['IMPORTER_USERNAME']
-    password = os.environ['IMPORTER_PASSWORD']
-    email = os.environ['IMPORTER_EMAIL']
-    user, created = get_user_model().objects.get_or_create(username=username, email=email)
-    if created:
-        user.set_password(password)
-        user.save()
-    return user
-
-
 def run():
+    if not BuildGuide.objects.count() == 0:
+        return
     user = make_importing_user()
     urls = generate_urls()
     guides_data = []
@@ -48,6 +39,14 @@ def run():
 
     for data in guides_data:
         make_new_guide(data, user)
+
+
+def make_importing_user():
+    user, created = get_user_model().objects.get_or_create(username=GUIDE_IMPORT_USERNAME, email=GUIDE_IMPORT_MAIL)
+    if created:
+        user.set_password(GUIDE_IMPORT_PASSWORD)
+        user.save()
+    return user
 
 
 def make_new_guide(guide_details, user):
@@ -61,7 +60,7 @@ def make_new_guide(guide_details, user):
                                                    guide_details.post_content, guide_details.title)
             build_guide.publish_guide(guide)
         except Exception as e:
-            logger.error(e, exc_info=True)
+            logger.info(e, exc_info=True)
 
 
 guide_data = collections.namedtuple('GuideData', ['post_content', 'pastebin_url', 'title'])
@@ -120,6 +119,6 @@ def generate_urls():
     urls = []
     for section in CLASS_FORUM_SECTION_URLS:
         urls.append(section)
-        for i in range(1, 4):
+        for i in range(1, 2):
             urls.append(f'{section}/page/{i}')
     return urls

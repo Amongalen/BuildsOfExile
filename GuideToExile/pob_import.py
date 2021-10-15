@@ -29,8 +29,6 @@ ALT_QUALITY_PREF_MAPPING = {
 
 GEMS_DATA = items_service.GemsData()
 
-pob = PathOfBuilding(POB_PATH, POB_PATH)
-
 
 def import_from_pastebin(url: str) -> str:
     logger.debug('Importing from Pastebin: %s', url)
@@ -139,6 +137,7 @@ def extract_stats(xml_root: ET.Element) -> Dict[str, Union[int, float]]:
 def extract_items(xml_root: ET.Element) -> List[Item]:
     logger.debug('Extracting items')
     items = []
+    pob_instance = PathOfBuilding(POB_PATH, POB_PATH)
 
     for item_xml in xml_root.find('Items').findall('Item'):
         item_id = int(item_xml.get('id'))
@@ -151,7 +150,7 @@ def extract_items(xml_root: ET.Element) -> List[Item]:
         else:
             base_name = item_lines[1].strip()
 
-        item_display_html = pob.item_as_html(item_str)
+        item_display_html = pob_instance.item_as_html(item_str)
 
         is_broken = True if not item_display_html else False
 
@@ -162,6 +161,8 @@ def extract_items(xml_root: ET.Element) -> List[Item]:
                           display_html=item_display_html,
                           support_gems=extract_support_gems_from_item(item_lines),
                           is_broken=is_broken))
+
+    pob_instance.kill()
     return items
 
 

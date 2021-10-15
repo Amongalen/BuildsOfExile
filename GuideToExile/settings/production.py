@@ -1,25 +1,25 @@
 # for now fetch the development settings only
 
 # project imports
-import os
 
 from .common import *
 
 # turn off all debugging
 
-DEBUG = False
+DEBUG = True
+LOAD_ALL_SKILLTREES = True
 
 # You will have to determine, which hostnames should be served by Django
-ALLOWED_HOSTS = ['GuideToExile-prod.eu-central-1.elasticbeanstalk.com', 'guidetoexile.com']
+ALLOWED_HOSTS = ['172.31.38.124', 'guidetoexile-prod-2.eu-central-1.elasticbeanstalk.com', 'guidetoexile.com']
 
 # ##### SECURITY CONFIGURATION ############################
 
 # redirects all requests to https
 SECURE_SSL_REDIRECT = False
 # session cookies will only be set, if https is used
-# SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 # how long is a session cookie valid?
-# SESSION_COOKIE_AGE = 1209600
+SESSION_COOKIE_AGE = 1209600
 
 CSRF_COOKIE_SECURE = True
 
@@ -50,7 +50,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # the email address, these error notifications to admins come from
-SERVER_EMAIL = 'root@localhost'
+SERVER_EMAIL = 'admin@guidetoexile.com'
 
 # The number of seconds a password reset link is valid for.
 PASSWORD_RESET_TIMEOUT = 60 * 60  # 1 hour
@@ -128,6 +128,9 @@ with open(AWS_CONFIG_FILE) as conf_file:
     AWS_S3_REGION_NAME = conf['AWS_S3_REGION_NAME']
     AWS_ACCESS_KEY_ID = conf['AWS_ACCESS_KEY_ID']
     AWS_SECRET_ACCESS_KEY = conf['AWS_SECRET_ACCESS_KEY']
+    GUIDE_IMPORT_USERNAME = conf['IMPORTER_USERNAME']
+    GUIDE_IMPORT_PASSWORD = conf['IMPORTER_PASSWORD']
+    GUIDE_IMPORT_MAIL = conf['IMPORTER_EMAIL']
 
 # Tell django-storages the domain to use to refer to static files.
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'

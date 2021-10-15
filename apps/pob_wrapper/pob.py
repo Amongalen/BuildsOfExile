@@ -1,5 +1,6 @@
 import atexit
 import os
+import platform
 import re
 from typing import *
 
@@ -87,14 +88,17 @@ class PathOfBuilding:
         data_dir = pkg_resources.resource_filename('pob_wrapper', 'data')
 
         os.environ['PATH'] = f'{pob_install};{os.environ["PATH"]}'
-        os.environ['LUA_PATH'] = f'{data_dir}\\?.lua;{pob_path}\\lua\\?.lua;{pob_install}\\lua\\?.lua'
-        os.environ['LUA_CPATH'] = f'{pob_install}\\?.dll'
+        os.environ['LUA_PATH'] = f'{data_dir}/?.lua;{pob_path}/lua/?.lua;{pob_install}/lua/?.lua'
+        os.environ['LUA_CPATH'] = f'{pob_install}/?.dll'
 
         os.environ['POB_SCRIPTPATH'] = pob_path
         os.environ['POB_RUNTIMEPATH'] = pob_install
 
         self.pob = ProcessWrapper(debug=self.verbose)
-        self.pob.start([f'{data_dir}\\luajit.exe', f'{data_dir}\\cli.lua'], cwd=pob_path)
+        if platform.system() == 'Windows':
+            self.pob.start([f'{data_dir}/luajit.exe', f'{data_dir}/cli.lua'], cwd=pob_path)
+        else:
+            self.pob.start([f'luajit', f'{data_dir}/cli.lua'], cwd=pob_path)
         atexit.register(self.kill)
 
     def require(self, module):

@@ -10,6 +10,7 @@ from .common import *
 
 # ##### DEBUG CONFIGURATION ###############################
 DEBUG = True
+LOAD_ALL_SKILLTREES = True
 
 # limits tree loading in debug mode
 CURRENT_TREE_VERSION = '3_15'

@@ -1,5 +1,6 @@
 # Python imports
 import json
+import os
 import sys
 from os.path import abspath, basename, dirname, join, normpath
 
@@ -127,7 +128,7 @@ DATABASE_CONFIG_FILE = normpath(join(PROJECT_ROOT, 'run', 'database.config'))
 
 # these persons receive error notification
 ADMINS = (
-    ('your name', 'your_name@example.com'),
+    ('Amongalen', '1gumis@gmail.com'),
 )
 MANAGERS = ADMINS
 
@@ -158,7 +159,7 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_LOGIN_ATTEMPTS_LIMIT = 5
 ACCOUNT_LOGIN_ATTEMPTS_TIMEOUT = 86400  # 1 day in seconds
 SOCIALACCOUNT_AUTO_SIGNUP = False
-SOCIALACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_EMAIL_REQUIRED = True
 SOCIALACCOUNT_STORE_TOKENS = False
 SOCIALACCOUNT_EMAIL_VERIFICATION = False
 
@@ -173,12 +174,7 @@ SOCIALACCOUNT_PROVIDERS = {
         'FIELDS': [
             'id',
             'email',
-            'first_name',
-            'last_name',
-            'middle_name',
             'name',
-            'name_format',
-            'short_name',
         ],
         'EXCHANGE_TOKEN': True,
         'LOCALE_FUNC': lambda request: 'en_US',
@@ -289,6 +285,10 @@ ASSET_DIR = 'poe_assets'
 BASE_ITEMS_LOOKUP_FILE = join('poe_assets', 'base_items_lookup.json')
 UNIQUE_ITEMS_LOOKUP_FILE = join('poe_assets', 'unique_items_lookup.json')
 GEMS_FILE = join('poe_assets', 'gems.min.json')
+
+GUIDE_IMPORT_USERNAME = os.environ.get('IMPORTER_USERNAME', None)
+GUIDE_IMPORT_PASSWORD = os.environ.get('IMPORTER_PASSWORD', None)
+GUIDE_IMPORT_MAIL = os.environ.get('IMPORTER_EMAIL', None)
 
 # finally grab the SECRET KEY
 try:
