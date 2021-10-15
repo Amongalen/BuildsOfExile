@@ -49,6 +49,7 @@ urlpatterns = [
     path('guide/deletecomment/', login_required(views.delete_comment), name='delete_comment'),
     path('guide/editcomment/', login_required(views.edit_comment), name='edit_comment'),
     path('user/settings/', login_required(views.user_settings_view), name='user_settings'),
+    path('user/delete/', login_required(views.delete_user_view), name='delete_user'),
     path('signup/', views.signup_view, name="signup"),
     path('sent/', views.activation_sent_view, name="activation_sent"),
     path('activate/<slug:uidb64>/<slug:token>/', views.activate, name='activate'),

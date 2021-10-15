@@ -2,7 +2,7 @@ import logging
 from datetime import timedelta, datetime
 
 import pytz
-from django.contrib.auth import login, get_user_model
+from django.contrib.auth import login, get_user_model, logout
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
@@ -17,7 +17,8 @@ from django.views import generic
 
 from GuideToExile.models import BuildGuide, UserProfile, GuideComment, GuideLike, ActiveSkill
 from . import skill_tree, build_guide, items_service, guide_search
-from .forms import SignUpForm, PobStringForm, EditGuideForm, ProfileForm, GuideListFilterForm, URL_REGEX
+from .forms import SignUpForm, PobStringForm, EditGuideForm, ProfileForm, GuideListFilterForm, URL_REGEX, \
+    UserDeleteForm
 from .settings import LIKES_RECENTLY_OFFSET
 from .tokens import account_activation_token
 
@@ -476,3 +477,16 @@ class PrivacyPolicy(generic.TemplateView):
 
 class TermsOfUse(generic.TemplateView):
     template_name = "policies/terms_of_use.html"
+
+
+def delete_user_view(request):
+    user = request.user
+    if request.method == 'GET':
+        form = UserDeleteForm(user=user)
+        return render(request, 'registration/user_deletion.html', {'form': form})
+    form = UserDeleteForm(request.POST, user=user)
+    if form.is_valid():
+        logout(request)
+        user.delete()
+        return redirect('index')
+    return render(request, 'registration/user_deletion.html', {'form': form})

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load myfilters %}
+{% block content %}
+  <h3>Delete Account</h3>
+  <h5 class="text-danger"><strong>This operation is permanent and cannot be reversed!</strong> <br/>All your personal
+    data
+    will be removed. However, comments and guides you posted will remain.</h5>
+  <form method="post" action="{% url 'delete_user' %}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <table>
+      <tr>
+        <td class="pe-2">{{ form.username.label_tag }}</td>
+        <td>{{ form.username|addclass:'form-control' }}</td>
+        <td>{{ form.username.errors }}</td>
+      </tr>
+      <tr>
+        <td class="pe-2">{{ form.delete.label_tag }}</td>
+        <td>{{ form.delete|addclass:'form-check-input' }}</td>
+        <td>{{ form.delete.errors }}</td>
+      </tr>
+    </table>
+    <input type="submit" value="Save" class="btn btn-outline-light btn-secondary" formnovalidate/>
+    <button type="button" class="my-2 btn btn-outline-light btn-secondary" onclick="window.history.back();">Cancel
+    </button>
+  </form>
+{% endblock %}

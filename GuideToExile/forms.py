@@ -35,6 +35,22 @@ class SignUpForm(UserCreationForm):
         return data
 
 
+class UserDeleteForm(Form):
+    delete = forms.BooleanField(required=True,
+                                label="Are you sure?")
+    username = forms.CharField(required=True)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(UserDeleteForm, self).__init__(*args, **kwargs)
+
+    def clean_username(self):
+        data = self.cleaned_data['username']
+        if self.user.username != data:
+            raise ValidationError('This is not your username', code='incorrect username')
+        return data
+
+
 class PobStringForm(Form):
     pob_input = forms.CharField(max_length=40000,
                                 label="Enter Path of Building export code or a Pastebin link containing it",
