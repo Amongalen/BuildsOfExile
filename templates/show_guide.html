@@ -29,8 +29,12 @@
     <div class="ps-3 p-1 bg-secondary col-auto text-end float-end border border-primary-lighter rounded-3">
       {% with build_guide.author as author %}
         <div class="row">
-        <div class="col-auto "><h5>
-          <strong>{{ author.user.username }}</strong></h5>
+        <div class="col-auto ">
+          {% if author.user.username %}
+            <h5><strong>{{ author.user.username }}</strong></h5>
+          {% else %}
+            <h5><strong>Unknown</strong></h5>
+          {% endif %}
           {% if author.youtube_url %}
             <a class="fs-7 text-light bg-dark border border-1 border-primary-lighter
             rounded-pill badge text-decoration-none"
@@ -45,11 +49,13 @@
               Twitch.tv
             </a><br/>
           {% endif %}
-          <a
-            class="fs-7 text-light bg-dark border border-1 border-primary-lighter rounded-pill badge text-decoration-none"
-            href="{% url 'index' %}?author_username={{ author.user.username }}">
-            All guides
-          </a>
+          {% if author.user.username %}
+            <a
+              class="fs-7 text-light bg-dark border border-1 border-primary-lighter rounded-pill badge text-decoration-none"
+              href="{% url 'index' %}?author_username={{ author.user.username }}">
+              All guides
+            </a>
+          {% endif %}
         </div>
         <div class="col-auto"><img id="avatar_preview" alt="Avatar" width="120" height="120"
                                    src="{% if user_profile.avatar %}
