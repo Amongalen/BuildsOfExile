@@ -1,62 +1,66 @@
 {% load static %}
 <div id="guide-list" style="display: none">
-{% if page_obj %}
-  <div class="list-group">
-    {% for guide in page_obj %}
-      <a href="{% url 'show_guide' guide.guide_id guide.slug %}"
-         class="mx-0 my-1 row bg-secondary d-flex text-decoration-none border border-1 border-primary-lighter rounded-2">
-        <img src="{% static guide.ascendancy_class.portrait_icon %}" height="80" width="110" class="w-auto p-0"
-             title="{{ guide.ascendancy_class }}">
-        <div class="col-10 py-1 d-flex h-auto flex-column">
-          <div class="row">
-            <h5 class="mb-0"><strong>{{ guide.title }}</strong></h5>
-          </div>
-          <div class="row flex-fill justify-content-start">
-            <div class="col-auto mt-auto">
-              By <strong>{{ guide.author.user.username }}</strong>
-              <span style="font-size: 0.7rem">
-                Created: {{ guide.creation_datetime|date:'Y-m-d H:i' }}.
-                {% if guide.creation_datetime != guide.modification_datetime %}
-                  Last modified: {{ guide.modification_datetime|date:'Y-m-d H:i' }}.
-                {% endif %}
-              </span>
+  {% if page_obj %}
+    <div class="list-group">
+      {% for guide in page_obj %}
+        <a href="{% url 'show_guide' guide.guide_id guide.slug %}"
+           class="mx-0 my-1 row bg-secondary d-flex text-decoration-none border border-1 border-primary-lighter rounded-2">
+          <img src="{% static guide.ascendancy_class.portrait_icon %}" height="80" width="110" class="w-auto p-0"
+               title="{{ guide.ascendancy_class }}">
+          <div class="col-10 py-1 d-flex h-auto flex-column">
+            <div class="row">
+              <h5 class="mb-0"><strong>{{ guide.title }}</strong></h5>
             </div>
-            <div class="col-auto ms-auto mt-auto">
-              {% if guide.is_archived %}
-                <span class="text-warning bg-warning bg-opacity-25 border border-1 border-warning rounded-pill badge">Archived</span>
-              {% endif %}
-              {% if guide.is_draft %}
-                <span class="text-warning bg-warning bg-opacity-25 border border-1 border-warning rounded-pill badge">Draft</span>
-              {% endif %}
-              <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
-                    data-bs-placement="bottom"
-                    data-bs-toggle="tooltip" data-bs-html="true"
-                    title="<small><ul class='list-unstyled mb-0'>{% for keystone in guide.keystones.all %}
+            <div class="row flex-fill justify-content-start">
+              <div class="col-auto mt-auto">
+                {% if guide.author.user.username %}
+                  By <strong>{{ guide.author.user.username }}</strong>
+                {% else %}
+                  By <strong>Unknown</strong>
+                {% endif %}
+                <span style="font-size: 0.7rem">
+                Created: {{ guide.creation_datetime|date:'Y-m-d H:i' }}.
+                  {% if guide.creation_datetime != guide.modification_datetime %}
+                    Last modified: {{ guide.modification_datetime|date:'Y-m-d H:i' }}.
+                  {% endif %}
+              </span>
+              </div>
+              <div class="col-auto ms-auto mt-auto">
+                {% if guide.is_archived %}
+                  <span class="text-warning bg-warning bg-opacity-25 border border-1 border-warning rounded-pill badge">Archived</span>
+                {% endif %}
+                {% if guide.is_draft %}
+                  <span class="text-warning bg-warning bg-opacity-25 border border-1 border-warning rounded-pill badge">Draft</span>
+                {% endif %}
+                <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
+                      data-bs-placement="bottom"
+                      data-bs-toggle="tooltip" data-bs-html="true"
+                      title="<small><ul class='list-unstyled mb-0'>{% for keystone in guide.keystones.all %}
                            <li>{{ keystone.name }}</li>
                        {% empty %}
                            <li>None</li>
                        {% endfor %}</ul></small>">Keystones</span>
-              <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
-                    data-bs-placement="bottom"
-                    data-bs-toggle="tooltip" data-bs-html="true"
-                    title="<small><ul class='list-unstyled mb-0 '>{% for skill in guide.primary_skills.all %}
+                <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
+                      data-bs-placement="bottom"
+                      data-bs-toggle="tooltip" data-bs-html="true"
+                      title="<small><ul class='list-unstyled mb-0 '>{% for skill in guide.primary_skills.all %}
                            <li>{{ skill.name }}</li>
                        {% empty %}
                            <li>None</li>
                        {% endfor %}</ul></small>">Main skills</span>
-              <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
-                    data-bs-placement="bottom"
-                    data-bs-toggle="tooltip" data-bs-html="true"
-                    title="<small><ul class='list-unstyled mb-0'>{% for unique_item in guide.unique_items.all %}
+                <span class="text-light bg-dark border border-1 border-primary-lighter rounded-pill badge"
+                      data-bs-placement="bottom"
+                      data-bs-toggle="tooltip" data-bs-html="true"
+                      title="<small><ul class='list-unstyled mb-0'>{% for unique_item in guide.unique_items.all %}
                            <li>{{ unique_item.name }}</li>
                        {% empty %}
                            <li>None</li>
                        {% endfor %}</ul></small>">Unique items</span>
+              </div>
             </div>
           </div>
-        </div>
-        <span
-                class="fs-6 col-auto m-auto text-light bg-dark border border-1 border-primary-lighter rounded-pill badge">{{ guide.likes }}
+          <span
+            class="fs-6 col-auto m-auto text-light bg-dark border border-1 border-primary-lighter rounded-pill badge">{{ guide.likes }}
         <svg height="20px" width="20px"
              viewBox="0 0 512 512" style="margin-top: -2px">
             <path d="M376,30c-27.783,0-53.255,8.804-75.707,26.168c-21.525,16.647-35.856,37.85-44.293,53.268
@@ -66,54 +70,54 @@
               C512,93.417,453.532,30,376,30z" fill="currentcolor"></path>
           </svg>
         </span>
-      </a>
-    {% endfor %}
-  </div>
-  {% if page_obj.has_other_pages %}
-    <ul class="my-1 pagination justify-content-center">
-      {% if page_obj.has_previous %}
-        <li class="page-item"><a class='page-link' onclick="find_guides(1)">&laquo; First</a></li>
-      {% endif %}
-      {% if page_obj.number > 2 %}
-        <li class="page-item"><a class='page-link'
-                                 onclick="find_guides({{ page_obj.number|add:"-2" }})">{{ page_obj.number|add:"-2" }}</a>
+        </a>
+      {% endfor %}
+    </div>
+    {% if page_obj.has_other_pages %}
+      <ul class="my-1 pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class='page-link' onclick="find_guides(1)">&laquo; First</a></li>
+        {% endif %}
+        {% if page_obj.number > 2 %}
+          <li class="page-item"><a class='page-link'
+                                   onclick="find_guides({{ page_obj.number|add:"-2" }})">{{ page_obj.number|add:"-2" }}</a>
+          </li>
+        {% endif %}
+        {% if page_obj.number > 1 %}
+          <li class="page-item"><a class='page-link'
+                                   onclick="find_guides({{ page_obj.number|add:"-1" }})">{{ page_obj.number|add:"-1" }}</a>
+          </li>
+        {% endif %}
+        <li class="page-item active" aria-current="page">
+          <span class="page-link">{{ page_obj.number }}</span>
         </li>
-      {% endif %}
-      {% if page_obj.number > 1 %}
-        <li class="page-item"><a class='page-link'
-                                 onclick="find_guides({{ page_obj.number|add:"-1" }})">{{ page_obj.number|add:"-1" }}</a>
-        </li>
-      {% endif %}
-      <li class="page-item active" aria-current="page">
-        <span class="page-link">{{ page_obj.number }}</span>
-      </li>
-      {% if page_obj.number < page_obj.paginator.num_pages %}
-        <li class="page-item"><a class='page-link'
-                                 onclick="find_guides({{ page_obj.number|add:"1" }})">{{ page_obj.number|add:"1" }}</a>
-        </li>
-      {% endif %}
-      {% if page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
-        <li class="page-item"><a class='page-link'
-                                 onclick="find_guides({{ page_obj.number|add:"2" }})">{{ page_obj.number|add:"2" }}</a>
-        </li>
-      {% endif %}
-      {% if page_obj.has_next %}
-        <li class="page-item"><a class='page-link' onclick="find_guides({{ page_obj.paginator.num_pages }})">Last
-          &raquo;</a>
-        </li>
-      {% endif %}
-    </ul>
+        {% if page_obj.number < page_obj.paginator.num_pages %}
+          <li class="page-item"><a class='page-link'
+                                   onclick="find_guides({{ page_obj.number|add:"1" }})">{{ page_obj.number|add:"1" }}</a>
+          </li>
+        {% endif %}
+        {% if page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
+          <li class="page-item"><a class='page-link'
+                                   onclick="find_guides({{ page_obj.number|add:"2" }})">{{ page_obj.number|add:"2" }}</a>
+          </li>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class='page-link' onclick="find_guides({{ page_obj.paginator.num_pages }})">Last
+            &raquo;</a>
+          </li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  {% else %}
+    <h4>Haven't found any guides!</h4>
   {% endif %}
-{% else %}
-  <h4>Haven't found any guides!</h4>
-{% endif %}
 
-<script>
-  page =
-  {{ page_obj.number }}
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
-</script>
+  <script>
+    page =
+    {{ page_obj.number }}
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
 </div>

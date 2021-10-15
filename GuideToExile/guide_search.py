@@ -90,9 +90,10 @@ def _get_base_filters(filter_form: GuideListFilterForm, user_id: int) -> List[Q]
     data = filter_form.cleaned_data
     filters = [
         Q(title__icontains=data['title']),
-        Q(author__user__username__icontains=data['author_username']),
         Q(modification_datetime__gte=data['updated_after']),
     ]
+    if data['author_username']:
+        filters.append(Q(author__user__username__icontains=data['author_username']))
     if data['base_class_name'] != '0':
         filters.append(Q(ascendancy_class__base_class_name=data['base_class_name']))
     if data['asc_class_name'] != '0':
