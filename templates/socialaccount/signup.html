@@ -13,9 +13,11 @@
       <form class="text-center" id="signup_form" method="POST" action="{% url 'socialaccount_signup' %}">
         {% csrf_token %}
         {{ form.non_field_errors }}
-        <table class="mx-auto" style="border-collapse:separate; border-spacing: 0 0.5em;">
+        <table class="mx-auto px-3" style="border-collapse:separate; border-spacing: 0 0.5em;">
           <tr>
             <td>{{ form.username|addclass:'form-control' }}</td>
+          </tr>
+          <tr>
             <td>{{ form.username.errors }}</td>
           </tr>
         </table>
