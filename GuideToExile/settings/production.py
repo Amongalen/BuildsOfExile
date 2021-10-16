@@ -10,7 +10,9 @@ DEBUG = True
 LOAD_ALL_SKILLTREES = True
 
 # You will have to determine, which hostnames should be served by Django
-ALLOWED_HOSTS = ['172.31.38.124', 'guidetoexile-prod-2.eu-central-1.elasticbeanstalk.com', 'guidetoexile.com']
+ALLOWED_HOSTS = ['172.31.24.7', '35.156.187.198', '35.156.187.198',
+                 'guidetoexile-prod-2.eu-central-1.elasticbeanstalk.com',
+                 'guidetoexile.com']
 
 # ##### SECURITY CONFIGURATION ############################
 
