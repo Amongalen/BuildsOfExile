@@ -107,8 +107,6 @@ CURRENT_TREE_VERSION = '3_15'
 
 POB_PATH = join(PROJECT_ROOT, 'pathofbuilding')
 
-EMAIL_BACKEND = 'django_ses.SESBackend'
-
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
@@ -131,10 +129,16 @@ with open(AWS_CONFIG_FILE) as conf_file:
     GUIDE_IMPORT_USERNAME = conf['IMPORTER_USERNAME']
     GUIDE_IMPORT_PASSWORD = conf['IMPORTER_PASSWORD']
     GUIDE_IMPORT_MAIL = conf['IMPORTER_EMAIL']
+    EMAIL_HOST_USER = conf['SMTP_USERNAME']
+    EMAIL_HOST_PASSWORD = conf['SMTP_PASSWORD']
 
 # Tell django-storages the domain to use to refer to static files.
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3Boto3Storage'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'email-smtp.eu-central-1.amazonaws.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'accounts@guidetoexile.com'

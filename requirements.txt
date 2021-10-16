@@ -17,6 +17,5 @@ parameterized~=0.8.1
 django-fullurl~=1.1
 
 django-allauth~=0.45.0
-django-ses~=2.3.0
 django-inlinecss~=0.3.0
 

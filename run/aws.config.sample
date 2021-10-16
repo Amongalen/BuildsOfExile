@@ -3,4 +3,9 @@
         "AWS_S3_REGION_NAME": "REGION_NAME",
         "AWS_ACCESS_KEY_ID": "xxxxxxxxxxxxxxxxxxxx",
         "AWS_SECRET_ACCESS_KEY": "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+        "IMPORTER_USERNAME":"USERNAME",
+        "IMPORTER_PASSWORD":"PASS",
+        "IMPORTER_EMAIL":"test@test.com",
+        "SMTP_USERNAME":"USERNAME",
+        "SMTP_PASSWORD":"PASS"
 }
