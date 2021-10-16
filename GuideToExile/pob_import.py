@@ -145,10 +145,7 @@ def extract_items(xml_root: ET.Element) -> List[Item]:
         item_lines = item_str.split('\n')
         item_rarity = item_lines[0].split(': ')[1].strip()
         item_name = item_lines[1].strip()
-        if item_rarity in ['UNIQUE', 'RARE']:
-            base_name = item_lines[2].strip()
-        else:
-            base_name = item_lines[1].strip()
+        base_name = get_base_name(item_lines, item_rarity)
 
         item_display_html = pob_instance.item_as_html(item_str)
 
@@ -164,6 +161,25 @@ def extract_items(xml_root: ET.Element) -> List[Item]:
 
     pob_instance.kill()
     return items
+
+
+def get_base_name(item_lines, item_rarity):
+    if item_rarity in ['UNIQUE', 'RARE']:
+        return item_lines[2].strip()
+
+    prefix, suffix = None, None
+    for line in item_lines:
+        if line.startswith('Prefix:'):
+            prefix = line.split(' ')[1]
+        if line.startswith('Suffix:'):
+            suffix = line.split(' ')[1]
+
+    name = item_lines[1].strip()
+    if prefix and prefix != 'None':
+        name = name.split(' ', maxsplit=1)[1]
+    if suffix and suffix != 'None':
+        name = name.split(' of ')[0]
+    return name
 
 
 def extract_support_gems_from_item(item_lines: List[str]) -> List[SkillGem]:

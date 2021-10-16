@@ -3,7 +3,7 @@ from typing import Union, Optional, List, Dict
 
 from GuideToExile import items_service
 
-assetMapping = items_service.AssetsData()
+assetService = items_service.AssetsService()
 
 
 @dataclass
@@ -18,7 +18,7 @@ class SkillGem:
 
     @property
     def asset(self):
-        return assetMapping.get_asset_name_for_gem(self.name)
+        return assetService.get_asset_name_for_gem(self.name)
 
 
 @dataclass
@@ -51,7 +51,7 @@ class Item:
 
     @property
     def asset(self):
-        return assetMapping.get_asset_name_for_gear(self)
+        return assetService.get_asset_name_for_gear(self)
 
 
 @dataclass

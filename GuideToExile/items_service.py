@@ -10,7 +10,7 @@ from django.contrib.staticfiles import finders
 from GuideToExile.settings import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE, GEMS_FILE
 
 
-class AssetsData:
+class AssetsService:
     def __init__(self):
         base_items_lookup_file = finders.find(BASE_ITEMS_LOOKUP_FILE)
         unique_items_lookup_file = finders.find(UNIQUE_ITEMS_LOOKUP_FILE)
@@ -32,24 +32,8 @@ class AssetsData:
         return self.mapping.get(gem_name, None)
 
     def get_asset_name_for_gear(self, item: Item) -> str:
-        if item.rarity == 'UNIQUE':
-            return self.mapping.get(item.name, None)
-        if item.rarity == 'RARE':
-            return self.mapping.get(item.base_name, None)
-
-        # hacks for dealing with prefix and suffix
-        base_name = item.base_name
-        if x := self.mapping.get(base_name, None):
-            return x
-        prefixless_name = base_name.split(' ', maxsplit=1)[1]
-        if x := self.mapping.get(prefixless_name, None):
-            return x
-        suffixless_name = base_name.split(' of ')[0]
-        if x := self.mapping.get(suffixless_name, None):
-            return x
-        stripped_name = prefixless_name.split(' of ')[0]
-        if x := self.mapping.get(stripped_name, None):
-            return x
+        item_name = item.name if item.rarity == 'UNIQUE' else item.base_name
+        return self.mapping.get(item_name, None)
 
 
 def _dict_skip_duplicates(ordered_pairs):
