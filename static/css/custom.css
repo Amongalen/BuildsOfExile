@@ -688,14 +688,14 @@ input[type=number] {
 }
 
 .social-btn-Google {
-    background: url('/static/buttons/google.png');
+    background: url('../buttons/google.png');
     background-size: 185px 36px;
     width: 185px;
     height: 36px;
 }
 
 .social-btn-Facebook {
-    background: url('/static/buttons/facebook.png');
+    background: url('../buttons/facebook.png');
     background-size: 185px 36px;
     width: 185px;
     height: 36px;
