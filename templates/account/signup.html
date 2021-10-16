@@ -36,6 +36,15 @@
             </tr>
           {% endif %}
           <tr>
+            <td class="text-end pe-2 text-light">{{ form.email2.label_tag }}</td>
+            <td>{{ form.email2|addclass:'form-control' }}</td>
+          </tr>
+          {% if form.email2.errors %}
+            <tr>
+              <td colspan="2">{{ form.email2.errors }}</td>
+            </tr>
+          {% endif %}
+          <tr>
             <td class="text-end pe-2 text-light">{{ form.password1.label_tag }}</td>
             <td>{{ form.password1|addclass:'form-control' }}</td>
           </tr>
