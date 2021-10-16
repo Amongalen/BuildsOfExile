@@ -29,11 +29,27 @@ class AssetsService:
                     self.mapping[name] = f'{ASSET_DIR}/{art_name}.png'
 
     def get_asset_name_for_gem(self, gem_name: str) -> str:
-        return self.mapping.get(gem_name, None)
+        return self.mapping.get(gem_name, '')
 
     def get_asset_name_for_gear(self, item: Item) -> str:
-        item_name = item.name if item.rarity == 'UNIQUE' else item.base_name
-        return self.mapping.get(item_name, None)
+        if item.rarity == 'UNIQUE':
+            return self.mapping.get(item.name, '')
+        if item.rarity == 'RARE':
+            return self.mapping.get(item.base_name, '')
+
+        # hacks for dealing with prefix and suffix
+        base_name = item.base_name
+        if x := self.mapping.get(base_name, ''):
+            return x
+        prefixless_name = base_name.split(' ', maxsplit=1)[1]
+        if x := self.mapping.get(prefixless_name, ''):
+            return x
+        suffixless_name = base_name.split(' of ')[0]
+        if x := self.mapping.get(suffixless_name, ''):
+            return x
+        stripped_name = prefixless_name.split(' of ')[0]
+        if x := self.mapping.get(stripped_name, ''):
+            return x
 
 
 def _dict_skip_duplicates(ordered_pairs):
