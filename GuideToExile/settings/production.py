@@ -135,9 +135,10 @@ with open(AWS_CONFIG_FILE) as conf_file:
     EMAIL_HOST_PASSWORD = conf['SMTP_PASSWORD']
 
 # Tell django-storages the domain to use to refer to static files.
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_CUSTOM_DOMAIN = 'dm58uz647xk6s.cloudfront.net'
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email-smtp.eu-central-1.amazonaws.com'
