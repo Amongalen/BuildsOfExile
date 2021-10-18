@@ -110,6 +110,8 @@ class TreeNode:
     def size(self):
         if self.is_keystone:
             return 48
+        if self.is_mastery:
+            return 40
         if self.is_notable:
             return 32
         return 28
