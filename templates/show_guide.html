@@ -352,10 +352,8 @@
         step: function () {
           description.css('filter', `brightness(${this.brightness}%)`);
         },
-        callback: function () {
-          // Final callback to set the target blur radius
-          // jQuery might not reach the end value
-          description.css('filter', `brightness(150%)`);
+        complete: function () {
+          description.css('filter', 'brightness(150%)');
         }
       });
     }
@@ -370,10 +368,8 @@
         step: function () {
           description.css('filter', `brightness(${this.brightness}%)`);
         },
-        callback: function () {
-          // Final callback to set the target blur radius
-          // jQuery might not reach the end value
-          description.css('filter', `brightness(100%)`);
+        complete: function () {
+          description.css('filter', 'brightness(100%)');
         }
       });
     }
