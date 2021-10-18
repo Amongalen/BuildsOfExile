@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
   <div class="col-6">
+    {% url 'new_guide' as new_guide_url %}
+    {% if request.get_full_path == new_guide_url %}
+      <h4><strong>New Guide</strong></h4>
+    {% else %}
+      <h4><strong>Edit PoB code</strong></h4>
+    {% endif %}
     <form id="form" method="post" onsubmit="onSubmit()"
           action="{% if pk %}
                     {% url 'edit_pob' pk %}
