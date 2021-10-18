@@ -26,11 +26,8 @@ def assign_pob_details_to_guide(guide: BuildGuide, pob_details: PobDetails, pob_
     asc_class = _get_asc_class(pob_details)
     keystones = _get_or_create_keystones(pob_details, skill_tree_service)
     unique_items = _get_or_create_unique_items(pob_details)
-    try:
-        primary_active_skill = ActiveSkill.objects.get(name=pob_details.imported_primary_skill)
-        guide.primary_skills.add(primary_active_skill)
-    except ActiveSkill.DoesNotExist:
-        pass
+    primary_active_skill = ActiveSkill.objects.get(name=pob_details.imported_primary_skill)
+    guide.primary_skills.add(primary_active_skill)
     guide.ascendancy_class = asc_class
     guide.keystones.set(keystones)
     guide.unique_items.set(unique_items)

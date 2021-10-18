@@ -12,3 +12,7 @@ class PastebinImportException(Exception):
 
 class BuildXmlParsingException(Exception):
     pass
+
+
+class BuildWithoutActiveSkillException(Exception):
+    pass

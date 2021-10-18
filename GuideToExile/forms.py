@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from django.forms import Form, ModelForm, Select
 
 from GuideToExile import pob_import
+from GuideToExile.exceptions import BuildWithoutActiveSkillException
 from GuideToExile.models import UserProfile, AscendancyClass, ActiveSkill, Keystone, UniqueItem
 from apps.django_tiptap.widgets import TipTapWidget
 
@@ -64,6 +65,8 @@ class PobStringForm(Form):
 
             xml = pob_import.base64_to_xml(data)
             return pob_import.parse_pob_details(xml), data
+        except BuildWithoutActiveSkillException:
+            raise ValidationError('At least one active skill required', code='missing active skill')
         except Exception as err:
             logger.error('Something went wrong while importing a build', exc_info=True)
             raise ValidationError('Invalid export code or Pastebin link', code='invalid_pob_string')
