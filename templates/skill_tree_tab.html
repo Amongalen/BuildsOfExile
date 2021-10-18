@@ -34,7 +34,8 @@
         </div>
         <div class="col-4">
           {% if tree.1 %}
-            <h3>Keystones:</h3>
+            <h3>Keystones: <sup><abbr
+          title="Mouse over to highlight.">?</abbr></sup></h3>
             {% for keystone in tree.1 %}
               <div class="bg-secondary border border-primary-lighter rounded-3 my-2 p-2"
              id="node-{{ keystone.id }}-description" onmouseenter="nodeMouseEnter({{ keystone.id }}
