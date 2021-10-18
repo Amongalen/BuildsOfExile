@@ -1,6 +1,6 @@
 import math
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Tuple, List, Dict
 
 from GuideToExile.data_classes import NodeGroup, TreeNode, SkillTree
@@ -28,6 +28,7 @@ class TreeGraphNode(GraphElement):
     pos_x: float
     pos_y: float
     size: int
+    is_hoverable: bool = field(default=False)
 
     @property
     def pos(self):
@@ -37,7 +38,11 @@ class TreeGraphNode(GraphElement):
     def svg_string(self):
         if self.is_hidden:
             return ''
-        return f'<circle cx="{self.pos_x}" cy="{self.pos_y}" r="{self.size}" fill="{self.color}" data-id="{self.node_id}"/>\n'
+        svg_string = f'<circle cx="{self.pos_x}" cy="{self.pos_y}" r="{self.size}" fill="{self.color}" data-id="{self.node_id}"/>\n'
+        if self.is_hoverable and self.is_taken:
+            svg_string += f'<circle id="node-{self.node_id}" cx="{self.pos_x}" cy="{self.pos_y}" r="{self.size * 4}" ' \
+                          f'fill="{self.color}" data-id="{self.node_id}" onmouseenter="nodeMouseEnter({self.node_id})" onmouseleave="nodeMouseLeave({self.node_id})" opacity="0"/>\n'
+        return svg_string
 
 
 @dataclass(frozen=True)
@@ -85,18 +90,24 @@ class TreeGraph:
         for group in groups:
             for node_id in group.node_ids:
                 node = tree_nodes[node_id]
-                if node.is_mastery or node.is_class_start_node:
+                if node.is_class_start_node or (not node.connected_out_nodes and not node.connected_in_nodes):
                     continue
                 pos_x, pos_y = self._calculate_node_position(group, node)
-                self.nodes[node_id] = TreeGraphNode(node_id=node_id, pos_x=pos_x, pos_y=pos_y, size=node.size,
-                                                    is_taken=False, is_hidden=False)
+                is_hoverable = node.is_mastery or node.is_keystone
+                self.nodes[node_id] = TreeGraphNode(node_id=node_id,
+                                                    pos_x=pos_x,
+                                                    pos_y=pos_y,
+                                                    size=node.size,
+                                                    is_taken=False,
+                                                    is_hidden=False,
+                                                    is_hoverable=is_hoverable)
 
     def _init_paths(self):
         paths_list = []
         for node_id, node in self.skill_tree.nodes.items():
             if node.is_mastery or node.is_class_start_node:
                 continue
-            for connected_node_id in node.connected_nodes:
+            for connected_node_id in node.connected_out_nodes:
                 connected_node = self.skill_tree.nodes[connected_node_id]
                 if not node.is_connected_to(connected_node):
                     continue
@@ -153,7 +164,8 @@ class TreeGraph:
                                      pos_y=node.pos_y,
                                      size=node.size,
                                      is_taken=(node_id in taken_node_ids),
-                                     is_hidden=is_hidden)
+                                     is_hidden=is_hidden,
+                                     is_hoverable=node.is_hoverable)
             nodes.append(new_node)
         return nodes
 

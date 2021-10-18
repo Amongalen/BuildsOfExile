@@ -99,7 +99,8 @@ class TreeNode:
     class_start_index: int
     is_ascendancy_start: bool
     stats: List[str] = field(default_factory=list)
-    connected_nodes: List[str] = field(default_factory=list)
+    connected_out_nodes: List[str] = field(default_factory=list)
+    connected_in_nodes: List[str] = field(default_factory=list)
 
     @property
     def is_class_start_node(self):

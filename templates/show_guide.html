@@ -341,6 +341,42 @@
       myDefaultAllowList.img = ['style', 'srcset', 'alt']
       myDefaultAllowList.div = ['style', 'class']
     }
+
+    function nodeMouseEnter(node_id) {
+      let node = $(`#node-${node_id}`);
+      let description = $(`#node-${node_id}-description`);
+      node.animate({opacity: '0.33'}, {duration: 200, queue: false});
+      $({brightness: 100}).animate({brightness: 150}, {
+        duration: 100,
+        easing: 'linear',
+        step: function () {
+          description.css('filter', `brightness(${this.brightness}%)`);
+        },
+        callback: function () {
+          // Final callback to set the target blur radius
+          // jQuery might not reach the end value
+          description.css('filter', `brightness(150%)`);
+        }
+      });
+    }
+
+    function nodeMouseLeave(node_id) {
+      let node = $(`#node-${node_id}`);
+      let description = $(`#node-${node_id}-description`);
+      node.animate({opacity: '0'}, {duration: 200, queue: false});
+      $({brightness: 150}).animate({brightness: 100}, {
+        duration: 100,
+        easing: 'linear',
+        step: function () {
+          description.css('filter', `brightness(${this.brightness}%)`);
+        },
+        callback: function () {
+          // Final callback to set the target blur radius
+          // jQuery might not reach the end value
+          description.css('filter', `brightness(100%)`);
+        }
+      });
+    }
   </script>
 
 {% endblock %}

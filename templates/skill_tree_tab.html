@@ -36,7 +36,9 @@
           {% if tree.1 %}
             <h3>Keystones:</h3>
             {% for keystone in tree.1 %}
-              <div class="bg-secondary border border-primary-lighter rounded-3 my-2 p-2">
+              <div class="bg-secondary border border-primary-lighter rounded-3 my-2 p-2"
+             id="node-{{ keystone.id }}-description" onmouseenter="nodeMouseEnter({{ keystone.id }}
+          )" onmouseleave="nodeMouseLeave({{ keystone.id }})">
                 <h4>{{ keystone.name }}</h4>
                 {% for keystone_stat in keystone.stats %}
                   <div class="small">{{ keystone_stat|linebreaksbr }}</div>
@@ -55,14 +57,16 @@
     $(function () {
       $("#tree_select").on('change', function (evt, params) {
         let title = params.selected;
-        let tree_html = trees[title];
+        let escaped_title = _.escape(title);
+        let tree_html = trees[escaped_title];
         $('#tree_container').html(tree_html);
       });
     });
 
     $(document).ready(function () {
       let title = $('#tree_select').val()
-      let tree_html = trees[title];
+      let escaped_title = _.escape(title);
+      let tree_html = trees[escaped_title];
       $('#tree_container').html(tree_html);
     });
 
