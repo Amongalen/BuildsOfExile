@@ -23,7 +23,7 @@
       <div class="my-2">
         <small>Link to passive tree:</small>
         <input id="treeUrl" class="align-middle w-25 d-inline form-control form-control-sm" disabled
-               value="{{ tree.2 }}"/>
+               value="{{ tree.3 }}"/>
         <button style="width:75px" class="btn btn-sm btn-outline-light btn-secondary treeUrlCopyBtn"
                 onclick="copyTreeUrl(this)">Copy
         </button>
@@ -34,8 +34,7 @@
         </div>
         <div class="col-4">
           {% if tree.1 %}
-            <h3>Keystones: <sup><abbr
-          title="Mouse over to highlight.">?</abbr></sup></h3>
+            <h3>Keystones: <sup><abbr title="Mouse over to highlight.">?</abbr></sup></h3>
             {% for keystone in tree.1 %}
               <div class="bg-secondary border border-primary-lighter rounded-3 my-2 p-2"
              id="node-{{ keystone.id }}-description" onmouseenter="nodeMouseEnter({{ keystone.id }}
@@ -43,6 +42,18 @@
                 <h4>{{ keystone.name }}</h4>
                 {% for keystone_stat in keystone.stats %}
                   <div class="small">{{ keystone_stat|linebreaksbr }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          {% endif %}
+          {% if tree.2 %}
+            <h3>Mastery effects: <sup><abbr title="Mouse over to highlight.">?</abbr></sup></h3>
+            {% for node_id, mastery_effects in tree.2 %}
+              <div class="bg-secondary border border-primary-lighter rounded-3 my-2 p-2"
+             id="node-{{ node_id }}-description" onmouseenter="nodeMouseEnter({{ node_id }}
+          )" onmouseleave="nodeMouseLeave({{ node_id }})">
+                {% for effect in mastery_effects %}
+                  <div class="small">{{ effect|linebreaksbr }}</div>
                 {% endfor %}
               </div>
             {% endfor %}

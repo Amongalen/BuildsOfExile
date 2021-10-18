@@ -96,9 +96,17 @@ def skill_tree_tab_view(request, pk):
     tree_specs = guide.pob_details.tree_specs
     trees = {}
     for tree_spec in tree_specs:
-        tree_html = skill_tree_service.get_html_with_taken_nodes(tree_spec.nodes, tree_spec.tree_version)
-        keystones = skill_tree_service.get_keystones(tree_spec.nodes, tree_spec.tree_version)
-        trees[tree_spec.title] = (tree_html, keystones, tree_spec.url)
+        tree_version = tree_spec.tree_version
+        tree_html = skill_tree_service.get_html_with_taken_nodes(tree_spec.nodes, tree_version)
+        keystones = skill_tree_service.get_keystones(tree_spec.nodes, tree_version)
+
+        if hasattr(tree_spec, 'mastery_effects'):
+            mastery_effects_descriptions = skill_tree_service.get_mastery_effects_descriptions(
+                tree_spec.mastery_effects,
+                tree_version)
+        else:
+            mastery_effects_descriptions = []
+        trees[tree_spec.title] = (tree_html, keystones, mastery_effects_descriptions, tree_spec.url)
     return render(request, 'skill_tree_tab.html', {'pk': pk, 'build_guide': guide, 'trees': trees})
 
 

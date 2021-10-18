@@ -37,6 +37,14 @@ class SkillTreeService:
         keystones.sort(key=lambda keystone: keystone.name)
         return keystones
 
+    def get_mastery_effects_descriptions(self, taken_mastery_effects: List[Tuple[str, str]],
+                                         tree_version: str) -> List[Tuple[str, List[str]]]:
+        skill_tree = self.skill_trees[tree_version]
+        mastery_effects_descriptions = [(node_id, skill_tree.mastery_effects[mastery_id])
+                                        for node_id, mastery_id in taken_mastery_effects]
+
+        return mastery_effects_descriptions
+
 
 def _read_tree_data_file(filepath: str) -> SkillTree:
     try:
@@ -45,6 +53,7 @@ def _read_tree_data_file(filepath: str) -> SkillTree:
 
         groups = _parse_node_groups(skill_tree_json)
         nodes, asc_start_nodes = _parse_nodes(skill_tree_json)
+        mastery_effects = _parse_mastery_effects(skill_tree_json)
 
         max_x = skill_tree_json['max_x'] - 400
         max_y = skill_tree_json['max_y'] - 300
@@ -62,7 +71,8 @@ def _read_tree_data_file(filepath: str) -> SkillTree:
             orbit_radii=skill_tree_json['constants']['orbitRadii'],
             node_groups=groups,
             nodes=nodes,
-            asc_start_nodes=asc_start_nodes
+            asc_start_nodes=asc_start_nodes,
+            mastery_effects=mastery_effects
         )
     except Exception as e:
         raise SkillTreeLoadingException(e)
@@ -100,6 +110,16 @@ def _find_asc_center_group(asc_groups: List[NodeGroup], nodes: Dict[str, TreeNod
         for node_id in group.node_ids:
             if nodes[node_id].is_ascendancy_start:
                 return group
+
+
+def _parse_mastery_effects(skill_tree_json: dict) -> Dict[str, List[str]]:
+    mastery_effects = {}
+    for node_json in skill_tree_json['nodes'].values():
+        for mastery_effect in node_json.get('masteryEffects', []):
+            effect_id = str(mastery_effect['effect'])
+            effect_description = mastery_effect['stats']
+            mastery_effects[effect_id] = effect_description
+    return mastery_effects
 
 
 def _parse_nodes(skill_tree_json: dict) -> Tuple[Dict[str, TreeNode], Dict[str, str]]:

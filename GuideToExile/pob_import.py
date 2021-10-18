@@ -10,7 +10,8 @@ import requests
 
 from GuideToExile import items_service
 from GuideToExile.data_classes import SkillGem, SkillGroup, TreeSpec, ItemSet, Item, PobDetails
-from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException, TreeParsingException
+from GuideToExile.exceptions import PastebinImportException, BuildXmlParsingException, TreeParsingException, \
+    BuildWithoutActiveSkillException
 from GuideToExile.settings import POB_PATH
 from apps.pob_wrapper import PathOfBuilding
 
@@ -61,6 +62,9 @@ def parse_pob_details(xml: str) -> PobDetails:
 
     # sorting must be after picking main skill, in the xml they use index for that, not id
     main_active_skill = get_main_active_skill(skill_groups, xml_root)
+    if not main_active_skill:
+        raise BuildWithoutActiveSkillException
+
     skill_groups.sort(key=lambda x: SLOTS_ORDER.index(x.slot))
 
     items = extract_items(xml_root)
@@ -69,7 +73,7 @@ def parse_pob_details(xml: str) -> PobDetails:
         class_name=(xml_root.find('Build').get('className')),
         ascendancy_name=(xml_root.find('Build').get('ascendClassName')),
         skill_groups=skill_groups,
-        main_active_skills=[main_active_skill] if main_active_skill else [],
+        main_active_skills=[main_active_skill],
         imported_primary_skill=main_active_skill,
         tree_specs=(extract_tree_specs(xml_root)),
         active_tree_spec_index=int(xml_root.find('Tree').get('activeSpec')),
@@ -204,16 +208,27 @@ def extract_tree_specs(xml_root: ET.Element) -> List[TreeSpec]:
     for spec_xml in xml_root.find('Tree'):
         nodes_str = spec_xml.get('nodes')
         if nodes_str:
-            nodes = list(map(str, nodes_str.split(',')))
+            nodes = nodes_str.split(',')
             title = title if (title := spec_xml.get('title')) is not None else 'Default'
             tree_specs.append(TreeSpec(title=title,
                                        nodes=nodes,
+                                       mastery_effects=extract_mastery_effects(spec_xml),
                                        url=(spec_xml.find('URL').text.strip()),
                                        tree_version=(spec_xml.get('treeVersion'))))
         else:
             raise TreeParsingException
 
     return tree_specs
+
+
+def extract_mastery_effects(spec_xml):
+    effects_string = spec_xml.get('masteryEffects')
+    if not effects_string:
+        return []
+    ids = effects_string.replace('{', '').replace('}', '').split(',')
+    mastery_effects = list(zip(ids[::2], ids[1::2]))
+
+    return mastery_effects
 
 
 def extract_skills_groups(xml_root: ET.Element) -> List[SkillGroup]:

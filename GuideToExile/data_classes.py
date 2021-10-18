@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Union, Optional, List, Dict
+from typing import Union, Optional, List, Dict, Tuple
 
 from GuideToExile import items_service
 
@@ -37,6 +37,7 @@ class TreeSpec:
     nodes: List[str]
     url: str
     tree_version: str
+    mastery_effects: List[Tuple[str, str]] = field(default_factory=list)
 
 
 @dataclass
@@ -132,6 +133,7 @@ class SkillTree:
     nodes: Dict[str, TreeNode]
     skills_per_orbit: List[int]
     orbit_radii: List[int]
+    mastery_effects: Dict[str, List[str]]
 
     def find_group_containing_node(self, node_id):
         for group in self.node_groups.values():
