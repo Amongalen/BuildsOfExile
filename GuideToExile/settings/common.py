@@ -309,3 +309,5 @@ DATABASES = {}
 # load database settings
 with open(DATABASE_CONFIG_FILE, 'r') as f:
     DATABASES['default'] = json.load(f)
+ASC_TREE_OFFSET_Y = 2500
+ASC_TREE_OFFSET_X = -2500

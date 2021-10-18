@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Tuple, List, Dict
 
 from GuideToExile.data_classes import NodeGroup, TreeNode, SkillTree
-from GuideToExile.settings.common import ASC_TREE_X, ASC_TREE_Y
+from GuideToExile.settings.common import ASC_TREE_OFFSET_X, ASC_TREE_OFFSET_Y
 
 
 @dataclass(frozen=True)
@@ -131,15 +131,15 @@ class TreeGraph:
         min_y = self.skill_tree.min_y
         size_x = self.skill_tree.max_x - min_x
         size_y = self.skill_tree.max_y - min_y
-        return min_x + 2400, min_y + 800, size_x - 2800, size_y - 1100
+        return min_x, min_y, size_x, size_y
 
     def as_html_with_taken_nodes(self, taken_node_ids: List[str]) -> str:
         min_x, min_y, size_x, size_y = self.tree_dimensions
         html = f'<svg style="background-color: transparent;" viewBox="{min_x} {min_y} {size_x} {size_y}">\n'
-        asc_tree_x = ASC_TREE_X
-        asc_tree_y = ASC_TREE_Y
         asc_name = self._find_asc_name(taken_node_ids)
         if asc_name:
+            asc_tree_x = min_x + size_x + ASC_TREE_OFFSET_X
+            asc_tree_y = min_y + ASC_TREE_OFFSET_Y
             html += f'<circle cx="{asc_tree_x}" cy="{asc_tree_y}" r="700" fill="#35383B"/>\n'
         graph_elements = self._get_all_graph_elements_including_taken_nodes(taken_node_ids)
         graph_elements.sort(key=lambda v: v.is_taken)

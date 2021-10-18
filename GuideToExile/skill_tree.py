@@ -7,6 +7,7 @@ from typing import Dict, List, Tuple
 import GuideToExile.settings as settings
 from GuideToExile.data_classes import NodeGroup, TreeNode, SkillTree
 from GuideToExile.exceptions import SkillTreeLoadingException
+from GuideToExile.settings import ASC_TREE_OFFSET_Y, ASC_TREE_OFFSET_X
 from GuideToExile.tree_graph import TreeGraph
 
 logger = logging.getLogger('guidetoexile')
@@ -45,13 +46,18 @@ def _read_tree_data_file(filepath: str) -> SkillTree:
         groups = _parse_node_groups(skill_tree_json)
         nodes, asc_start_nodes = _parse_nodes(skill_tree_json)
 
-        _move_asc_groups_to_pos(groups, nodes, settings.ASC_TREE_X, settings.ASC_TREE_Y)
+        max_x = skill_tree_json['max_x'] - 400
+        max_y = skill_tree_json['max_y'] - 300
+        min_x = skill_tree_json['min_x'] + 2400
+        min_y = skill_tree_json['min_y'] + 800
+
+        _move_asc_groups_to_pos(groups, nodes, max_x + ASC_TREE_OFFSET_X, min_y + ASC_TREE_OFFSET_Y)
 
         skill_tree = SkillTree(
-            max_x=skill_tree_json['max_x'],
-            max_y=skill_tree_json['max_y'],
-            min_x=skill_tree_json['min_x'],
-            min_y=skill_tree_json['min_y'],
+            max_x=max_x,
+            max_y=max_y,
+            min_x=min_x,
+            min_y=min_y,
             skills_per_orbit=skill_tree_json['constants']['skillsPerOrbit'],
             orbit_radii=skill_tree_json['constants']['orbitRadii'],
             node_groups=groups,
