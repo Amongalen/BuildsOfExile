@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /guide/show/
+Disallow: /guide/
+
+Disallow: /guide/list/
+Disallow: /my-guides/list/
+Disallow: /authors/list/
+Disallow: /user/
+Disallow: /signup/
+Disallow: /sent/
+Disallow: /activate/

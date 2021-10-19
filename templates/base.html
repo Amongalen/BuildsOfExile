@@ -2,15 +2,22 @@
 <html lang="en" class="vw-100 no-js" style="overflow-x: hidden">
 <head>
   {% load static %}
-  {% block title %}<title>Guide to Exile</title>{% endblock %}
+  {% block title %}<title>Guide to Exile - PoE build sharing platform</title>{% endblock %}
   <link rel="apple-touch-icon" sizes="180x180" href="{% static '/favicon/apple-touch-icon.png' %}">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static '/favicon/favicon-32x32.png' %}">
   <link rel="icon" type="image/png" sizes="16x16" href="{% static '/favicon/favicon-16x16.png' %}">
   <link rel="manifest" href="{% static '/favicon/site.webmanifest' %}">
   <link rel="shortcut icon" type="image/png" href="{% static '/favicon/favicon.ico' %}"/>
 
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="description"
+        content="A Path of Exile build guide sharing platform designed for both content creators and regular players with Path of Building integration in mind."/>
+  <meta name="keywords" content="Path of Exile, PoE, Guide to Exile, Build, Guide, Tutorial, Path of Building">
+
+  {% block author %}{% endblock %}
+  {% block extra_meta %}{% endblock %}
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>

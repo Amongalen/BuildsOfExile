@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-
+{% block extra_meta %}
+  <meta name="robots" content="noindex"/>{% endblock %}
 {% block content %}
-    <h4>Activation link sent! Please check your email.</h4>
+  <h4>Activation link sent! Please check your email.</h4>
 {% endblock %}

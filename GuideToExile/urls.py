@@ -17,6 +17,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.urls import path, include
+from django.views.generic import TemplateView
 
 from GuideToExile import views, settings
 
@@ -56,6 +57,7 @@ urlpatterns = [
     path('cookies-policy', views.CookiePolicy.as_view(), name='cookie_policy'),
     path('privacy-policy', views.PrivacyPolicy.as_view(), name='privacy_policy'),
     path('terms-of-use', views.TermsOfUse.as_view(), name='terms_of_use'),
+    path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain"), ),
 ]
 
 urlpatterns += static(settings.MEDIA_URL,

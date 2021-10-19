@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-
+{% block extra_meta %}
+  <meta name="robots" content="noindex"/>{% endblock %}
 {% block content %}
-    <h3>Something went wrong, try again.</h3>
+  <h3>Something went wrong, try again.</h3>
 {% endblock %}

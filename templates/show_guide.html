@@ -1,4 +1,12 @@
 {% extends "base.html" %}
+
+{% if author.user.username %}
+  {% block author %}
+    <meta name="author" content="{{ author.user.username }}"/>
+  {% endblock %}
+{% endif %}
+{% block title %}<title>Guide to Exile: {{ build_guide.title }}</title>{% endblock %}
+
 {% load static %}
 {% block content %}
 
