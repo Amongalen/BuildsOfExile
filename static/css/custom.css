@@ -250,6 +250,11 @@ hr {
     border: 2px solid #AF602548;
 }
 
+.gear-bg-relic {
+    box-shadow: 0 0 25px rgba(96, 220, 45, 0.2) inset;
+    border: 2px solid rgba(96, 220, 45, 0.28);
+}
+
 .gear-bg-placeholder {
     box-shadow: 0 0 25px #FFFFFF08 inset;
     border: 2px solid #FFFFFF0A;
