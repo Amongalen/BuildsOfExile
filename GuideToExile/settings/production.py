@@ -6,7 +6,7 @@ from .common import *
 
 # turn off all debugging
 
-DEBUG = True
+DEBUG = False
 LOAD_ALL_SKILLTREES = True
 
 # You will have to determine, which hostnames should be served by Django
