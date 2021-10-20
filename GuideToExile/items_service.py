@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from collections import defaultdict
 from typing import List
 
@@ -9,8 +10,11 @@ from django.contrib.staticfiles import finders
 
 from GuideToExile.settings import ASSET_DIR, BASE_ITEMS_LOOKUP_FILE, UNIQUE_ITEMS_LOOKUP_FILE, GEMS_FILE
 
+PARENTHESIS_REGEX = re.compile(r"\(.*\)")
+
 
 class AssetsService:
+
     def __init__(self):
         base_items_lookup_file = finders.find(BASE_ITEMS_LOOKUP_FILE)
         unique_items_lookup_file = finders.find(UNIQUE_ITEMS_LOOKUP_FILE)
@@ -35,7 +39,8 @@ class AssetsService:
         if item.rarity in ['UNIQUE', 'RELIC']:
             return self.mapping.get(item.name.lower(), '')
         if item.rarity == 'RARE':
-            return self.mapping.get(item.base_name.lower(), '')
+            base_name = PARENTHESIS_REGEX.sub('', item.base_name).strip().lower()
+            return self.mapping.get(base_name, '')
 
         # hacks for dealing with prefix and suffix
         base_name = item.base_name.lower()
