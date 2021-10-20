@@ -57,7 +57,9 @@ def guide_list_view(request):
         user_id = request.user.userprofile.user_id if request.user.is_authenticated else 0
         page = request.GET.get('page')
         page_obj = guide_search.find_with_filter(form, user_id, page, paginate_by)
-        return render(request, 'guide_list.html', {'page_obj': page_obj})
+        initial_date = form.fields['updated_after'].initial
+        return render(request, 'guide_list.html', {'page_obj': page_obj, 'initial_date': initial_date})
+    return render(request, 'guide_list.html', {'page_obj': None})
 
 
 def show_guide_view(request, pk, slug):

@@ -113,6 +113,12 @@ class EditGuideForm(Form):
         return data
 
 
+def get_date_with_offset(offset=90):
+    today = datetime.today()
+    updated_after_initial = today - timedelta(days=offset)
+    return updated_after_initial.strftime("%Y-%m-%d")
+
+
 class GuideListFilterForm(Form):
     base_class_name_choices = [(i.value, i.label) for i in AscendancyClass.BaseClassName]
     asc_class_name_choices = [(i.value, i.label) for i in AscendancyClass.AscClassName if i.label != 'None']
@@ -126,11 +132,10 @@ class GuideListFilterForm(Form):
     asc_class_name = forms.ChoiceField(required=True, choices=asc_class_name_choices)
     author_username = forms.CharField(max_length=255, required=False, label='Author',
                                       widget=forms.TextInput(attrs={'placeholder': 'Author...'}))
-    today = datetime.today()
-    updated_after_offset = 90
-    updated_after_initial = today - timedelta(days=updated_after_offset)
+
     updated_after = forms.DateField(
-        initial=updated_after_initial.strftime("%Y-%m-%d"),
+        initial=get_date_with_offset,
+        required=False,
         localize=False,
         widget=forms.DateInput()
     )
@@ -181,6 +186,12 @@ class GuideListFilterForm(Form):
                                enumerate(UniqueItem.objects.filter(unique_items_related_builds__isnull=False)
                                          .distinct().order_by('name').all())]
         self.fields['unique_items'].choices = unique_item_choices
+
+    def clean_updated_after(self):
+        data = self.cleaned_data['updated_after']
+        if not data:
+            data = get_date_with_offset(90)
+        return data
 
 
 class ProfileForm(ModelForm):
