@@ -15,6 +15,7 @@ class SkillGem:
     quality: int
     alt_quality_pref: str = field(default='')
     is_item_provided: bool = field(default=False)
+    is_fake: bool = field(default=False)
 
     @property
     def asset(self):

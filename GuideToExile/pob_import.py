@@ -275,6 +275,7 @@ def extract_gems_in_group(group_xml: ET.Element) -> List[SkillGem]:
 def get_nonvaal_gem_version(gem: SkillGem) -> SkillGem:
     nonvaal_gem = copy.copy(gem)
     nonvaal_gem.name = gem.name.replace('Vaal ', '')
+    nonvaal_gem.is_fake = True
     return nonvaal_gem
 
 
