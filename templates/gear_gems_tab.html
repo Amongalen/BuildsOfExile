@@ -34,7 +34,11 @@
                             <div class='row'>
                               <div class='col-10'>
                                 <img srcset='
-                  {% if gem.is_item_provided %}{% static item.asset %}{% else %}{% static gem.asset %}{% endif %}'
+                  {% if gem.is_item_provided %}
+                    {% if item.asset %}{% static item.asset %}{% endif %}
+                  {% else %}
+                    {% if gem.asset %}{% static gem.asset %}{% endif %}
+                  {% endif %}'
                                 alt='{{ gem.alt_quality_pref }}{{ gem.name }}' style='width:30px; height: 30px'/>
                                 <span
                                   class='{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}'>
@@ -58,7 +62,7 @@
                         {% endfor %}
                      </div>
                     {% endif %}">
-                      <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+                      <img srcset='{% if item.asset %}{% static item.asset %}{% endif %} 1.6x' alt="{{ item.name }}">
                     </div>
                   {% else %}
                     <div class="gear-{{ slot_name }} gear-slot gear-bg-placeholder"></div>
@@ -80,7 +84,7 @@
                            data-bs-toggle="tooltip"
                            data-bs-html="true" data-bs-placement="bottom"
                            title="{{ item.display_html }}">
-                        <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+                        <img srcset='{% if item.asset %}{% static item.asset %}{% endif %} 1.6x' alt="{{ item.name }}">
                       </div>
                     {% else %}
                       <div class="gear-{{ slot_name }} gear-slot gear-bg-placeholder"></div>
@@ -103,7 +107,7 @@
                       <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
                            data-bs-html="true" data-bs-placement="bottom"
                            title="{{ item.display_html }}">
-                        <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
+                        <img srcset='{% if item.asset %}{% static item.asset %}{% endif %} 1.6x' alt="{{ item.name }}">
                       </div>
                     {% endif %}
                   {% endfor %}
@@ -116,9 +120,9 @@
                     {% if not item.is_broken %}
                       <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
                            data-bs-html="true" data-bs-placement="bottom"
-                         title="{{ item.display_html }}">
-                      <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
-                    </div>
+                           title="{{ item.display_html }}">
+                        <img srcset='{% if item.asset %}{% static item.asset %}{% endif %} 1.6x' alt="{{ item.name }}">
+                      </div>
                     {% endif %}
                   {% endfor %}
                 </div>
@@ -128,11 +132,11 @@
                 <div class="gear-jewels-container my-1">
                   {% for item in used_jewels.normal %}
                     {% if not item.is_broken %}
-                    <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
-                         data-bs-html="true" data-bs-placement="bottom"
-                         title="{{ item.display_html }}">
-                      <img srcset='{% static item.asset %} 1.6x' alt="{{ item.name }}">
-                    </div>
+                      <div class="gear-jewel gear-slot gear-bg-{{ item.rarity|lower }}" data-bs-toggle="tooltip"
+                           data-bs-html="true" data-bs-placement="bottom"
+                           title="{{ item.display_html }}">
+                        <img srcset='{% if item.asset %}{% static item.asset %}{% endif %} 1.6x' alt="{{ item.name }}">
+                      </div>
                     {% endif %}
                   {% endfor %}
                 </div>
@@ -151,7 +155,7 @@
                   {% for gem in skill_group.gems %}
                     <div class="row">
                       <div class="col-10">
-                        <img srcset='{% static gem.asset %}' alt="{{ gem.name }}"
+                        <img srcset='{% if gem.asset %}{% static gem.asset %}{% endif %}' alt="{{ gem.name }}"
                              style='max-width:30px; max-height: 30px'/>
                         <span
                           class="{% if gem.is_enabled and skill_group.is_enabled %}poegem-enabled{% else %}poegem-disabled{% endif %}">{{ gem.name }}</span>

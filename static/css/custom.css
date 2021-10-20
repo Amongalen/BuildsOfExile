@@ -789,3 +789,7 @@ input[type=number] {
 a.anchor {
     text-decoration: none;
 }
+
+img[alt] {
+    font-size: 0.75rem;
+}
