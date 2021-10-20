@@ -128,7 +128,7 @@ DATABASE_CONFIG_FILE = normpath(join(PROJECT_ROOT, 'run', 'database.config'))
 
 # these persons receive error notification
 ADMINS = (
-    ('Amongalen', '1gumis@gmail.com'),
+    ('Amongalen', 'guidetoexile@gmail.com'),
 )
 MANAGERS = ADMINS
 
