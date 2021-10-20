@@ -115,8 +115,8 @@ def _get_base_filters(filter_form: GuideListFilterForm, user_id: int) -> List[Q]
 def _apply_order(queryset: QuerySet, filter_form: GuideListFilterForm) -> QuerySet:
     order_by = filter_form.cleaned_data['order_by']
     order_field_map = {
-        'Trending': ['-likes_recently', 'title'],
-        'Popular': ['-likes', 'title'],
+        'Trending': ['-likes_recently', '-modification_datetime'],
+        'Popular': ['-likes', '-modification_datetime'],
         'Modification date': ['-modification_datetime', 'title'],
         'Creation date': ['-creation_datetime', 'title'],
         'Title': ['title'],
